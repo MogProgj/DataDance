@@ -121,6 +121,8 @@ layer boundaries.
 
 Full details are in [`docs/roadmap.md`](docs/roadmap.md).
 
+For the Phase 0 working contract, see [`docs/phase-0-foundation.md`](docs/phase-0-foundation.md).
+
 ---
 
 ## Running the project
