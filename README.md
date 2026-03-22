@@ -107,14 +107,17 @@ layer boundaries.
 
 | Phase | Focus |
 |---|---|
-| 0 | Foundation and repo scaffolding |
-| 1 | First working laboratory core (arrays, stacks, queues) |
-| 2 | Rendering and state-explanation layer |
-| 3 | Broader structure family (deque, heap, priority queue) |
-| 4 | Hashing and hybrid structures |
-| 5 | Comparison mode (same ops on multiple implementations) |
-| 6 | Optional lightweight JavaFX UI |
-| 7 | Algorithms built on top of the structures |
+| 0 | Foundation and repo setup |
+| 1 | Core data structure engine (arrays, stacks, queues) |
+| 2 | Trace and explanation layer |
+| 3 | Console rendering layer |
+| 4 | Data structure registry and metadata system |
+| 5 | Terminal interactive simulator |
+| 6 | Broader data structure family |
+| 7 | Comparison mode (same ops on multiple implementations) |
+| 8 | Graphical simulator layer (JavaFX) |
+| 9 | Algorithm demonstrations on top of structures |
+| 10 | Polish, testing, and educational refinement |
 
 Full details are in [`docs/roadmap.md`](docs/roadmap.md).
 

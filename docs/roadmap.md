@@ -1,156 +1,351 @@
-# Roadmap
+# StructLab Roadmap
+
+StructLab is being developed as an implementation-first data structure laboratory
+that will grow into an interactive simulator. The project begins with core data
+structure implementations and gradually adds tracing, visualization, metadata,
+interactivity, comparison features, and algorithm demonstrations.
 
 ---
 
-## Phase 0 — Foundation and repo scaffolding
+## Phase 0 — Foundation and Repo Setup
 
 ### Goal
-Set up the project properly before writing any implementations.
+Create a clean base that can grow into a simulator later.
 
-### Deliverables
-- Repository initialised with clean Java project layout
-- README with project vision and roadmap
-- `.gitignore` for Java, IDE, and OS artefacts
-- MIT licence
-- `CONTRIBUTING.md`
-- `docs/` folder with architecture, design principles, and future ideas
-- Placeholder package structure under `src/`
-- Naming and coding conventions documented
+### What Happens Here
+- Initialize repo
+- Add README, roadmap, architecture notes, `.gitignore`
+- Create package structure
+- Define naming conventions
+- Define project principles
+- Define versioning direction
+
+### Outputs
+- Clean repository scaffold
+- Docs that explain the vision
+- Empty but organized folders for `core`, `trace`, `render`, `registry`, `simulator`
+
+### Why This Phase Matters
+This prevents the project from becoming disorganized. A well-structured scaffold
+means every future change has a clear place to live.
 
 ---
 
-## Phase 1 — First working laboratory core
+## Phase 1 — Core Data Structure Engine
 
 ### Goal
-Implement the first small but meaningful subset of structures from scratch.
+Implement the first real structures from scratch.
 
-### Structures
+### Structures to Build First
+- Fixed array
 - Dynamic array
-- Stack via dynamic array
-- Stack via linked list
-- Queue via circular array
-- Queue via linked list
-- Queue via two stacks
+- Stack on dynamic array
+- Stack on linked list
+- Queue on circular array
+- Queue on linked list
+- Queue on two stacks
 
-### Deliverables
-- Implementations with no built-in Java collections
-- Invariant-check methods
-- Basic text renderers
-- Scripted demo scenarios
-- Initial unit tests
+### What Each Structure Must Support
+- Basic operations
+- Internal state exposure
+- Invariant checking
+- Simple string/state snapshot export
 
----
+### Outputs
+- Working implementations
+- No GUI yet
+- No simulator shell yet
+- Solid core code
 
-## Phase 2 — Rendering and state-explanation layer
-
-### Goal
-Make operations visually comprehensible through structured trace output.
-
-### Deliverables
-- ASCII-based renderers
-- Trace output for each operation (before / after / cost note / invariant status)
-- Resize, relink, and wraparound events shown explicitly
-- Example output format:
-
-```
-Operation: push(7)
-Before:    [3, 5]
-After:     [3, 5, 7]
-Backing:   [3, 5, 7, _, _]
-Top index: 2
-Invariant: OK
-Cost:      O(1) amortised
-```
+### Why This Phase Matters
+Without this, the simulator has nothing real to simulate. Every later phase
+depends on the correctness and observability of the core engine.
 
 ---
 
-## Phase 3 — Broader structure family
+## Phase 2 — Trace and Explanation Layer
 
 ### Goal
-Expand the structural map beyond arrays, stacks, and queues.
+Make operations observable and understandable.
 
-### Structures
+### What Happens Here
+Every operation produces a trace step. Each trace step captures:
+- Operation name
+- Input
+- Before state
+- After state
+- Explanation
+- Invariant result
+- Optional complexity note
+
+### Outputs
+- Reusable trace model
+- Human-readable operation logs
+- Consistent state snapshots across structures
+
+### Why This Phase Matters
+This is where the project starts teaching instead of merely functioning. The trace
+layer is what separates a data structure library from a data structure laboratory.
+
+---
+
+## Phase 3 — Console Rendering Layer
+
+### Goal
+Visually present state changes in a lightweight way.
+
+### What Happens Here
+- Build ASCII/text renderers for arrays, stacks, queues, and linked structures
+- Render current state and transition after each operation
+- Show markers like `top`, `front`, `rear`, `head`, `tail`, `size`, `capacity`
+
+### Outputs
+- Terminal-based visualizations
+- Readable simulation output
+- Clean before/after views
+
+### Why This Phase Matters
+This gives the project visual explanatory power without GUI complexity. Anyone
+can run it in a terminal and immediately see what is happening inside each structure.
+
+---
+
+## Phase 4 — Data Structure Registry and Metadata System
+
+### Goal
+Build the searchable knowledge layer behind the future simulator.
+
+### What Happens Here
+For each data structure, define metadata including:
+- Name
+- Category
+- Keywords
+- Description
+- Behavior
+- Operations
+- Invariants
+- Implementations
+- Combinations
+- Related structures
+- Learning notes
+
+### Outputs
+- Registry of structures
+- Searchable tags and keywords
+- Normalized metadata model
+
+### Why This Phase Matters
+This powers the future search and detail panels. Without a structured registry,
+the simulator is just a collection of disconnected demos.
+
+---
+
+## Phase 5 — Terminal Interactive Simulator
+
+### Goal
+Turn the engine into an interactive exploration tool.
+
+### What Happens Here
+Users can:
+- Search or choose a structure
+- Inspect its description
+- View supported operations
+- Select an implementation
+- Execute operations
+- View trace and rendered state
+
+### Example Flow
+1. Search `"FIFO"`
+2. Choose queue
+3. Pick circular array, linked list, or two stacks
+4. Run `enqueue` / `dequeue`
+5. Watch the state update with trace and ASCII rendering
+
+### Outputs
+- First real simulator
+- Terminal-first product version
+- Practical interactive learning environment
+
+### Why This Phase Matters
+This is the first full expression of the project vision. Every previous phase
+was building toward this point.
+
+---
+
+## Phase 6 — Broader Data Structure Family
+
+### Goal
+Expand beyond the initial set.
+
+### Structures to Add
 - Singly linked list
 - Doubly linked list
-- Deque via linked list
-- Deque via circular array
+- Circular linked list
+- Deque on circular array
+- Deque on doubly linked list
 - Binary heap
-- Priority queue via heap
+- Priority queue on heap
+- Priority queue on sorted array
+- Priority queue on unsorted array
+- Hash table with separate chaining
+- Hash table with open addressing
+- Set on hash table
+- Disjoint set / union-find
+- Binary search tree
+- AVL tree
+- Red-black tree
+- Trie
+- Graph via adjacency list
+- Graph via adjacency matrix
 
-### Deliverables
-- Generalised interfaces
-- Richer comparison demos
-- Enhanced invariant and renderer systems
+### Outputs
+- Richer registry
+- Larger simulator catalog
+- Deeper implementation comparisons
 
----
-
-## Phase 4 — Hashing and hybrid structures
-
-### Goal
-Expose structures that are built from combinations of earlier ones.
-
-### Structures
-- Hash table with separate chaining (array + linked lists)
-- Open addressing variant (optional)
-- Disjoint set / union-find (optional)
-
-### Deliverables
-- Collision visualisation
-- Rehash visualisation
-- Bucket renderers
-
----
-
-## Phase 5 — Comparison mode
-
-### Goal
-Run the same sequence of operations on multiple implementations and show aligned
-results side by side.
-
-### Deliverables
-- Comparison runner
-- Aligned state views
-- Aligned complexity notes
-- Highlighted differences
-
-### Example
-Run `enqueue(1), enqueue(2), dequeue(), enqueue(3)` on:
-- Linked queue
-- Circular array queue
-- Two-stack queue
-
-And compare how each internal state evolves.
+### Why This Phase Matters
+The project grows into a much fuller conceptual map. The initial structures cover
+the fundamentals; this phase covers the broader landscape.
 
 ---
 
-## Phase 6 — Optional lightweight UI (JavaFX)
+## Phase 7 — Comparison Mode
 
 ### Goal
-Add a simple visual shell after the core logic is stable.
+Compare multiple implementations of the same ADT side by side.
 
-### Deliverables
-- Structure selector
+### What Happens Here
+Users can run the same operation sequence on different implementations and compare:
+- Internal state
+- Trace steps
+- Invariants
+- Cost intuition
+- Structural differences
+
+### Examples
+- Queue via linked list vs. circular array vs. two stacks
+- Stack via array vs. linked list
+- Priority queue via heap vs. sorted array vs. unsorted array
+
+### Outputs
+- Side-by-side comparison engine
+- Stronger learning value
+- Deeper intuition for tradeoffs
+
+### Why This Phase Matters
+This is where design understanding becomes much stronger. Seeing two or three
+implementations of the same ADT evolve in parallel under identical operations
+makes the tradeoffs concrete and memorable.
+
+---
+
+## Phase 8 — Graphical Simulator Layer
+
+### Goal
+Add an optional GUI after the architecture is stable.
+
+### Suggested Technology
+- JavaFX
+
+### What Happens Here
+- Search bar
+- Structure browser
+- Detail panel
 - Implementation selector
-- Operation input panel
+- Operations panel
 - Trace panel
 - Visual state panel
+- Console mode remains available
 
-### Note
-The console version is sufficient for the intellectual goal.  UI is polish, not
-foundation.
+### Outputs
+- Visual simulator app
+- Cleaner UX
+- More engaging demonstrations
+
+### Why This Phase Matters
+This adds polish without building the project backward. Because the console
+simulator already exists, the GUI is a presentation layer over a working engine,
+not a load-bearing wall.
 
 ---
 
-## Phase 7 — Algorithms built on top of structures
+## Phase 9 — Algorithm Demonstrations on Top of Structures
 
 ### Goal
-Show why data structures matter in real algorithmic contexts.
+Show data structures in actual algorithmic workflows.
 
-### Possible demos
+### Examples
 - DFS using stack
 - BFS using queue
-- Task scheduling using priority queue
-- Browser history using deque
-- Undo/redo using stacks
-- Expression evaluation using stacks
-- Producer–consumer queue simulation
+- Expression evaluation with stack
+- Undo/redo with stacks
+- Task scheduling with priority queue
+- Autocomplete with trie
+- Connectivity with union-find
+
+### Outputs
+- Algorithm modules
+- Structure-to-algorithm bridge
+- Practical demonstrations
+
+### Why This Phase Matters
+This connects abstract structures to real uses. It answers the question every
+student eventually asks: when would I actually need this?
+
+---
+
+## Phase 10 — Polish, Testing, and Educational Refinement
+
+### Goal
+Make the project stable, durable, and presentation-worthy.
+
+### What Happens Here
+- Improve tests
+- Add invariant stress tests
+- Improve docs
+- Add example scenarios
+- Add curated learning paths
+- Refine naming and structure
+- Possibly add exportable trace snapshots
+
+### Outputs
+- Portfolio-quality repository
+- Stable simulator
+- Useful study tool
+- Expandable educational system
+
+### Why This Phase Matters
+This turns the project into a serious long-term body of work. A well-tested,
+well-documented simulator with curated learning paths has lasting value beyond
+any individual course or semester.
+
+---
+
+## Recommended Build Order
+
+1. Repo and docs
+2. First core structures
+3. Trace system
+4. Console rendering
+5. Metadata registry
+6. Terminal simulator
+7. More structures
+8. Comparison mode
+9. GUI
+10. Algorithms and polish
+
+---
+
+## Version Checkpoints
+
+| Version | Milestone |
+|---------|-----------|
+| 0.1 | Repo scaffold and docs |
+| 0.2 | Core arrays, stacks, queues |
+| 0.3 | Trace + ASCII rendering |
+| 0.4 | Registry + searchable structure info |
+| 0.5 | Terminal interactive simulator |
+| 0.6 | More structures and combinations |
+| 0.7 | Comparison mode |
+| 0.8 | JavaFX graphical simulator |
+| 1.0 | Full StructLab simulator with educational demos |
