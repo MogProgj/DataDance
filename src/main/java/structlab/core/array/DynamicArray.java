@@ -33,17 +33,6 @@ public class DynamicArray<T> {
     return size == 0;
   }
 
-  @SuppressWarnings("unchecked")
-  public T get(int index) {
-    checkIndex(index);
-    return (T) data[index];
-  }
-
-  public void set(int index, T value) {
-    checkIndex(index);
-    data[index] = value;
-  }
-
   public void append(T value) {
     ensureCapacityForOneMore();
     data[size] = value;
@@ -51,10 +40,7 @@ public class DynamicArray<T> {
   }
 
   public void insert(int index, T value) {
-    if (index < 0 || index > size) {
-      throw new IndexOutOfBoundsException(
-        "Index " + index + " out of bounds for size " + size);
-    }
+    checkPositionIndex(index);
 
     ensureCapacityForOneMore();
 
@@ -67,8 +53,19 @@ public class DynamicArray<T> {
   }
 
   @SuppressWarnings("unchecked")
+  public T get(int index) {
+    checkElementIndex(index);
+    return (T) data[index];
+  }
+
+  public void set(int index, T value) {
+    checkElementIndex(index);
+    data[index] = value;
+  }
+
+  @SuppressWarnings("unchecked")
   public T removeAt(int index) {
-    checkIndex(index);
+    checkElementIndex(index);
 
     T removed = (T) data[index];
 
@@ -84,24 +81,29 @@ public class DynamicArray<T> {
 
   public boolean checkInvariant() {
     return data != null
-      && data.length > 0
       && size >= 0
       && size <= data.length;
   }
 
   public String snapshot() {
-    Object[] logical = new Object[size];
+    StringBuilder sb = new StringBuilder();
+
+    sb.append("DynamicArray{");
+    sb.append("size=").append(size);
+    sb.append(", capacity=").append(data.length);
+    sb.append(", elements=[");
 
     for (int i = 0; i < size; i++) {
-      logical[i] = data[i];
+      sb.append(data[i]);
+      if (i < size - 1) {
+        sb.append(", ");
+      }
     }
 
-    return "DynamicArray{" +
-      "size=" + size +
-      ", capacity=" + data.length +
-      ", elements=" + Arrays.toString(logical) +
-      ", raw=" + Arrays.toString(data) +
-      '}';
+    sb.append("], raw=").append(Arrays.toString(data));
+    sb.append("}");
+
+    return sb.toString();
   }
 
   private void ensureCapacityForOneMore() {
@@ -120,10 +122,19 @@ public class DynamicArray<T> {
     data = newData;
   }
 
-  private void checkIndex(int index) {
+  private void checkElementIndex(int index) {
     if (index < 0 || index >= size) {
       throw new IndexOutOfBoundsException(
-        "Index " + index + " out of bounds for size " + size);
+        "Index: " + index + ", Size: " + size
+      );
+    }
+  }
+
+  private void checkPositionIndex(int index) {
+    if (index < 0 || index > size) {
+      throw new IndexOutOfBoundsException(
+        "Index: " + index + ", Size: " + size
+      );
     }
   }
 }
