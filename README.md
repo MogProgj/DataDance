@@ -53,24 +53,30 @@ a swamp.
 
 ## Project status
 
-> **Phase 0 — Scaffolding**
+> **Phase 1 — Core Data Structure Engine (complete)**
 >
-> The repository is being structured and documented.  No core implementations
-> exist yet.  This file and the `docs/` folder describe the full intended design
-> so that every future change has clear context.
+> All Phase 1 structures are implemented with tests, demos, invariant checking,
+> and snapshot support.  The project is ready to move into Phase 2 (Trace layer).
 
 ---
 
-## Planned structures (version 1 scope)
+## Implemented structures
 
-| Category | Structure | Implementations planned |
-|---|---|---|
-| Array | Dynamic array | single backing array |
-| Stack | Array stack | dynamic array |
-| Stack | Linked stack | singly linked list |
-| Queue | Circular array queue | circular buffer |
-| Queue | Linked queue | singly linked list |
-| Queue | Two-stack queue | two array/linked stacks |
+| Category | Structure | Implementation | Tests | Demo |
+|---|---|---|---|---|
+| Array | Fixed array | `FixedArray` | yes | yes |
+| Array | Dynamic array | `DynamicArray` | yes | yes |
+| Stack | Array stack | `ArrayStack` (on DynamicArray) | yes | yes |
+| Stack | Linked stack | `LinkedStack` | yes | yes |
+| Queue | Circular array queue | `CircularArrayQueue` | yes | yes |
+| Queue | Linked queue | `LinkedQueue` | yes | yes |
+| Queue | Two-stack queue | `TwoStackQueue` | yes | yes |
+| List | Singly linked list | `SinglyLinkedList` | yes | yes |
+| List | Doubly linked list | `DoublyLinkedList` | yes | yes |
+| Deque | Linked deque | `LinkedDeque` | yes | yes |
+| Deque | Array deque | `ArrayDequeCustom` | yes | yes |
+| Heap | Binary heap | `BinaryHeap` (on DynamicArray) | yes | yes |
+| Heap | Priority queue | `HeapPriorityQueue` | yes | yes |
 
 ---
 
@@ -127,8 +133,18 @@ For the Phase 0 working contract, see [`docs/phase-0-foundation.md`](docs/phase-
 
 ## Running the project
 
-> Build tooling (Maven or Gradle) will be added before Phase 1 implementations
-> begin.  For now the repository contains the scaffold only.
+Requires Java 17+ and Gradle.
+
+```bash
+gradle build       # compile and run all tests
+gradle test         # run tests only
+```
+
+To run a demo:
+
+```bash
+gradle run -PmainClass=structlab.demo.ArrayStackDemo
+```
 
 ---
 
