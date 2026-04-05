@@ -53,24 +53,69 @@ a swamp.
 
 ## Project status
 
-> **Phase 0 — Scaffolding**
+> **Phase 2 — Trace and Explanation Layer (complete for arrays, stacks, and queues)**
 >
-> The repository is being structured and documented.  No core implementations
-> exist yet.  This file and the `docs/` folder describe the full intended design
-> so that every future change has clear context.
+> Phase 1 is complete — all core structures have tests, demos, invariant
+> checking, and snapshot support.  Phase 2 adds an operation-tracing layer
+> that captures before/after state, invariant results, complexity notes, and
+> human-readable explanations for every operation.  All Phase 1 array, stack,
+> and queue structures now have traced wrappers.  Lists, deques, heaps, and
+> hash structures are not yet traced.
 
 ---
 
-## Planned structures (version 1 scope)
+## Implemented structures
 
-| Category | Structure | Implementations planned |
-|---|---|---|
-| Array | Dynamic array | single backing array |
-| Stack | Array stack | dynamic array |
-| Stack | Linked stack | singly linked list |
-| Queue | Circular array queue | circular buffer |
-| Queue | Linked queue | singly linked list |
-| Queue | Two-stack queue | two array/linked stacks |
+| Category | Structure | Implementation | Tests | Demo |
+|---|---|---|---|---|
+| Array | Fixed array | `FixedArray` | yes | yes |
+| Array | Dynamic array | `DynamicArray` | yes | yes |
+| Stack | Array stack | `ArrayStack` (on DynamicArray) | yes | yes |
+| Stack | Linked stack | `LinkedStack` | yes | yes |
+| Queue | Circular array queue | `CircularArrayQueue` | yes | yes |
+| Queue | Linked queue | `LinkedQueue` | yes | yes |
+| Queue | Two-stack queue | `TwoStackQueue` | yes | yes |
+| List | Singly linked list | `SinglyLinkedList` | yes | yes |
+| List | Doubly linked list | `DoublyLinkedList` | yes | yes |
+| Deque | Linked deque | `LinkedDeque` | yes | yes |
+| Deque | Array deque | `ArrayDequeCustom` | yes | yes |
+| Heap | Binary heap | `BinaryHeap` (on DynamicArray) | yes | yes |
+| Heap | Priority queue | `HeapPriorityQueue` | yes | yes |
+
+---
+
+## Phase 2 — Trace layer
+
+The trace layer lives under `src/main/java/structlab/trace/` and provides:
+
+| Class | Purpose |
+|---|---|
+| `TraceStep` | Immutable record capturing one traced operation |
+| `TraceLog` | Ordered collection of `TraceStep` entries |
+| `InvariantResult` | Enum: `PASSED`, `FAILED`, `SKIPPED` |
+| `Traceable` | Interface implemented by traceable structures |
+| `TracedDynamicArray` | Traced wrapper for `DynamicArray` |
+| `TracedFixedArray` | Traced wrapper for `FixedArray` |
+| `TracedArrayStack` | Traced wrapper for `ArrayStack` |
+| `TracedLinkedStack` | Traced wrapper for `LinkedStack` |
+| `TracedCircularArrayQueue` | Traced wrapper for `CircularArrayQueue` |
+| `TracedLinkedQueue` | Traced wrapper for `LinkedQueue` |
+| `TracedTwoStackQueue` | Traced wrapper for `TwoStackQueue` |
+
+Each `TraceStep` captures: structure name, implementation name, operation name,
+input arguments, before-state snapshot, after-state snapshot, invariant result,
+optional complexity note, and a human-readable explanation.
+
+**Failed-operation policy:** When an operation fails due to a detectable
+precondition (empty stack/queue, full fixed array), the failure is traced as a
+`TraceStep` with a `FAILED:` explanation before the exception propagates.  This
+makes failures visible in the trace log for educational purposes.
+
+Run a traced demo:
+
+```bash
+mvn compile exec:java -Dexec.mainClass=structlab.demo.TracedDynamicArrayDemo
+```
 
 ---
 
@@ -127,8 +172,23 @@ For the Phase 0 working contract, see [`docs/phase-0-foundation.md`](docs/phase-
 
 ## Running the project
 
-> Build tooling (Maven or Gradle) will be added before Phase 1 implementations
-> begin.  For now the repository contains the scaffold only.
+Requires Java 17+ and Maven 3.9+.
+
+```bash
+mvn compile         # compile all sources
+mvn test            # compile and run all tests
+```
+
+To run a demo, use your IDE's main-class runner (e.g. right-click the demo
+class in IntelliJ and choose Run), or from the command line:
+
+```bash
+mvn compile exec:java -Dexec.mainClass=structlab.demo.ArrayStackDemo
+```
+
+> **Note:** the `exec:java` command requires the `exec-maven-plugin`.  If you
+> prefer not to add it, running demos directly from IntelliJ or any IDE with
+> Maven support works out of the box.
 
 ---
 

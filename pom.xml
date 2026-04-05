@@ -7,7 +7,7 @@
 
   <groupId>com.structlab</groupId>
   <artifactId>structlab</artifactId>
-  <version>0.1.0-SNAPSHOT</version>
+  <version>0.2.0-SNAPSHOT</version>
 
   <name>StructLab</name>
   <description>
@@ -16,10 +16,7 @@
   </description>
 
   <properties>
-      <maven.compiler.release>17</maven.compiler.release>
-      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <junit.jupiter.version>5.11.4</junit.jupiter.version>
-      <surefire.version>3.5.5</surefire.version>
+    <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <junit.jupiter.version>5.11.4</junit.jupiter.version>
     <surefire.version>3.5.5</surefire.version>

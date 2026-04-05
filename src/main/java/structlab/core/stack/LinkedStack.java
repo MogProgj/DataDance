@@ -1,6 +1,8 @@
 package structlab.core.stack;
 
-public class LinkedStack<T> {
+import structlab.trace.Traceable;
+
+public class LinkedStack<T> implements Traceable {
   private Node<T> top;
   private int size;
 
@@ -51,6 +53,17 @@ public class LinkedStack<T> {
     return top.value;
   }
 
+  @Override
+  public String structureName() {
+    return "Stack";
+  }
+
+  @Override
+  public String implementationName() {
+    return "LinkedStack";
+  }
+
+  @Override
   public boolean checkInvariant() {
     if (size < 0) {
       return false;
@@ -67,6 +80,7 @@ public class LinkedStack<T> {
     return counted == size;
   }
 
+  @Override
   public String snapshot() {
     StringBuilder sb = new StringBuilder();
     sb.append("LinkedStack{");

@@ -1,6 +1,8 @@
 package structlab.core.queue;
 
-public class LinkedQueue<T> {
+import structlab.trace.Traceable;
+
+public class LinkedQueue<T> implements Traceable {
   private Node<T> front;
   private Node<T> rear;
   private int size;
@@ -66,6 +68,17 @@ public class LinkedQueue<T> {
     return front.value;
   }
 
+  @Override
+  public String structureName() {
+    return "Queue";
+  }
+
+  @Override
+  public String implementationName() {
+    return "LinkedQueue";
+  }
+
+  @Override
   public boolean checkInvariant() {
     if (size < 0) {
       return false;
@@ -92,6 +105,7 @@ public class LinkedQueue<T> {
     return counted == size && last == rear;
   }
 
+  @Override
   public String snapshot() {
     StringBuilder sb = new StringBuilder();
     sb.append("LinkedQueue{");

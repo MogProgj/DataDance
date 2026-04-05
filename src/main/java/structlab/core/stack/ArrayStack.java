@@ -1,8 +1,9 @@
 package structlab.core.stack;
 
 import structlab.core.array.DynamicArray;
+import structlab.trace.Traceable;
 
-public class ArrayStack<T> {
+public class ArrayStack<T> implements Traceable {
   private final DynamicArray<T> elements;
 
   public ArrayStack() {
@@ -37,10 +38,22 @@ public class ArrayStack<T> {
     return elements.get(elements.size() - 1);
   }
 
+  @Override
+  public String structureName() {
+    return "Stack";
+  }
+
+  @Override
+  public String implementationName() {
+    return "ArrayStack";
+  }
+
+  @Override
   public boolean checkInvariant() {
     return elements != null && elements.checkInvariant();
   }
 
+  @Override
   public String snapshot() {
     return "ArrayStack{" +
       "size=" + size() +

@@ -1,6 +1,8 @@
 package structlab.core.queue;
 
-public class CircularArrayQueue<T> {
+import structlab.trace.Traceable;
+
+public class CircularArrayQueue<T> implements Traceable {
   private static final int DEFAULT_CAPACITY = 4;
 
   private Object[] data;
@@ -62,6 +64,17 @@ public class CircularArrayQueue<T> {
     return (T) data[front];
   }
 
+  @Override
+  public String structureName() {
+    return "Queue";
+  }
+
+  @Override
+  public String implementationName() {
+    return "CircularArrayQueue";
+  }
+
+  @Override
   public boolean checkInvariant() {
     return data != null
       && data.length > 0
@@ -71,6 +84,7 @@ public class CircularArrayQueue<T> {
       && size <= data.length;
   }
 
+  @Override
   public String snapshot() {
     StringBuilder logical = new StringBuilder();
     logical.append("[");

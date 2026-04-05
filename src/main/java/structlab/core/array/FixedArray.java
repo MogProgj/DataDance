@@ -3,22 +3,16 @@ package structlab.core.array;
 import java.util.Arrays;
 import structlab.trace.Traceable;
 
-public class DynamicArray<T> implements Traceable {
-  private static final int DEFAULT_CAPACITY = 4;
-
-  private Object[] data;
+public class FixedArray<T> implements Traceable {
+  private final Object[] data;
   private int size;
 
-  public DynamicArray() {
-    this(DEFAULT_CAPACITY);
-  }
-
-  public DynamicArray(int initialCapacity) {
-    if (initialCapacity <= 0) {
-      throw new IllegalArgumentException("Initial capacity must be greater than 0.");
+  public FixedArray(int capacity) {
+    if (capacity <= 0) {
+      throw new IllegalArgumentException("Capacity must be greater than 0.");
     }
 
-    this.data = new Object[initialCapacity];
+    this.data = new Object[capacity];
     this.size = 0;
   }
 
@@ -34,16 +28,27 @@ public class DynamicArray<T> implements Traceable {
     return size == 0;
   }
 
+  public boolean isFull() {
+    return size == data.length;
+  }
+
   public void append(T value) {
-    ensureCapacityForOneMore();
+    if (isFull()) {
+      throw new IllegalStateException(
+        "Cannot append to a full fixed array (capacity=" + data.length + ").");
+    }
+
     data[size] = value;
     size++;
   }
 
   public void insert(int index, T value) {
-    checkPositionIndex(index);
+    if (isFull()) {
+      throw new IllegalStateException(
+        "Cannot insert into a full fixed array (capacity=" + data.length + ").");
+    }
 
-    ensureCapacityForOneMore();
+    checkPositionIndex(index);
 
     for (int i = size; i > index; i--) {
       data[i] = data[i - 1];
@@ -82,12 +87,12 @@ public class DynamicArray<T> implements Traceable {
 
   @Override
   public String structureName() {
-    return "Dynamic Array";
+    return "Fixed Array";
   }
 
   @Override
   public String implementationName() {
-    return "DynamicArray";
+    return "FixedArray";
   }
 
   @Override
@@ -101,7 +106,7 @@ public class DynamicArray<T> implements Traceable {
   public String snapshot() {
     StringBuilder sb = new StringBuilder();
 
-    sb.append("DynamicArray{");
+    sb.append("FixedArray{");
     sb.append("size=").append(size);
     sb.append(", capacity=").append(data.length);
     sb.append(", elements=[");
@@ -117,22 +122,6 @@ public class DynamicArray<T> implements Traceable {
     sb.append("}");
 
     return sb.toString();
-  }
-
-  private void ensureCapacityForOneMore() {
-    if (size == data.length) {
-      resize(data.length * 2);
-    }
-  }
-
-  private void resize(int newCapacity) {
-    Object[] newData = new Object[newCapacity];
-
-    for (int i = 0; i < size; i++) {
-      newData[i] = data[i];
-    }
-
-    data = newData;
   }
 
   private void checkElementIndex(int index) {
