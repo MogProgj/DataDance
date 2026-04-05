@@ -61,7 +61,6 @@ public class TwoStackQueue<T> implements Traceable {
   public String snapshot() {
     return "TwoStackQueue{" +
       "size=" + size() +
-      ", front=" + (isEmpty() ? "null" : peek()) +
       ", inbox=" + inbox.snapshot() +
       ", outbox=" + outbox.snapshot() +
       '}';
