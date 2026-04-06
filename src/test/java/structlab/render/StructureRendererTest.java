@@ -159,6 +159,19 @@ class StructureRendererTest {
     assertTrue(rendered.contains("(empty)"));
   }
 
+  // ---- Index alignment ----
+
+  @Test
+  void indexRowAlignsCenterUnderCells() {
+    // With 10+ elements, multi-digit indexes should still appear
+    String snap = "DynamicArray{size=3, capacity=12, elements=[1, 2, 3], raw=[1, 2, 3, null, null, null, null, null, null, null, null, null]}";
+    String rendered = StructureRenderer.renderArray(snap);
+    // Should contain double-digit indexes without breaking layout
+    assertTrue(rendered.contains("10"));
+    assertTrue(rendered.contains("11"));
+    assertTrue(rendered.contains("Index:"));
+  }
+
   // ---- Dispatch ----
 
   @Test

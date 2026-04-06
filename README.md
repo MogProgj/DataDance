@@ -66,21 +66,21 @@ a swamp.
 
 ## Implemented structures
 
-| Category | Structure | Implementation | Tests | Demo |
-|---|---|---|---|---|
-| Array | Fixed array | `FixedArray` | yes | yes |
-| Array | Dynamic array | `DynamicArray` | yes | yes |
-| Stack | Array stack | `ArrayStack` (on DynamicArray) | yes | yes |
-| Stack | Linked stack | `LinkedStack` | yes | yes |
-| Queue | Circular array queue | `CircularArrayQueue` | yes | yes |
-| Queue | Linked queue | `LinkedQueue` | yes | yes |
-| Queue | Two-stack queue | `TwoStackQueue` | yes | yes |
-| List | Singly linked list | `SinglyLinkedList` | yes | yes |
-| List | Doubly linked list | `DoublyLinkedList` | yes | yes |
-| Deque | Linked deque | `LinkedDeque` | yes | yes |
-| Deque | Array deque | `ArrayDequeCustom` | yes | yes |
-| Heap | Binary heap | `BinaryHeap` (on DynamicArray) | yes | yes |
-| Heap | Priority queue | `HeapPriorityQueue` | yes | yes |
+| Category | Structure | Implementation | Tests | Traced | Rendered |
+|---|---|---|---|---|---|
+| Array | Fixed array | `FixedArray` | yes | yes | yes |
+| Array | Dynamic array | `DynamicArray` | yes | yes | yes |
+| Stack | Array stack | `ArrayStack` (on DynamicArray) | yes | yes | yes |
+| Stack | Linked stack | `LinkedStack` | yes | yes | yes |
+| Queue | Circular array queue | `CircularArrayQueue` | yes | yes | yes |
+| Queue | Linked queue | `LinkedQueue` | yes | yes | yes |
+| Queue | Two-stack queue | `TwoStackQueue` | yes | yes | yes |
+| List | Singly linked list | `SinglyLinkedList` | yes | — | — |
+| List | Doubly linked list | `DoublyLinkedList` | yes | — | — |
+| Deque | Linked deque | `LinkedDeque` | yes | — | — |
+| Deque | Array deque | `ArrayDequeCustom` | yes | — | — |
+| Heap | Binary heap | `BinaryHeap` (on DynamicArray) | yes | — | — |
+| Heap | Priority queue | `HeapPriorityQueue` | yes | — | — |
 
 ---
 
@@ -204,16 +204,14 @@ mvn compile         # compile all sources
 mvn test            # compile and run all tests
 ```
 
-To run a demo, use your IDE's main-class runner (e.g. right-click the demo
-class in IntelliJ and choose Run), or from the command line:
+To run a traced demo from the command line:
 
 ```bash
-mvn compile exec:java -Dexec.mainClass=structlab.demo.ArrayStackDemo
+mvn compile exec:java -Dexec.mainClass=structlab.demo.TracedArrayStackDemo
 ```
 
-> **Note:** the `exec:java` command requires the `exec-maven-plugin`.  If you
-> prefer not to add it, running demos directly from IntelliJ or any IDE with
-> Maven support works out of the box.
+Replace the class name with any demo under `structlab.demo`.  Running demos
+from your IDE (right-click and Run) also works.
 
 ---
 

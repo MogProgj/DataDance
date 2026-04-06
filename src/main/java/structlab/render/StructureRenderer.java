@@ -51,13 +51,13 @@ public final class StructureRenderer {
 
     // Index row for logical
     if (!elements.isEmpty()) {
-      sb.append("  Index:   ").append(indexRow(elements.size())).append("\n");
+      sb.append("  Index:   ").append(indexRow(elements)).append("\n");
     }
 
     // Backing array row
     if (!raw.isEmpty()) {
       sb.append("  Backing: ").append(boxRow(raw)).append("\n");
-      sb.append("  Index:   ").append(indexRow(raw.size())).append("\n");
+      sb.append("  Index:   ").append(indexRow(raw)).append("\n");
     }
 
     return sb.toString();
@@ -130,19 +130,21 @@ public final class StructureRenderer {
 
     // Buffer row
     if (!raw.isEmpty()) {
-      sb.append("  Buffer:  ").append(boxRow(raw)).append("\n");
-      sb.append("  Index:   ").append(indexRow(raw.size())).append("\n");
+      int cellWidth = maxWidth(raw) + 2;
+      int slotWidth = cellWidth + 2; // matches "| " per cell in boxRow
 
-      // Marker row showing F and R
+      sb.append("  Buffer:  ").append(boxRow(raw)).append("\n");
+      sb.append("  Index:   ").append(indexRow(raw)).append("\n");
+
+      // Marker row showing F and R, aligned to cell centers
       if (size > 0) {
         sb.append("  Markers: ");
-        int cellWidth = maxWidth(raw) + 2;
         for (int i = 0; i < raw.size(); i++) {
           String marker = "";
           if (i == frontIndex && i == rearIndex) marker = "F/R";
           else if (i == frontIndex) marker = "F";
           else if (i == rearIndex) marker = "R";
-          sb.append(padCenter(marker, cellWidth + 1));
+          sb.append(padCenter(marker, slotWidth));
         }
         sb.append("\n");
       }
@@ -224,30 +226,37 @@ public final class StructureRenderer {
 
     // Pointer markers for front and rear
     if (chain.size() > 1) {
-      sb.append("           ");
-      int pos = 0;
-      for (int i = 0; i < chain.size(); i++) {
-        int nodeWidth = chain.get(i).length() + 2; // [x]
-        if (i == 0) {
-          sb.append("^");
-          pos = 1;
-        } else if (i == chain.size() - 1) {
-          int target = 0;
-          for (int j = 0; j < i; j++) target += chain.get(j).length() + 2 + 4; // [x] + " -> "
-          while (pos < target) { sb.append(" "); pos++; }
-          sb.append("^");
-          pos++;
-        }
+      // Compute position of the center of each node in the chain line.
+      // "front -> " prefix is 10 chars, then each node is "[val] -> " (len+2+4)
+      String prefix = "  front -> ";
+      int frontCenter = prefix.length() + chain.get(0).length() / 2 + 1; // center of [val]
+      int rearStart = prefix.length();
+      for (int j = 0; j < chain.size() - 1; j++) {
+        rearStart += chain.get(j).length() + 2 + 4; // [val] + " -> "
       }
-      sb.append("\n");
-      sb.append("         front");
-      if (chain.size() > 1) {
-        int target = 0;
-        for (int j = 0; j < chain.size() - 1; j++) target += chain.get(j).length() + 2 + 4;
-        String padding = " ".repeat(Math.max(0, target - 3));
-        sb.append(padding).append("rear");
+      int rearCenter = rearStart + chain.get(chain.size() - 1).length() / 2 + 1;
+
+      // Caret line
+      StringBuilder carets = new StringBuilder();
+      for (int i = 0; i < Math.max(frontCenter, rearCenter) + 1; i++) carets.append(' ');
+      carets.setCharAt(frontCenter, '^');
+      carets.setCharAt(rearCenter, '^');
+      sb.append(carets).append("\n");
+
+      // Label line
+      String frontLabel = "front";
+      String rearLabel = "rear";
+      int frontLabelStart = Math.max(0, frontCenter - frontLabel.length() / 2);
+      int rearLabelStart = Math.max(0, rearCenter - rearLabel.length() / 2);
+      // Ensure no overlap
+      if (rearLabelStart < frontLabelStart + frontLabel.length() + 1) {
+        rearLabelStart = frontLabelStart + frontLabel.length() + 1;
       }
-      sb.append("\n");
+      StringBuilder labels = new StringBuilder();
+      for (int i = 0; i < rearLabelStart + rearLabel.length(); i++) labels.append(' ');
+      for (int i = 0; i < frontLabel.length(); i++) labels.setCharAt(frontLabelStart + i, frontLabel.charAt(i));
+      for (int i = 0; i < rearLabel.length(); i++) labels.setCharAt(rearLabelStart + i, rearLabel.charAt(i));
+      sb.append(labels).append("\n");
     }
 
     return sb.toString();
@@ -344,12 +353,18 @@ public final class StructureRenderer {
     return sb.toString();
   }
 
-  /** Builds an index row like "  0    1    2  " aligned under boxed cells. */
-  static String indexRow(int count) {
+  /**
+   * Builds an index row aligned to the center of each boxed cell.
+   * Each cell occupies (cellWidth + 2) characters: "| " + content + " ".
+   * The final "|" is one extra character.
+   */
+  static String indexRow(List<String> items) {
+    int cellWidth = maxWidth(items) + 2;
+    int slotWidth = cellWidth + 2; // "| " prefix per cell
     StringBuilder sb = new StringBuilder();
-    // rough alignment — each cell is (maxWidth+2) + 2 for "| " prefix
-    for (int i = 0; i < count; i++) {
-      sb.append("  ").append(i).append("   ");
+    for (int i = 0; i < items.size(); i++) {
+      String idx = String.valueOf(i);
+      sb.append(padCenter(idx, slotWidth));
     }
     return sb.toString();
   }
