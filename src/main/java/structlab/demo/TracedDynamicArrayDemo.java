@@ -1,6 +1,7 @@
 package structlab.demo;
 
 import structlab.core.array.DynamicArray;
+import structlab.render.ConsoleTraceRenderer;
 import structlab.trace.TraceLog;
 import structlab.trace.TracedDynamicArray;
 
@@ -20,6 +21,6 @@ public class TracedDynamicArrayDemo {
     traced.get(0);
     traced.removeAt(2);
 
-    System.out.println(log.formatAll());
+    System.out.println(ConsoleTraceRenderer.renderAll(log));
   }
 }

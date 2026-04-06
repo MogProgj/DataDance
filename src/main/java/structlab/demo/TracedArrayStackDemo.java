@@ -1,6 +1,7 @@
 package structlab.demo;
 
 import structlab.core.stack.ArrayStack;
+import structlab.render.ConsoleTraceRenderer;
 import structlab.trace.TraceLog;
 import structlab.trace.TracedArrayStack;
 
@@ -19,6 +20,6 @@ public class TracedArrayStackDemo {
     traced.pop();
     traced.pop();
 
-    System.out.println(log.formatAll());
+    System.out.println(ConsoleTraceRenderer.renderAll(log));
   }
 }

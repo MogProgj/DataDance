@@ -53,14 +53,14 @@ a swamp.
 
 ## Project status
 
-> **Phase 2 — Trace and Explanation Layer (complete for arrays, stacks, and queues)**
+> **Phase 3 — Console Rendering Layer (complete for arrays, stacks, and queues)**
 >
-> Phase 1 is complete — all core structures have tests, demos, invariant
-> checking, and snapshot support.  Phase 2 adds an operation-tracing layer
-> that captures before/after state, invariant results, complexity notes, and
-> human-readable explanations for every operation.  All Phase 1 array, stack,
-> and queue structures now have traced wrappers.  Lists, deques, heaps, and
-> hash structures are not yet traced.
+> Phases 1 and 2 are complete for arrays, stacks, and queues.  Phase 3 adds
+> a console rendering layer that turns trace output into structure-aware
+> ASCII visualizations with markers (`top`, `front`, `rear`, `F`, `R`),
+> boxed array cells, vertical stack views, linked-node chains, and
+> side-by-side before/after transition views.  Lists, deques, heaps, and
+> hash structures are not yet traced or rendered.
 
 ---
 
@@ -116,6 +116,31 @@ Run a traced demo:
 ```bash
 mvn compile exec:java -Dexec.mainClass=structlab.demo.TracedDynamicArrayDemo
 ```
+
+---
+
+## Phase 3 — Console rendering layer
+
+The render layer lives under `src/main/java/structlab/render/` and provides:
+
+| Class | Purpose |
+|---|---|
+| `SnapshotParser` | Parses snapshot strings into structured fields |
+| `StructureRenderer` | Produces ASCII art for each structure type |
+| `ConsoleTraceRenderer` | Renders full trace steps with before/after views |
+
+Rendered structures include visual markers and layout cues:
+
+| Structure | Visual features |
+|---|---|
+| DynamicArray, FixedArray | Boxed cells, logical/backing arrays, index row, capacity |
+| ArrayStack | Vertical stack with `<-- top` marker |
+| CircularArrayQueue | Buffer with `F`/`R` markers, logical order chain |
+| LinkedStack | Node chain: `top -> [30] -> [20] -> null` |
+| LinkedQueue | Node chain with `front`/`rear` pointer markers |
+| TwoStackQueue | Side-by-side inbox/outbox stacks, effective queue order |
+
+All traced demos now use `ConsoleTraceRenderer` for polished terminal output.
 
 ---
 

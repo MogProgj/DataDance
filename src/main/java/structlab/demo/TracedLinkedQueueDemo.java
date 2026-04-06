@@ -1,6 +1,7 @@
 package structlab.demo;
 
 import structlab.core.queue.LinkedQueue;
+import structlab.render.ConsoleTraceRenderer;
 import structlab.trace.TraceLog;
 import structlab.trace.TracedLinkedQueue;
 
@@ -27,6 +28,6 @@ public class TracedLinkedQueueDemo {
       // failure was traced before the exception
     }
 
-    System.out.println(log.formatAll());
+    System.out.println(ConsoleTraceRenderer.renderAll(log));
   }
 }

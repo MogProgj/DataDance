@@ -1,6 +1,7 @@
 package structlab.demo;
 
 import structlab.core.queue.TwoStackQueue;
+import structlab.render.ConsoleTraceRenderer;
 import structlab.trace.TraceLog;
 import structlab.trace.TracedTwoStackQueue;
 
@@ -29,6 +30,6 @@ public class TracedTwoStackQueueDemo {
     // This peek triggers another transfer
     traced.peek();
 
-    System.out.println(log.formatAll());
+    System.out.println(ConsoleTraceRenderer.renderAll(log));
   }
 }

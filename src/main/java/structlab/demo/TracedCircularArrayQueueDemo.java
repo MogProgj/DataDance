@@ -1,6 +1,7 @@
 package structlab.demo;
 
 import structlab.core.queue.CircularArrayQueue;
+import structlab.render.ConsoleTraceRenderer;
 import structlab.trace.TraceLog;
 import structlab.trace.TracedCircularArrayQueue;
 
@@ -21,6 +22,6 @@ public class TracedCircularArrayQueueDemo {
     traced.peek();
     traced.dequeue();
 
-    System.out.println(log.formatAll());
+    System.out.println(ConsoleTraceRenderer.renderAll(log));
   }
 }
