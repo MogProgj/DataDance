@@ -30,12 +30,11 @@ public class DiscoveryCommands {
         CommandHandler clearHandler = new CommandHandler() {
             @Override
             public CommandResult execute(CommandContext context, ParsedCommand command) {
-                System.out.print("\033[H\033[2J");
-                System.out.flush();
-                return CommandResult.ok();
+                // Return an instruction to clear the console output (by printing standard ANSI clear codes)
+                return CommandResult.ok("\033[H\033[2J");
             }
             @Override
-            public String getDescription() { return "Clear the console screen"; }
+            public String getDescription() { return "Clear the terminal screen"; }
         };
         router.register("clear", clearHandler);
         router.register("cls", clearHandler);
@@ -44,11 +43,10 @@ public class DiscoveryCommands {
         CommandHandler listHandler = new CommandHandler() {
             @Override
             public CommandResult execute(CommandContext context, ParsedCommand command) {
-                printAllStructures(context);
-                return CommandResult.ok();
+                return getAllStructures(context);
             }
             @Override
-            public String getDescription() { return "List all abstract data structures in the registry"; }
+            public String getDescription() { return "List all abstract structures in the registry"; }
         };
         router.register("list", listHandler);
         router.register("ls", listHandler);
@@ -59,14 +57,12 @@ public class DiscoveryCommands {
             @Override
             public CommandResult execute(CommandContext context, ParsedCommand command) {
                 if (!command.hasArgs()) {
-                    TerminalFormatter.printError("Missing argument. Usage: search <keyword>");
-                    return CommandResult.ok();
+                    return CommandResult.error("Missing Argument", "Provide a keyword (e.g., 'search array')");
                 }
-                searchStructures(context, command.arguments().get(0));
-                return CommandResult.ok();
+                return searchStructures(context, command.arguments().get(0));
             }
             @Override
-            public String getDescription() { return "Search for structures by keyword (e.g., LIFO, tree)"; }
+            public String getDescription() { return "Search available structures by keyword"; }
         };
         router.register("search", searchHandler);
         router.register("s", searchHandler);
@@ -76,14 +72,12 @@ public class DiscoveryCommands {
             @Override
             public CommandResult execute(CommandContext context, ParsedCommand command) {
                 if (!command.hasArgs()) {
-                    TerminalFormatter.printError("Missing argument. Usage: info <registry-id>");
-                    return CommandResult.ok();
+                    return CommandResult.error("Missing Argument", "Specify a structure (e.g., 'info stack')");
                 }
-                printStructureInfo(context, command.arguments().get(0));
-                return CommandResult.ok();
+                return getStructureInfo(context, command.arguments().get(0));
             }
             @Override
-            public String getDescription() { return "Get detailed info and complexities for a structure ID"; }
+            public String getDescription() { return "Display details and implementations for a structure"; }
         };
         router.register("info", infoHandler);
         router.register("i", infoHandler);
@@ -92,11 +86,10 @@ public class DiscoveryCommands {
         CommandHandler statsHandler = new CommandHandler() {
             @Override
             public CommandResult execute(CommandContext context, ParsedCommand command) {
-                printStats(context);
-                return CommandResult.ok();
+                return getStats(context);
             }
             @Override
-            public String getDescription() { return "View total metadata registry counts"; }
+            public String getDescription() { return "Show registry loading statistics"; }
         };
         router.register("stats", statsHandler);
 
@@ -104,8 +97,7 @@ public class DiscoveryCommands {
         CommandHandler helpHandler = new CommandHandler() {
             @Override
             public CommandResult execute(CommandContext context, ParsedCommand command) {
-                printHelp(router);
-                return CommandResult.ok();
+                return getHelp(router);
             }
             @Override
             public String getDescription() { return "Print this help manual"; }
@@ -114,93 +106,113 @@ public class DiscoveryCommands {
         router.register("?", helpHandler);
     }
 
-    // Reuse the formatting logic from the old StructLabApp core (migrated inside the handlers to keep layers clean)
-    private static void printAllStructures(CommandContext ctx) {
-        System.out.println("\n\u001B[36m=== Available Core Data Structures ===\u001B[0m\n");
+    private static CommandResult getAllStructures(CommandContext ctx) {
+        StringBuilder sb = new StringBuilder();
         List<StructureMetadata> allStructures = ctx.registry().getAllStructures();
 
-        System.out.printf("%-20s %-30s %-20s %n", "\u001B[1mCATEGORY\u001B[0m", "\u001B[1mNAME\u001B[0m", "\u001B[1mREGISTRY ID\u001B[0m");
-        System.out.println("-----------------------------------------------------------------------");
+        sb.append(String.format("%-20s %-30s %-20s\n", "CATEGORY", "NAME", "REGISTRY ID"));
+        sb.append("-".repeat(70)).append("\n");
 
         allStructures.stream().sorted((a, b) -> a.category().compareTo(b.category())).forEach(structure -> {
-            System.out.printf("\u001B[33m%-20s\u001B[0m %-30s \u001B[90m%-20s\u001B[0m%n",
-                "[" + structure.category() + "]", structure.name(), structure.id());
+            sb.append(String.format(TerminalTheme.YELLOW + "%-20s" + TerminalTheme.RESET + " %-30s " + TerminalTheme.GRAY + "%-20s" + TerminalTheme.RESET + "\n",
+                "[" + structure.category() + "]", structure.name(), structure.id()));
         });
-        System.out.println();
+
+        return CommandResult.success("Available Core Data Structures", sb.toString());
     }
 
-    private static void searchStructures(CommandContext ctx, String keyword) {
+    private static CommandResult searchStructures(CommandContext ctx, String keyword) {
         List<StructureMetadata> results = ctx.registry().search(keyword);
         if (results.isEmpty()) {
-            System.out.println("\u001B[31mNo matching structures found for: \u001B[0m" + keyword);
+            return CommandResult.error("No matches", "No structures found for: " + keyword);
         } else {
-            System.out.println("\n\u001B[32m=== Search Results for '" + keyword + "' ===\u001B[0m\n");
+            StringBuilder sb = new StringBuilder();
             for (StructureMetadata structure : results) {
-                System.out.println(" \u001B[36m\u25b6\u001B[0m " + structure.name() + " \u001B[90m(" + structure.id() + ")\u001B[0m");
+                sb.append(" \u25b6 ").append(structure.name()).append(" (").append(structure.id()).append(")\n");
             }
-            System.out.println();
+            return CommandResult.success("Search Results for '" + keyword + "'", sb.toString());
         }
     }
 
-    private static void printStructureInfo(CommandContext ctx, String id) {
-        Optional<StructureMetadata> optMeta = ctx.registry().getStructureById(id);
-        if (optMeta.isEmpty()) {
-            TerminalFormatter.printError("Structure not found with ID: " + id);
-            return;
+    private static CommandResult getStructureInfo(CommandContext ctx, String id) {
+        String targetId = id.startsWith("struct-") ? id : "struct-" + id;
+        Optional<StructureMetadata> opt = ctx.registry().getStructureById(targetId);
+        if (opt.isEmpty()) {
+            return CommandResult.error("Not Found", "Unknown structure: " + id, "Use 'ls' to see available structures.");
         }
+        StructureMetadata meta = opt.get();
+        StringBuilder sb = new StringBuilder();
 
-        StructureMetadata meta = optMeta.get();
-        System.out.println("\n\u001B[1;34m=== " + meta.name().toUpperCase() + " ===\u001B[0m");
-        System.out.println("\u001B[1mCategory:\u001B[0m    \u001B[33m" + meta.category() + "\u001B[0m");
-        System.out.println("\u001B[1mDescription:\u001B[0m " + meta.description());
-        System.out.println("\u001B[1mBehavior:\u001B[0m    " + meta.behavior());
-        System.out.println("\u001B[1mKeywords:\u001B[0m    \u001B[36m" + String.join(", ", meta.keywords()) + "\u001B[0m");
+        sb.append("Description: ").append(meta.description()).append("\n");
+        sb.append("Category:    ").append(meta.category()).append("\n");
+        sb.append("Keywords:    ").append(String.join(", ", meta.keywords())).append("\n\n");
 
-        System.out.println("\n\u001B[1m\u25BC Available Implementations:\u001B[0m");
+        sb.append("Available Implementations:\n");
 
-        List<ImplementationMetadata> impls = ctx.registry().getImplementationsFor(id);
+        List<ImplementationMetadata> impls = ctx.registry().getImplementationsFor(targetId);
         for (ImplementationMetadata impl : impls) {
-            System.out.println("\n  \u001B[32m\u25A0 " + impl.name() + "\u001B[0m \u001B[90m[" + impl.id() + "]\u001B[0m");
-            System.out.println("    " + impl.description());
+            sb.append("\n  \u25A0 ").append(impl.name()).append(" [").append(impl.id()).append("]\n");
+            sb.append("    ").append(impl.description()).append("\n");
 
-            System.out.println("    \u001B[35m[ Complexity ]\u001B[0m");
-            System.out.println("      Space: " + impl.spaceComplexity());
-            System.out.print("      Time:  ");
+            sb.append("    [ Complexity ]\n");
+            sb.append("      Space: ").append(impl.spaceComplexity()).append("\n");
+            sb.append("      Time:  ");
 
             StringBuilder timeRules = new StringBuilder();
             impl.timeComplexity().forEach((op, cost) -> timeRules.append(String.format("%s = %s, ", op, cost)));
             if (timeRules.length() > 0) timeRules.setLength(timeRules.length() - 2);
-            System.out.println(timeRules.toString());
+            sb.append(timeRules.toString()).append("\n");
         }
-        System.out.println();
+        return CommandResult.success("Structure Profile: " + meta.name(), sb.toString());
     }
 
-    private static void printStats(CommandContext ctx) {
+    private static CommandResult getStats(CommandContext ctx) {
         List<StructureMetadata> all = ctx.registry().getAllStructures();
         int totalImpls = 0;
         for (StructureMetadata meta : all) {
             totalImpls += ctx.registry().getImplementationsFor(meta.id()).size();
         }
-        System.out.println("\n\u001B[36m[Registry Statistics]\u001B[0m");
-        System.out.println("  Abstract Structures Registered: " + all.size());
-        System.out.println("  Concrete Implementations:       " + totalImpls);
-        System.out.println();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Abstract Structures Registered: ").append(all.size()).append("\n");
+        sb.append("Concrete Implementations:       ").append(totalImpls).append("\n");
+
+        return CommandResult.success("Registry Statistics", sb.toString());
     }
 
-    private static void printHelp(CommandRouter router) {
-        System.out.println("\n\u001B[1mAvailable Commands:\u001B[0m\n");
-        // Print unique handlers
-        router.getHandlers().entrySet().stream()
-                .filter(e -> !isAlias(e.getKey())) // Custom alias filter logic
-                .forEach(e -> {
-            System.out.printf("  \u001B[32m%-15s\u001B[0m - %s%n", e.getKey(), e.getValue().getDescription());
-        });
-        System.out.println("\nAliases: 'q'=quit, 'ls'=list, 's'=search, 'i'=info, '?'=help");
-        System.out.println();
+    private static CommandResult getHelp(CommandRouter router) {
+        StringBuilder sb = new StringBuilder();
+
+        // Group by semantic mapping
+        sb.append(TerminalTheme.BOLD).append("Discovery Commands:").append(TerminalTheme.RESET).append("\n");
+        appendCmd(sb, "list, ls, catalog", "List all structures in the registry");
+        appendCmd(sb, "search <s>, s <s>", "Search registry by keyword");
+        appendCmd(sb, "info <i>, i <i>", "Get metadata for a structure");
+        appendCmd(sb, "stats", "View registry size");
+
+        sb.append("\n").append(TerminalTheme.BOLD).append("Active Session Commands:").append(TerminalTheme.RESET).append("\n");
+        appendCmd(sb, "session", "View environment details for the active mounted structure");
+        appendCmd(sb, "ops, operations", "View legal operations & complexities");
+        appendCmd(sb, "state, snapshot", "View the current visual state of the structure");
+        appendCmd(sb, "history, log", "View operation history and count");
+        appendCmd(sb, "last", "Display detailed logs for the newest state change");
+        appendCmd(sb, "trace", "Step-by-step memory trace of the last executed operation");
+        appendCmd(sb, "reset, wipe", "Clear history timeline (Memory usage reset)");
+        appendCmd(sb, "close, back", "Dismount current session and return to discovery mode");
+
+        sb.append("\n").append(TerminalTheme.BOLD).append("Shell Controls:").append(TerminalTheme.RESET).append("\n");
+        appendCmd(sb, "open, use, play, start", "Mount an implementation and begin simulating (e.g., 'open stack impl-array-stack')");
+        appendCmd(sb, "run, do", "Run a structure operation explicitly (e.g., 'run push 10')");
+        appendCmd(sb, "<operation> [args]", "Execute a legal operation directly when a session is active (e.g., 'push 10')");
+        appendCmd(sb, "quit, exit, q", "Gracefully terminate shell simulation");
+        appendCmd(sb, "clear, cls", "Clear visual terminal output");
+
+        appendCmd(sb, "help, ?", "Render this manual");
+
+        return CommandResult.success("Command Reference Manual", sb.toString());
     }
 
-    private static boolean isAlias(String key) {
-        return key.equals("q") || key.equals("ls") || key.equals("catalog")
-            || key.equals("s") || key.equals("i") || key.equals("?") || key.equals("cls") || key.equals("exit");
+    private static void appendCmd(StringBuilder sb, String names, String desc) {
+        sb.append(String.format("  " + TerminalTheme.GREEN + "%-20s" + TerminalTheme.RESET + " - %s\n", names, desc));
     }
 }

@@ -19,12 +19,12 @@ public class DequeRuntimeAdapter extends AbstractRuntimeAdapter {
     @Override
     public List<OperationDescriptor> getAvailableOperations() {
         return List.of(
-                new OperationDescriptor("addfirst", "Add an element to the front of the deque", 1, "addfirst <value>", true),
-                new OperationDescriptor("addlast", "Add an element to the end of the deque", 1, "addlast <value>", true),
-                new OperationDescriptor("removefirst", "Remove the first element of the deque", 0, "removefirst", true),
-                new OperationDescriptor("removelast", "Remove the last element of the deque", 0, "removelast", true),
-                new OperationDescriptor("peekfirst", "Look at the first element of the deque", 0, "peekfirst", false),
-                new OperationDescriptor("peeklast", "Look at the last element of the deque", 0, "peeklast", false)
+                new OperationDescriptor("addfirst", List.of(), "Add an element to the front of the deque", 1, "addfirst <value>", true, "addfirst <value>", "O(1)"),
+                new OperationDescriptor("addlast", List.of(), "Add an element to the end of the deque", 1, "addlast <value>", true, "addlast <value>", "O(1)"),
+                new OperationDescriptor("removefirst", List.of(), "Remove the first element of the deque", 0, "removefirst", true, "removefirst", "O(1)"),
+                new OperationDescriptor("removelast", List.of(), "Remove the last element of the deque", 0, "removelast", true, "removelast", "O(1)"),
+                new OperationDescriptor("peekfirst", List.of(), "Look at the first element of the deque", 0, "peekfirst", false, "peekfirst", "O(1)"),
+                new OperationDescriptor("peeklast", List.of(), "Look at the last element of the deque", 0, "peeklast", false, "peeklast", "O(1)")
         );
     }
 
@@ -99,6 +99,12 @@ public class DequeRuntimeAdapter extends AbstractRuntimeAdapter {
     }
 
     @Override
+    public void clearTraceHistory() {
+        if (activeDeque instanceof TracedArrayDequeCustom tcaq) tcaq.traceLog().clear();
+        if (activeDeque instanceof TracedLinkedDeque tld) tld.traceLog().clear();
+    }
+
+    @Override
     public void reset() {
         if (activeDeque instanceof TracedArrayDequeCustom tcaq) {
             try {
@@ -110,5 +116,6 @@ public class DequeRuntimeAdapter extends AbstractRuntimeAdapter {
                 while (!tld.unwrap().isEmpty()) tld.unwrap().removeFirst();
              } catch (Exception ignored) {}
         }
+        clearTraceHistory();
     }
 }

@@ -39,7 +39,19 @@ public class ActiveStructureSession implements StructureSession {
     }
 
     public List<OperationExecutionResult> getHistory() {
-        return new ArrayList<>(history);
+        return List.copyOf(history);
+    }
+
+    public void clearHistory() {
+        history.clear();
+    }
+
+    public int historySize() {
+        return history.size();
+    }
+
+    public java.util.Optional<OperationExecutionResult> getLastResult() {
+        return history.isEmpty() ? java.util.Optional.empty() : java.util.Optional.of(history.get(history.size() - 1));
     }
 
     @Override

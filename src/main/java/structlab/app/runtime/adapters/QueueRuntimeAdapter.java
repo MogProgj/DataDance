@@ -20,9 +20,9 @@ public class QueueRuntimeAdapter extends AbstractRuntimeAdapter {
     @Override
     public List<OperationDescriptor> getAvailableOperations() {
         return List.of(
-                new OperationDescriptor("enqueue", "Enqueue an element to the rear of the queue", 1, "enqueue <value>", true),
-                new OperationDescriptor("dequeue", "Dequeue an element from the front of the queue", 0, "dequeue", true),
-                new OperationDescriptor("peek", "Look at the front element without removing it", 0, "peek", false)
+                new OperationDescriptor("enqueue", List.of(), "Enqueue an element to the rear of the queue", 1, "enqueue <value>", true, "enqueue <value>", "O(1)"),
+                new OperationDescriptor("dequeue", List.of(), "Dequeue an element from the front of the queue", 0, "dequeue", true, "dequeue", "O(1)"),
+                new OperationDescriptor("peek", List.of(), "Look at the front element without removing it", 0, "peek", false, "peek", "O(1)")
         );
     }
 
@@ -80,6 +80,13 @@ public class QueueRuntimeAdapter extends AbstractRuntimeAdapter {
     }
 
     @Override
+    public void clearTraceHistory() {
+        if (activeQueue instanceof TracedCircularArrayQueue tcaq) tcaq.traceLog().clear();
+        if (activeQueue instanceof TracedLinkedQueue tlq) tlq.traceLog().clear();
+        if (activeQueue instanceof TracedTwoStackQueue ttsq) ttsq.traceLog().clear();
+    }
+
+    @Override
     public void reset() {
         if (activeQueue instanceof TracedCircularArrayQueue tcaq) {
             try {
@@ -96,5 +103,6 @@ public class QueueRuntimeAdapter extends AbstractRuntimeAdapter {
                 while (!ttsq.unwrap().isEmpty()) ttsq.unwrap().dequeue();
              } catch(Exception ignored) {}
         }
+        clearTraceHistory();
     }
 }

@@ -19,10 +19,10 @@ public class ArrayRuntimeAdapter extends AbstractRuntimeAdapter {
     @Override
     public List<OperationDescriptor> getAvailableOperations() {
         return List.of(
-                new OperationDescriptor("append", "Append an element to the end", 1, "append <value>", true),
-                new OperationDescriptor("insert", "Insert an element at the specified index", 2, "insert <index> <value>", true),
-                new OperationDescriptor("removeat", "Remove an element at the specified index", 1, "removeat <index>", true),
-                new OperationDescriptor("get", "Get the element at the specified index", 1, "get <index>", false)
+                new OperationDescriptor("append", List.of(), "Append an element to the end", 1, "append <value>", true, "append <value>", "O(N)"),
+                new OperationDescriptor("insert", List.of(), "Insert an element at the specified index", 2, "insert <index> <value>", true, "insert <index> <value>", "O(N)"),
+                new OperationDescriptor("removeat", List.of(), "Remove an element at the specified index", 1, "removeat <index>", true, "removeat <index>", "O(N)"),
+                new OperationDescriptor("get", List.of(), "Get the element at the specified index", 1, "get <index>", false, "get <index>", "O(N)")
         );
     }
 
@@ -88,6 +88,12 @@ public class ArrayRuntimeAdapter extends AbstractRuntimeAdapter {
     }
 
     @Override
+    public void clearTraceHistory() {
+        if (activeArray instanceof TracedFixedArray tfa) tfa.traceLog().clear();
+        if (activeArray instanceof TracedDynamicArray tda) tda.traceLog().clear();
+    }
+
+    @Override
     public void reset() {
         if (activeArray instanceof TracedFixedArray tfa) {
             try {
@@ -99,5 +105,6 @@ public class ArrayRuntimeAdapter extends AbstractRuntimeAdapter {
                 while (tda.unwrap().size() > 0) tda.unwrap().removeAt(tda.unwrap().size() - 1);
              } catch(Exception ignored) {}
         }
+        clearTraceHistory();
     }
 }

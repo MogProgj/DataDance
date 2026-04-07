@@ -32,14 +32,22 @@ public abstract class AbstractRuntimeAdapter implements StructureRuntime {
         return implementationName;
     }
 
+    @Override
+    public String renderCurrentState() {
+        return structlab.render.StructureRenderer.render(getCurrentState());
+    }
+
     protected OperationExecutionResult success(String operation, Object returnedValue, TraceLog traceLog) {
-        List<TraceStep> steps = traceLog != null ? traceLog.steps() : new ArrayList<>();
+        List<TraceStep> steps = traceLog != null ? new ArrayList<>(traceLog.steps()) : new ArrayList<>();
+        if (traceLog != null) {
+            traceLog.clear();
+        }
         return new OperationExecutionResult(
                 true,
                 "Executed " + operation + " successfully.",
                 operation,
                 returnedValue != null ? returnedValue.toString() : null,
-                new ArrayList<>(steps)
+                steps
         );
     }
 

@@ -24,34 +24,22 @@ public class CommandRouter {
             try {
                 return handler.execute(context, parsed);
             } catch (Exception e) {
-                TerminalFormatter.printError("Unexpected error executing " + parsed.name() + ": " + e.getMessage());
-                return CommandResult.error(e.getMessage());
+                return CommandResult.error("Unexpected error executing " + parsed.name() + ": " + e.getMessage());
             }
         }
 
         // Implicit operation forwarder for active sessions
-        if (context.sessionManager().hasActiveSession()) {
-            ActiveStructureSession ass = (ActiveStructureSession) context.sessionManager().getActiveSession().get();
+        if (context.sessionManager().getActiveStructureSession().isPresent()) {
+            ActiveStructureSession ass = context.sessionManager().getActiveStructureSession().get();
             var ops = ass.getRuntime().getAvailableOperations();
-            boolean isKnownOp = ops.stream().anyMatch(o -> o.name().equalsIgnoreCase(parsed.name()));
+            boolean isKnownOp = ops.stream().anyMatch(o -> o.name().equalsIgnoreCase(parsed.name()) || o.aliases().contains(parsed.name().toLowerCase()));
 
             if (isKnownOp) {
-                OperationExecutionResult result = ass.getRuntime().execute(parsed.name(), parsed.arguments());
-                if (!result.success()) {
-                    TerminalFormatter.printError(result.message());
-                } else {
-                    ass.addHistory(result);
-                    TerminalFormatter.printSuccess(result.message());
-                    System.out.println(TerminalFormatter.boxText("Returned", String.valueOf(result.returnedValue()), structlab.app.ui.TerminalTheme.BLUE));
-                    System.out.println(TerminalFormatter.boxText("Current State", ass.getRuntime().getCurrentState(), structlab.app.ui.TerminalTheme.GREEN));
-                }
-                return CommandResult.ok();
+                return structlab.app.command.handlers.SessionCommands.executeAndFormatOperation(ass, parsed.name(), parsed.arguments());
             }
         }
 
-        TerminalFormatter.printError("Unknown command/operation: '" + parsed.name() + "'");
-        System.out.println("  Try typing 'help' to see valid commands.");
-        return CommandResult.ok();
+        return CommandResult.error("Unknown command", "Unknown command/operation: '" + parsed.name() + "'", "Try typing 'help' to see valid commands.");
     }
 
     public Map<String, CommandHandler> getHandlers() {

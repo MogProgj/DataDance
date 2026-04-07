@@ -12,5 +12,9 @@ public interface StructureRuntime {
 
     String getCurrentState();
 
+    String renderCurrentState();
+
+    void clearTraceHistory();
+
     void reset();
 }

@@ -19,12 +19,12 @@ public class ListRuntimeAdapter extends AbstractRuntimeAdapter {
     @Override
     public List<OperationDescriptor> getAvailableOperations() {
         return List.of(
-                new OperationDescriptor("addfirst", "Add an element to the front of the list", 1, "addfirst <value>", true),
-                new OperationDescriptor("addlast", "Add an element to the end of the list", 1, "addlast <value>", true),
-                new OperationDescriptor("removefirst", "Remove the first element of the list", 0, "removefirst", true),
-                new OperationDescriptor("removelast", "Remove the last element of the list (Doubly Linked only)", 0, "removelast", true),
-                new OperationDescriptor("getfirst", "Get the first element of the list", 0, "getfirst", false),
-                new OperationDescriptor("getlast", "Get the last element of the list", 0, "getlast", false)
+                new OperationDescriptor("addfirst", List.of(), "Add an element to the front of the list", 1, "addfirst <value>", true, "addfirst <value>", "O(1)"),
+                new OperationDescriptor("addlast", List.of(), "Add an element to the end of the list", 1, "addlast <value>", true, "addlast <value>", "O(1)"),
+                new OperationDescriptor("removefirst", List.of(), "Remove the first element of the list", 0, "removefirst", true, "removefirst", "O(1)"),
+                new OperationDescriptor("removelast", List.of(), "Remove the last element of the list (Doubly Linked only)", 0, "removelast", true, "removelast", "O(1)"),
+                new OperationDescriptor("getfirst", List.of(), "Get the first element of the list", 0, "getfirst", false, "getfirst", "O(1)"),
+                new OperationDescriptor("getlast", List.of(), "Get the last element of the list", 0, "getlast", false, "getlast", "O(1)")
         );
     }
 
@@ -99,6 +99,12 @@ public class ListRuntimeAdapter extends AbstractRuntimeAdapter {
     }
 
     @Override
+    public void clearTraceHistory() {
+        if (activeList instanceof TracedSinglyLinkedList tsll) tsll.traceLog().clear();
+        if (activeList instanceof TracedDoublyLinkedList tdll) tdll.traceLog().clear();
+    }
+
+    @Override
     public void reset() {
         if (activeList instanceof TracedSinglyLinkedList tsll) {
             try {
@@ -110,5 +116,6 @@ public class ListRuntimeAdapter extends AbstractRuntimeAdapter {
                 while (!tdll.unwrap().isEmpty()) tdll.unwrap().removeFirst();
              } catch (Exception ignored) {}
         }
+        clearTraceHistory();
     }
 }

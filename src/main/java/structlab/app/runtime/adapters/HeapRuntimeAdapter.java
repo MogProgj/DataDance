@@ -20,15 +20,15 @@ public class HeapRuntimeAdapter extends AbstractRuntimeAdapter {
     public List<OperationDescriptor> getAvailableOperations() {
         if (activeHeap instanceof TracedHeapPriorityQueue) {
             return List.of(
-                    new OperationDescriptor("enqueue", "Enqueue an element into the priority queue", 1, "enqueue <value>", true),
-                    new OperationDescriptor("dequeue", "Dequeue the min priority element", 0, "dequeue", true),
-                    new OperationDescriptor("peek", "Look at the min element", 0, "peek", false)
+                    new OperationDescriptor("enqueue", List.of(), "Enqueue an element into the priority queue", 1, "enqueue <value>", true, "enqueue <value>", "O(log N)"),
+                    new OperationDescriptor("dequeue", List.of(), "Dequeue the min priority element", 0, "dequeue", true, "dequeue", "O(log N)"),
+                    new OperationDescriptor("peek", List.of(), "Look at the min element", 0, "peek", false, "peek", "O(log N)")
             );
         } else {
             return List.of(
-                    new OperationDescriptor("insert", "Insert an element into the heap", 1, "insert <value>", true),
-                    new OperationDescriptor("extractmin", "Extract the minimum element", 0, "extractmin", true),
-                    new OperationDescriptor("peek", "Look at the minimum element", 0, "peek", false)
+                    new OperationDescriptor("insert", List.of(), "Insert an element into the heap", 1, "insert <value>", true, "insert <value>", "O(log N)"),
+                    new OperationDescriptor("extractmin", List.of(), "Extract the minimum element", 0, "extractmin", true, "extractmin", "O(log N)"),
+                    new OperationDescriptor("peek", List.of(), "Look at the minimum element", 0, "peek", false, "peek", "O(log N)")
             );
         }
     }
@@ -95,6 +95,12 @@ public class HeapRuntimeAdapter extends AbstractRuntimeAdapter {
     }
 
     @Override
+    public void clearTraceHistory() {
+        if (activeHeap instanceof TracedBinaryHeap tbh) tbh.traceLog().clear();
+        if (activeHeap instanceof TracedHeapPriorityQueue thpq) thpq.traceLog().clear();
+    }
+
+    @Override
     public void reset() {
         if (activeHeap instanceof TracedBinaryHeap tbh) {
             try {
@@ -106,5 +112,6 @@ public class HeapRuntimeAdapter extends AbstractRuntimeAdapter {
                 while (!thpq.unwrap().isEmpty()) thpq.unwrap().dequeue();
              } catch(Exception ignored) {}
         }
+        clearTraceHistory();
     }
 }

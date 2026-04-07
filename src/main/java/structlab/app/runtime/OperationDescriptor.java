@@ -4,8 +4,11 @@ import java.util.List;
 
 public record OperationDescriptor(
     String name,
+    List<String> aliases,
     String description,
     int argCount,
     String usage,
-    boolean mutates
+    boolean mutates,
+    String example,
+    String complexityNote
 ) {}

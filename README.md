@@ -221,6 +221,24 @@ To run a traced demo from the command line:
 mvn compile exec:java -Dexec.mainClass=structlab.demo.TracedArrayStackDemo
 ```
 
+To run the interactive terminal simulator:
+
+```bash
+mvn compile exec:java -Dexec.mainClass=structlab.app.StructLabApp
+```
+
+For full instructions, rules, and commands on how to play/run the simulator, please see [**`docs/how-to-play.md`**](docs/how-to-play.md).
+
+### Simulator Commands
+Once inside the simulator, try the following flow:
+* `ls` - View all available data structures
+* `info stack` - See available implementations and time complexities for a stack
+* `play stack impl-array-stack` - Mount an array-based stack and begin simulation
+* `ops` - Check supported operations on your open structure
+* `push 10`, `pop`, `peek` - Apply live changes and render state
+* `history`, `last`, `reset` - Inspect or reset simulation timeline
+* `close` or `quit` - Exit session or simulator
+
 Replace the class name with any demo under `structlab.demo`.  Running demos
 from your IDE (right-click and Run) also works.
 

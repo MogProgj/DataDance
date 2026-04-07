@@ -13,6 +13,13 @@ public class SessionManager {
         return Optional.ofNullable(activeSession);
     }
 
+    public Optional<ActiveStructureSession> getActiveStructureSession() {
+        if (activeSession instanceof ActiveStructureSession ass) {
+            return Optional.of(ass);
+        }
+        return Optional.empty();
+    }
+
     public void startSession(StructureSession session) {
         if (this.activeSession != null) {
             this.activeSession.close();

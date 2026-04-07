@@ -19,9 +19,9 @@ public class StackRuntimeAdapter extends AbstractRuntimeAdapter {
     @Override
     public List<OperationDescriptor> getAvailableOperations() {
         return List.of(
-                new OperationDescriptor("push", "Push an element onto the stack", 1, "push <value>", true),
-                new OperationDescriptor("pop", "Pop an element off the stack", 0, "pop", true),
-                new OperationDescriptor("peek", "Look at the top element without removing it", 0, "peek", false)
+                new OperationDescriptor("push", List.of(), "Push an element onto the stack", 1, "push <value>", true, "push <value>", "O(1)"),
+                new OperationDescriptor("pop", List.of(), "Pop an element off the stack", 0, "pop", true, "pop", "O(1)"),
+                new OperationDescriptor("peek", List.of(), "Look at the top element without removing it", 0, "peek", false, "peek", "O(1)")
         );
     }
 
@@ -71,6 +71,12 @@ public class StackRuntimeAdapter extends AbstractRuntimeAdapter {
     }
 
     @Override
+    public void clearTraceHistory() {
+        if (activeStack instanceof TracedArrayStack tas) tas.traceLog().clear();
+        if (activeStack instanceof TracedLinkedStack tls) tls.traceLog().clear();
+    }
+
+    @Override
     public void reset() {
         if (activeStack instanceof TracedArrayStack tas) {
             try {
@@ -82,5 +88,6 @@ public class StackRuntimeAdapter extends AbstractRuntimeAdapter {
                 while(true) tls.unwrap().pop();
              } catch(Exception ignored) {}
         }
+        clearTraceHistory();
     }
 }

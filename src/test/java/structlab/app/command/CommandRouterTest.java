@@ -16,9 +16,8 @@ public class CommandRouterTest {
         CommandContext ctx = new CommandContext(new InMemoryStructureRegistry(), new SessionManager());
 
         CommandResult result = router.handle(ctx, new ParsedCommand("", "", List.of()));
-
         assertTrue(result.success());
-        assertNull(result.message());
+        assertEquals("", result.message());
     }
 
     @Test
@@ -31,7 +30,6 @@ public class CommandRouterTest {
             public CommandResult execute(CommandContext context, ParsedCommand command) {
                 return CommandResult.ok("pong");
             }
-
             @Override
             public String getDescription() {
                 return "Responds with pong";
@@ -39,7 +37,6 @@ public class CommandRouterTest {
         });
 
         assertTrue(router.getHandlers().containsKey("ping"));
-
         CommandResult result = router.handle(ctx, new ParsedCommand("ping", "ping", List.of()));
         assertTrue(result.success());
         assertEquals("pong", result.message());
@@ -51,10 +48,10 @@ public class CommandRouterTest {
         CommandContext ctx = new CommandContext(new InMemoryStructureRegistry(), new SessionManager());
 
         CommandResult result = router.handle(ctx, new ParsedCommand("unknown", "unknown", List.of()));
-
-        // Still returns OK so the shell keeps running
-        assertTrue(result.success());
-        assertNull(result.message());
+        
+        // Return an error result if it's unknown
+        assertFalse(result.success());
+        assertEquals("Unknown command", result.title());
     }
 
     @Test
@@ -67,7 +64,6 @@ public class CommandRouterTest {
             public CommandResult execute(CommandContext context, ParsedCommand command) {
                 throw new RuntimeException("Simulated crash");
             }
-
             @Override
             public String getDescription() {
                 return "Crashes the handler";
@@ -76,7 +72,7 @@ public class CommandRouterTest {
 
         CommandResult result = router.handle(ctx, new ParsedCommand("crash", "crash", List.of()));
         assertFalse(result.success());
-        assertEquals("Simulated crash", result.message());
+        assertTrue(result.message().contains("Simulated crash"));
     }
 
     @Test

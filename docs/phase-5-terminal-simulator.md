@@ -43,5 +43,11 @@ Transform the current app from a simple registry browser into a polished termina
 ### Phase D — UX polish
 - Redesign outputs, error states, traces, and histories to be creative and visually distinct.
 
-### Phase E — Tests + docs
+### Phase E — Tests + docs + Stabilization Patch
 - Expand tests around parsing, routing, and output generation.
+- Stabilization patch applied to simulator layer, moving away from `System.out.println` towards tightly-coupled `CommandResult` object structures (success, title, body, hint, exitRequested).
+- Tightened `SessionManager` state to handle clean dismounts and exceptions.
+- Restructured `StructureRuntime` and `AbstractRuntimeAdapter` to implement localized `clearTraceHistory()` behavior preventing trace pollution.
+- Introduced UI-centric Terminal Output using `TerminalFormatter.successBox`, `errorBox`, `keyValueBlock`, and `infoBox`.
+- Added dynamic contextual prompting to `PromptBuilder`.
+- 280+ total test cases ensuring architectural consistency across the Repl shell and session memory handling.

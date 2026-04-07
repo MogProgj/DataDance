@@ -40,8 +40,19 @@ public class AppShell {
                 ParsedCommand cmd = CommandParser.parse(input);
                 CommandResult result = router.handle(context, cmd);
 
-                if (result.message() != null && !result.message().isEmpty()) {
-                    System.out.println(result.message());
+                // Print the result properly
+                if (result.title() != null && !result.success()) {
+                    if (result.hint() != null) {
+                        System.out.println(structlab.app.ui.TerminalFormatter.errorBox(result.title(), result.body() + "\n" + structlab.app.ui.TerminalTheme.YELLOW + result.hint()));
+                    } else {
+                        System.out.println(structlab.app.ui.TerminalFormatter.errorBox(result.title(), result.body()));
+                    }
+                } else if (result.title() != null && result.success()) {
+                    if (result.body() != null && !result.body().isEmpty()) {
+                        System.out.println(structlab.app.ui.TerminalFormatter.successBox(result.title(), result.body()));
+                    }
+                } else if (result.body() != null && !result.body().isEmpty()) {
+                     System.out.println(result.body());
                 }
 
                 if (result.exitRequested()) {
