@@ -9,7 +9,7 @@ StructLab is designed as an interactive REPL (Read-Eval-Print Loop) environment.
 Ensure you have Java 17+ and Maven 3.9+ installed. You can start the interactive shell by running the following command from the root of the project:
 
 ```bash
-mvn compile exec:java -Dexec.mainClass=structlab.app.StructLabApp
+mvn compile exec:java "-Dexec.mainClass=structlab.app.StructLabApp"
 ```
 
 ## The Two Core Modes
