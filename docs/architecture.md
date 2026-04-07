@@ -4,7 +4,7 @@ StructLab is designed around strict layer separation so that the project can gro
 without collapsing into an undifferentiated mass of code.
 
 ---
-f
+
 ## Layers
 
 ### 1. Core (`structlab.core`)
