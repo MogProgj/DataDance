@@ -28,7 +28,7 @@ public class CommandRouter {
             }
         }
 
-        // Implicit operation forwarder for active sessions
+        // Implicit Operation forwarder for active sessions
         if (context.sessionManager().getActiveStructureSession().isPresent()) {
             ActiveStructureSession ass = context.sessionManager().getActiveStructureSession().get();
             var ops = ass.getRuntime().getAvailableOperations();

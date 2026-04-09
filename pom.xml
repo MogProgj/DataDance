@@ -22,9 +22,10 @@
     <surefire.version>3.5.5</surefire.version>
     <javafx.version>21.0.5</javafx.version>
     <jacoco.version>0.8.12</jacoco.version>
-    <sonar.projectKey>MogProgj_DataDance</sonar.projectKey>
-    <sonar.organization>mogprogj</sonar.organization>
+    <sonar.projectKey>MogProgJ_DataDance</sonar.projectKey>
+    <sonar.organization>asae44344grsgy546grger</sonar.organization>
   </properties>
+
 
   <dependencies>
     <!-- JavaFX -->

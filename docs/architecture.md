@@ -1,9 +1,9 @@
 # Architecture
 
 StructLab is designed around strict layer separation so that the project can grow
-without collapsing into an undifferentiated mass of code.
+without collapsing into an undifferentiated mass of Code . 
 
----
+--- 
 
 ## Layers
 
