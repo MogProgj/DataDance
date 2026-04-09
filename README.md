@@ -53,34 +53,46 @@ a swamp.
 
 ## Project status
 
-> **Phase 3 — Console Rendering Layer (complete for arrays, stacks, and queues)**
+> **Phase 6 — JavaFX GUI Shell and Service Layer (active)**
 >
-> Phases 1 and 2 are complete for arrays, stacks, and queues.  Phase 3 adds
-> a console rendering layer that turns trace output into structure-aware
-> ASCII visualizations with markers (`top`, `front`, `rear`, `F`, `R`),
-> boxed array cells, vertical stack views, linked-node chains, and
-> side-by-side before/after transition views.  Lists, deques, heaps, and
-> hash structures are not yet traced or rendered.
+> Phases 1–5 are complete.  A terminal simulator backend and a JavaFX GUI
+> alpha are both functional.  The project now has a dual-interface
+> architecture: a GUI for primary manual testing and a terminal for
+> secondary smoke/debug usage.
+>
+> **What works:**
+> - Terminal simulator: full discovery, session, and operation flow
+> - JavaFX GUI: structure browsing, detail display, session lifecycle,
+>   operation execution, state/trace/history rendering
+> - Service facade: clean API consumed by the GUI, tested independently
+> - Backend tests: 280+ automated tests covering core, trace, render,
+>   and service layers
+>
+> **Current limitations:**
+> - Hash structures are not fully interactive yet
+> - Comparison mode is not yet built
+> - GUI visualisation is ASCII-based; richer graphics are future work
+> - Operations use integer-based interactive values
 
 ---
 
 ## Implemented structures
 
-| Category | Structure | Implementation | Tests | Demo |
-|---|---|---|---|---|
-| Array | Fixed array | `FixedArray` | yes | yes |
-| Array | Dynamic array | `DynamicArray` | yes | yes |
-| Stack | Array stack | `ArrayStack` (on DynamicArray) | yes | yes |
-| Stack | Linked stack | `LinkedStack` | yes | yes |
-| Queue | Circular array queue | `CircularArrayQueue` | yes | yes |
-| Queue | Linked queue | `LinkedQueue` | yes | yes |
-| Queue | Two-stack queue | `TwoStackQueue` | yes | yes |
-| List | Singly linked list | `SinglyLinkedList` | yes | yes |
-| List | Doubly linked list | `DoublyLinkedList` | yes | yes |
-| Deque | Linked deque | `LinkedDeque` | yes | yes |
-| Deque | Array deque | `ArrayDequeCustom` | yes | yes |
-| Heap | Binary heap | `BinaryHeap` (on DynamicArray) | yes | yes |
-| Heap | Priority queue | `HeapPriorityQueue` | yes | yes |
+| Category | Structure | Implementation | Tests | Traced | Rendered |
+|---|---|---|---|---|---|
+| Array | Fixed array | `FixedArray` | yes | yes | yes |
+| Array | Dynamic array | `DynamicArray` | yes | yes | yes |
+| Stack | Array stack | `ArrayStack` (on DynamicArray) | yes | yes | yes |
+| Stack | Linked stack | `LinkedStack` | yes | yes | yes |
+| Queue | Circular array queue | `CircularArrayQueue` | yes | yes | yes |
+| Queue | Linked queue | `LinkedQueue` | yes | yes | yes |
+| Queue | Two-stack queue | `TwoStackQueue` | yes | yes | yes |
+| List | Singly linked list | `SinglyLinkedList` | yes | yes | yes |
+| List | Doubly linked list | `DoublyLinkedList` | yes | yes | yes |
+| Deque | Linked deque | `LinkedDeque` | yes | yes | yes |
+| Deque | Array deque | `ArrayDequeCustom` | yes | yes | yes |
+| Heap | Binary heap | `BinaryHeap` (on DynamicArray) | yes | yes | yes |
+| Heap | Priority queue | `HeapPriorityQueue` | yes | yes | yes |
 
 ---
 
@@ -101,6 +113,12 @@ The trace layer lives under `src/main/java/structlab/trace/` and provides:
 | `TracedCircularArrayQueue` | Traced wrapper for `CircularArrayQueue` |
 | `TracedLinkedQueue` | Traced wrapper for `LinkedQueue` |
 | `TracedTwoStackQueue` | Traced wrapper for `TwoStackQueue` |
+| `TracedSinglyLinkedList` | Traced wrapper for `SinglyLinkedList` |
+| `TracedDoublyLinkedList` | Traced wrapper for `DoublyLinkedList` |
+| `TracedLinkedDeque` | Traced wrapper for `LinkedDeque` |
+| `TracedArrayDequeCustom` | Traced wrapper for `ArrayDequeCustom` |
+| `TracedBinaryHeap` | Traced wrapper for `BinaryHeap` |
+| `TracedHeapPriorityQueue` | Traced wrapper for `HeapPriorityQueue` |
 
 Each `TraceStep` captures: structure name, implementation name, operation name,
 input arguments, before-state snapshot, after-state snapshot, invariant result,
@@ -139,8 +157,14 @@ Rendered structures include visual markers and layout cues:
 | LinkedStack | Node chain: `top -> [30] -> [20] -> null` |
 | LinkedQueue | Node chain with `front`/`rear` pointer markers |
 | TwoStackQueue | Side-by-side inbox/outbox stacks, effective queue order |
+| SinglyLinkedList | Node chain with `head`/`tail` markers |
+| DoublyLinkedList | Bidirectional chain (`<-->`) with `head`/`tail` markers |
+| LinkedDeque | Bidirectional chain with `front`/`rear` markers |
+| ArrayDequeCustom | Circular buffer with `F`/`R` markers, logical order |
+| BinaryHeap | Array view plus tree-level view showing parent/child layout |
+| HeapPriorityQueue | Priority info with underlying heap array and tree view |
 
-All traced demos now use `ConsoleTraceRenderer` for polished terminal output.
+All traced demos use `ConsoleTraceRenderer` for polished terminal output.
 
 ---
 
@@ -183,9 +207,14 @@ layer boundaries.
 | 3 | Console rendering layer |
 | 4 | Data structure registry and metadata system |
 | 5 | Terminal interactive simulator |
-| 6 | Broader data structure family |
-| 7 | Comparison mode (same ops on multiple implementations) |
-| 8 | Graphical simulator layer (JavaFX) |
+| 6 | JavaFX GUI shell and service layer |
+| 7 | Broader data structure family |
+| 8 | Comparison mode (same ops on multiple implementations) |
+| 9 | Algorithm demonstrations on top of structures |
+| 10 | Polish, testing, and educational refinement |
+| 6 | JavaFX GUI shell and service layer |
+| 7 | Broader data structure family |
+| 8 | Comparison mode (same ops on multiple implementations) |
 | 9 | Algorithm demonstrations on top of structures |
 | 10 | Polish, testing, and educational refinement |
 
@@ -199,21 +228,58 @@ For the Phase 0 working contract, see [`docs/phase-0-foundation.md`](docs/phase-
 
 Requires Java 17+ and Maven 3.9+.
 
+### GUI mode (primary)
+
+```bash
+mvn clean javafx:run
+```
+
+The JavaFX application window will open.  See
+[`docs/gui-playthrough-manual.md`](docs/gui-playthrough-manual.md) for a
+step-by-step walkthrough.
+
+### Terminal mode (secondary)
+
+```bash
+mvn compile exec:java "-Dexec.mainClass=structlab.app.StructLabApp"
+```
+
+See [`docs/how-to-play.md`](docs/how-to-play.md) for terminal commands and
+usage.
+
+### Build and test
+
 ```bash
 mvn compile         # compile all sources
 mvn test            # compile and run all tests
 ```
 
-To run a demo, use your IDE's main-class runner (e.g. right-click the demo
-class in IntelliJ and choose Run), or from the command line:
+### Run a traced demo
 
 ```bash
-mvn compile exec:java -Dexec.mainClass=structlab.demo.ArrayStackDemo
+mvn compile exec:java -Dexec.mainClass=structlab.demo.TracedArrayStackDemo
 ```
 
-> **Note:** the `exec:java` command requires the `exec-maven-plugin`.  If you
-> prefer not to add it, running demos directly from IntelliJ or any IDE with
-> Maven support works out of the box.
+Replace the class name with any demo under `structlab.demo`.
+
+---
+
+## Testing the app
+
+| Layer | Command | Purpose |
+|---|---|---|
+| Backend tests | `mvn test` | Primary regression gate — must always pass |
+| GUI manual testing | `mvn clean javafx:run` | Primary human acceptance surface |
+| Console smoke test | `mvn compile exec:java "-Dexec.mainClass=structlab.app.StructLabApp"` | Secondary debug/validation path |
+
+- **GUI** is the main surface for manual feature validation.
+- **Backend tests** are mandatory before every merge.
+- **Terminal** remains available for quick debugging and smoke testing.
+
+For full details, see:
+- [`docs/gui-playthrough-manual.md`](docs/gui-playthrough-manual.md) — GUI testing manual
+- [`docs/testing-strategy.md`](docs/testing-strategy.md) — testing policy and checklist
+- [`docs/how-to-play.md`](docs/how-to-play.md) — terminal simulator guide
 
 ---
 
@@ -226,3 +292,4 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 ## License
 
 MIT — see [`LICENSE`](LICENSE).
+

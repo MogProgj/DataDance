@@ -1,8 +1,9 @@
 package structlab.core.heap;
 
 import structlab.core.array.DynamicArray;
+import structlab.trace.Traceable;
 
-public class BinaryHeap<T extends Comparable<T>> {
+public class BinaryHeap<T extends Comparable<T>> implements Traceable {
   private final DynamicArray<T> elements;
 
   public BinaryHeap() {
@@ -49,6 +50,13 @@ public class BinaryHeap<T extends Comparable<T>> {
     return min;
   }
 
+  @Override
+  public String structureName() { return "Binary Heap"; }
+
+  @Override
+  public String implementationName() { return "BinaryHeap"; }
+
+  @Override
   public boolean checkInvariant() {
     if (!elements.checkInvariant()) {
       return false;
@@ -70,6 +78,7 @@ public class BinaryHeap<T extends Comparable<T>> {
     return true;
   }
 
+  @Override
   public String snapshot() {
     return "BinaryHeap{" +
       "size=" + size() +

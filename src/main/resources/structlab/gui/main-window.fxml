@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="structlab.gui.controller.MainWindowController"
+            stylesheets="@styles.css"
+            prefWidth="1200" prefHeight="750">
+
+    <!-- Top: App header -->
+    <top>
+        <HBox styleClass="toolbar" alignment="CENTER_LEFT" spacing="12">
+            <padding><Insets top="8" bottom="8" left="16" right="16"/></padding>
+            <Label text="StructLab" styleClass="app-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="statusLabel" text="Discovery Mode" styleClass="status-label"/>
+        </HBox>
+    </top>
+
+    <!-- Left: Discovery panel -->
+    <left>
+        <VBox prefWidth="280" styleClass="side-panel" spacing="8">
+            <padding><Insets top="12" bottom="12" left="12" right="12"/></padding>
+
+            <Label text="Data Structures" styleClass="section-header"/>
+            <ListView fx:id="structureListView" VBox.vgrow="ALWAYS"/>
+
+            <Separator/>
+
+            <Label text="Implementations" styleClass="section-header"/>
+            <ListView fx:id="implementationListView" prefHeight="160"/>
+
+            <Button fx:id="openSessionButton" text="Open Session"
+                    onAction="#onOpenSession" maxWidth="Infinity"
+                    styleClass="primary-button" disable="true"/>
+        </VBox>
+    </left>
+
+    <!-- Center: Main content area -->
+    <center>
+        <VBox styleClass="center-panel" spacing="8">
+            <padding><Insets top="12" bottom="12" left="12" right="12"/></padding>
+
+            <!-- Structure details -->
+            <Label text="Structure Details" styleClass="section-header"/>
+            <VBox fx:id="structureDetailBox" spacing="4" styleClass="detail-box">
+                <padding><Insets top="6" bottom="6" left="8" right="8"/></padding>
+                <Label fx:id="detailNameLabel" text="Select a structure to view details." styleClass="detail-name"/>
+                <Label fx:id="detailCategoryLabel" text="" styleClass="info-label"/>
+                <Label fx:id="detailDescriptionLabel" text="" wrapText="true" styleClass="detail-description"/>
+                <Label fx:id="detailKeywordsLabel" text="" styleClass="detail-keywords"/>
+            </VBox>
+
+            <Separator/>
+
+            <Label text="Structure State" styleClass="section-header"/>
+            <TextArea fx:id="stateArea" editable="false" wrapText="true"
+                      VBox.vgrow="ALWAYS" styleClass="mono-area"
+                      promptText="Open a session to see structure state here."/>
+
+            <Separator/>
+
+            <Label text="Last Trace" styleClass="section-header"/>
+            <TextArea fx:id="traceArea" editable="false" wrapText="true"
+                      prefHeight="180" styleClass="mono-area"
+                      promptText="Trace output will appear here after operations."/>
+        </VBox>
+    </center>
+
+    <!-- Right: Session and operations panel -->
+    <right>
+        <VBox prefWidth="300" styleClass="side-panel" spacing="8">
+            <padding><Insets top="12" bottom="12" left="12" right="12"/></padding>
+
+            <!-- Session info -->
+            <Label text="Session" styleClass="section-header"/>
+            <VBox fx:id="sessionInfoBox" spacing="4">
+                <Label fx:id="sessionStructureLabel" text="No active session" styleClass="info-label"/>
+                <Label fx:id="sessionImplLabel" text="" styleClass="info-label"/>
+                <Label fx:id="sessionOpsCountLabel" text="" styleClass="info-label"/>
+            </VBox>
+
+            <HBox spacing="6">
+                <Button fx:id="resetButton" text="Reset" onAction="#onReset"
+                        styleClass="secondary-button" disable="true"/>
+                <Button fx:id="closeSessionButton" text="Close Session" onAction="#onCloseSession"
+                        styleClass="secondary-button" disable="true"/>
+            </HBox>
+
+            <Separator/>
+
+            <!-- Operations -->
+            <Label text="Operations" styleClass="section-header"/>
+            <ListView fx:id="operationListView" prefHeight="140"/>
+
+            <HBox spacing="6" alignment="CENTER_LEFT">
+                <TextField fx:id="argField" promptText="args (e.g. 42)"
+                           HBox.hgrow="ALWAYS"/>
+                <Button fx:id="executeButton" text="Execute" onAction="#onExecuteOperation"
+                        styleClass="primary-button" disable="true"/>
+            </HBox>
+
+            <Separator/>
+
+            <!-- History -->
+            <Label text="History" styleClass="section-header"/>
+            <ListView fx:id="historyListView" VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </right>
+
+    <!-- Bottom: Status bar -->
+    <bottom>
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="8">
+            <padding><Insets top="4" bottom="4" left="12" right="12"/></padding>
+            <Label fx:id="bottomStatusLabel" text="Ready" styleClass="status-text"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

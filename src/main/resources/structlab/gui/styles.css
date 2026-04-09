@@ -1,0 +1,162 @@
+/* StructLab JavaFX – clean, modern, neutral aesthetic */
+
+/* ── Root ────────────────────────────── */
+.root {
+    -fx-font-family: "Segoe UI", "System", sans-serif;
+    -fx-font-size: 13px;
+    -fx-background-color: #f4f5f7;
+}
+
+/* ── Toolbar ─────────────────────────── */
+.toolbar {
+    -fx-background-color: #2b2d42;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 4, 0, 0, 2);
+}
+
+.app-title {
+    -fx-text-fill: #edf2f4;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.status-label {
+    -fx-text-fill: #8d99ae;
+    -fx-font-size: 12px;
+}
+
+/* ── Side panels ─────────────────────── */
+.side-panel {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 1 0 0;
+}
+
+.section-header {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2b2d42;
+}
+
+.info-label {
+    -fx-text-fill: #495057;
+    -fx-font-size: 12px;
+}
+
+/* ── Center panel ────────────────────── */
+.center-panel {
+    -fx-background-color: #ffffff;
+}
+
+/* ── Structure detail box ────────────── */
+.detail-box {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #dee2e6;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.detail-name {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2b2d42;
+}
+
+.detail-description {
+    -fx-text-fill: #495057;
+    -fx-font-size: 12px;
+}
+
+.detail-keywords {
+    -fx-text-fill: #6c757d;
+    -fx-font-size: 11px;
+    -fx-font-style: italic;
+}
+
+/* ── Empty state labels ──────────────── */
+.empty-state {
+    -fx-text-fill: #adb5bd;
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+    -fx-alignment: center;
+}
+
+/* ── Monospace text areas ────────────── */
+.mono-area {
+    -fx-font-family: "Consolas", "Courier New", monospace;
+    -fx-font-size: 12px;
+    -fx-control-inner-background: #1e1e2e;
+    -fx-text-fill: #cdd6f4;
+    -fx-highlight-fill: #45475a;
+    -fx-highlight-text-fill: #cdd6f4;
+}
+
+.mono-area .content {
+    -fx-background-color: #1e1e2e;
+}
+
+/* ── Buttons ─────────────────────────── */
+.primary-button {
+    -fx-background-color: #2b2d42;
+    -fx-text-fill: #edf2f4;
+    -fx-padding: 6 16;
+    -fx-cursor: hand;
+}
+
+.primary-button:hover {
+    -fx-background-color: #3a3d5c;
+}
+
+.primary-button:disabled {
+    -fx-background-color: #adb5bd;
+    -fx-text-fill: #e9ecef;
+    -fx-cursor: default;
+}
+
+.secondary-button {
+    -fx-background-color: #dee2e6;
+    -fx-text-fill: #2b2d42;
+    -fx-padding: 6 12;
+    -fx-cursor: hand;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #ced4da;
+}
+
+.secondary-button:disabled {
+    -fx-background-color: #e9ecef;
+    -fx-text-fill: #adb5bd;
+    -fx-cursor: default;
+}
+
+/* ── ListView ────────────────────────── */
+.list-view {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dee2e6;
+}
+
+.list-cell:filled:selected {
+    -fx-background-color: #d8e2f3;
+    -fx-text-fill: #2b2d42;
+}
+
+/* ── Status bar ──────────────────────── */
+.status-bar {
+    -fx-background-color: #e9ecef;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1 0 0 0;
+}
+
+.status-text {
+    -fx-text-fill: #6c757d;
+    -fx-font-size: 11px;
+}
+
+/* ── History cells ───────────────────── */
+.history-success {
+    -fx-text-fill: #2d6a4f;
+}
+
+.history-fail {
+    -fx-text-fill: #c1121f;
+}

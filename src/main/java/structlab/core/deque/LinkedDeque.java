@@ -1,6 +1,8 @@
 package structlab.core.deque;
 
-public class LinkedDeque<T> {
+import structlab.trace.Traceable;
+
+public class LinkedDeque<T> implements Traceable {
   private Node<T> front;
   private Node<T> rear;
   private int size;
@@ -109,6 +111,13 @@ public class LinkedDeque<T> {
     return rear.value;
   }
 
+  @Override
+  public String structureName() { return "Deque"; }
+
+  @Override
+  public String implementationName() { return "LinkedDeque"; }
+
+  @Override
   public boolean checkInvariant() {
     if (size < 0) {
       return false;
@@ -138,6 +147,7 @@ public class LinkedDeque<T> {
     return counted == size && last == rear;
   }
 
+  @Override
   public String snapshot() {
     StringBuilder sb = new StringBuilder();
     sb.append("LinkedDeque{");

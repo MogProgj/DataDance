@@ -1,6 +1,8 @@
 package structlab.core.list;
 
-public class DoublyLinkedList<T> {
+import structlab.trace.Traceable;
+
+public class DoublyLinkedList<T> implements Traceable {
   private Node<T> head;
   private Node<T> tail;
   private int size;
@@ -123,6 +125,13 @@ public class DoublyLinkedList<T> {
     return false;
   }
 
+  @Override
+  public String structureName() { return "Doubly Linked List"; }
+
+  @Override
+  public String implementationName() { return "DoublyLinkedList"; }
+
+  @Override
   public boolean checkInvariant() {
     if (size < 0) {
       return false;
@@ -156,6 +165,7 @@ public class DoublyLinkedList<T> {
     return counted == size && last == tail;
   }
 
+  @Override
   public String snapshot() {
     StringBuilder sb = new StringBuilder();
     sb.append("DoublyLinkedList{");

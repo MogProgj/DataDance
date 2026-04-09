@@ -1,6 +1,8 @@
 package structlab.core.list;
 
-public class SinglyLinkedList<T> {
+import structlab.trace.Traceable;
+
+public class SinglyLinkedList<T> implements Traceable {
   private Node<T> head;
   private Node<T> tail;
   private int size;
@@ -99,6 +101,13 @@ public class SinglyLinkedList<T> {
     return false;
   }
 
+  @Override
+  public String structureName() { return "Singly Linked List"; }
+
+  @Override
+  public String implementationName() { return "SinglyLinkedList"; }
+
+  @Override
   public boolean checkInvariant() {
     if (size < 0) {
       return false;
@@ -125,6 +134,7 @@ public class SinglyLinkedList<T> {
     return counted == size && last == tail && tail.next == null;
   }
 
+  @Override
   public String snapshot() {
     StringBuilder sb = new StringBuilder();
     sb.append("SinglyLinkedList{");

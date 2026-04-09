@@ -338,14 +338,14 @@ any individual course or semester.
 
 ## Version Checkpoints
 
-| Version | Milestone |
-|---------|-----------|
-| 0.1 | Repo scaffold and docs |
-| 0.2 | Core arrays, stacks, queues |
-| 0.3 | Trace + ASCII rendering |
-| 0.4 | Registry + searchable structure info |
-| 0.5 | Terminal interactive simulator |
-| 0.6 | More structures and combinations |
-| 0.7 | Comparison mode |
-| 0.8 | JavaFX graphical simulator |
-| 1.0 | Full StructLab simulator with educational demos |
+| Version | Milestone                                       |
+|---------|-------------------------------------------------|
+| 0.1     | Repo scaffold and docs                          |
+| 0.2     | Core arrays, stacks, queues                     |
+| 0.3     | Trace + ASCII rendering                         |
+| 0.4     | Registry + searchable structure info            |
+| 0.5     | Terminal interactive simulator                  |
+| 0.6     | More structures and combinations                |
+| 0.7     | Comparison mode                                 |
+| 0.8     | JavaFX graphical simulator                      |
+| 1.0     | Full StructLab simulator with educational demos |

@@ -67,6 +67,18 @@ class SnapshotParserTest {
   }
 
   @Test
+  void doublyLinkedChainFieldExtractsElements() {
+    String snap = "DoublyLinkedList{chain=[10 <-> 20 <-> 30]}";
+    assertEquals(List.of("10", "20", "30"), SnapshotParser.doublyLinkedChainField(snap, "chain"));
+  }
+
+  @Test
+  void doublyLinkedChainFieldReturnsEmptyForEmptyChain() {
+    String snap = "DoublyLinkedList{chain=[]}";
+    assertEquals(List.of(), SnapshotParser.doublyLinkedChainField(snap, "chain"));
+  }
+
+  @Test
   void embeddedSnapshotHandlesDoubleNesting() {
     String snap = "TwoStackQueue{size=1, inbox=ArrayStack{size=1, elements=DynamicArray{size=1}}, outbox=ArrayStack{size=0}}";
     String inbox = SnapshotParser.embeddedSnapshot(snap, "inbox");

@@ -69,6 +69,23 @@ public final class SnapshotParser {
   }
 
   /**
+   * Extracts a doubly-linked chain list using " &lt;-&gt; " separator, e.g.
+   * "chain=[10 &lt;-&gt; 20 &lt;-&gt; 30]" returns ["10", "20", "30"].
+   */
+  public static List<String> doublyLinkedChainField(String snapshot, String name) {
+    Pattern p = Pattern.compile(name + "=\\[([^\\]]*)]");
+    Matcher m = p.matcher(snapshot);
+    if (!m.find()) return Collections.emptyList();
+    String inner = m.group(1).trim();
+    if (inner.isEmpty()) return Collections.emptyList();
+    List<String> items = new ArrayList<>();
+    for (String item : inner.split("\\s*<->\\s*")) {
+      items.add(item.trim());
+    }
+    return items;
+  }
+
+  /**
    * Extracts an embedded snapshot (nested braces), e.g.
    * "inbox=ArrayStack{size=0, ...}" returns "ArrayStack{size=0, ...}".
    */

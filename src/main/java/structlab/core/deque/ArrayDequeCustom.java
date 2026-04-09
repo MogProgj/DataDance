@@ -1,8 +1,9 @@
 package structlab.core.deque;
 
 import java.util.Arrays;
+import structlab.trace.Traceable;
 
-public class ArrayDequeCustom<T> {
+public class ArrayDequeCustom<T> implements Traceable {
   private static final int DEFAULT_CAPACITY = 4;
 
   private Object[] data;
@@ -94,6 +95,13 @@ public class ArrayDequeCustom<T> {
     return (T) data[rearIndex];
   }
 
+  @Override
+  public String structureName() { return "Deque"; }
+
+  @Override
+  public String implementationName() { return "ArrayDequeCustom"; }
+
+  @Override
   public boolean checkInvariant() {
     return data != null
       && data.length > 0
@@ -103,6 +111,7 @@ public class ArrayDequeCustom<T> {
       && size <= data.length;
   }
 
+  @Override
   public String snapshot() {
     StringBuilder logical = new StringBuilder();
     logical.append("[");

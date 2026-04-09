@@ -1,6 +1,8 @@
 package structlab.core.heap;
 
-public class HeapPriorityQueue<T extends Comparable<T>> {
+import structlab.trace.Traceable;
+
+public class HeapPriorityQueue<T extends Comparable<T>> implements Traceable {
   private final BinaryHeap<T> heap;
 
   public HeapPriorityQueue() {
@@ -35,10 +37,18 @@ public class HeapPriorityQueue<T extends Comparable<T>> {
     return heap.peek();
   }
 
+  @Override
+  public String structureName() { return "Priority Queue"; }
+
+  @Override
+  public String implementationName() { return "HeapPriorityQueue"; }
+
+  @Override
   public boolean checkInvariant() {
     return heap != null && heap.checkInvariant();
   }
 
+  @Override
   public String snapshot() {
     return "HeapPriorityQueue{" +
       "size=" + size() +
