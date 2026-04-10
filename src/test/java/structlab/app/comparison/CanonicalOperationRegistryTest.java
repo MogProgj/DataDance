@@ -220,4 +220,37 @@ class CanonicalOperationRegistryTest {
     void registeredFamiliesContainsDeque() {
         assertTrue(CanonicalOperationRegistry.registeredFamilies().contains("deque"));
     }
+
+    // ── Array family ────────────────────────────────────────
+
+    @Test
+    void arrayFamilyHasFiveCanonicalOps() {
+        var ops = CanonicalOperationRegistry.forFamily("array");
+        assertEquals(5, ops.size());
+    }
+
+    @Test
+    void arrayFamilyHasMapping() {
+        assertTrue(CanonicalOperationRegistry.hasMapping("array"));
+    }
+
+    @Test
+    void arrayAppendResolvesFromAdd() {
+        assertEquals("append", CanonicalOperationRegistry.resolveCanonical("array", "add"));
+    }
+
+    @Test
+    void arrayRemoveAtResolvesFromDelete() {
+        assertEquals("removeat", CanonicalOperationRegistry.resolveCanonical("array", "delete"));
+    }
+
+    @Test
+    void arrayGetResolvesFromAccess() {
+        assertEquals("get", CanonicalOperationRegistry.resolveCanonical("array", "access"));
+    }
+
+    @Test
+    void registeredFamiliesContainsArray() {
+        assertTrue(CanonicalOperationRegistry.registeredFamilies().contains("array"));
+    }
 }

@@ -39,6 +39,18 @@ class VisualStateFactoryTest {
     @Test
     void isSupportedReturnsFalseForUnsupported() {
         assertFalse(VisualStateFactory.isSupported(
+                "UnknownStructure{size=0}"));
+    }
+
+    @Test
+    void isSupportedReturnsTrueForFixedArray() {
+        assertTrue(VisualStateFactory.isSupported(
+                "FixedArray{size=2, capacity=4, elements=[10, 20], raw=[10, 20, null, null]}"));
+    }
+
+    @Test
+    void isSupportedReturnsTrueForDynamicArray() {
+        assertTrue(VisualStateFactory.isSupported(
                 "DynamicArray{size=3, capacity=4, elements=[1, 2, 3], raw=[1, 2, 3, null]}"));
     }
 

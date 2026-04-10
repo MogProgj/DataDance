@@ -304,4 +304,36 @@ public final class StateModelParser {
         return new LinkedDequeStateModel(
                 Collections.unmodifiableList(chain), size, front, rear);
     }
+
+    // ── Array family ────────────────────────────────────────────
+
+    /**
+     * Parses a FixedArray snapshot.
+     * Snapshot: FixedArray{size=N, capacity=C, elements=[...], raw=[...]}
+     */
+    public static FixedArrayStateModel parseFixedArray(String snapshot) {
+        int size = SnapshotParser.intField(snapshot, "size");
+        int capacity = SnapshotParser.intField(snapshot, "capacity");
+        List<String> elements = SnapshotParser.listField(snapshot, "elements");
+        List<String> raw = SnapshotParser.listField(snapshot, "raw");
+        return new FixedArrayStateModel(
+                Collections.unmodifiableList(elements),
+                Collections.unmodifiableList(raw),
+                size, capacity);
+    }
+
+    /**
+     * Parses a DynamicArray snapshot.
+     * Snapshot: DynamicArray{size=N, capacity=C, elements=[...], raw=[...]}
+     */
+    public static DynamicArrayStateModel parseDynamicArray(String snapshot) {
+        int size = SnapshotParser.intField(snapshot, "size");
+        int capacity = SnapshotParser.intField(snapshot, "capacity");
+        List<String> elements = SnapshotParser.listField(snapshot, "elements");
+        List<String> raw = SnapshotParser.listField(snapshot, "raw");
+        return new DynamicArrayStateModel(
+                Collections.unmodifiableList(elements),
+                Collections.unmodifiableList(raw),
+                size, capacity);
+    }
 }

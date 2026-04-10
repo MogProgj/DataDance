@@ -1933,3 +1933,159 @@
     -fx-text-fill: #475569;
     -fx-font-size: 14px;
 }
+
+/* ================================================================
+   Phase 2C4 — Array Visual Panes
+   FixedArray accent: slate/steel (#94a3b8, #64748b)
+   DynamicArray accent: sky/cyan (#38bdf8, #22d3ee)
+   ================================================================ */
+
+/* ── Shared array cell layout ───────────────────────────── */
+.array-cell-container {
+    -fx-padding: 4 0 4 0;
+}
+
+.array-cell-index {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 9px;
+    -fx-text-fill: #6b7280;
+    -fx-alignment: CENTER;
+}
+
+.array-cell {
+    -fx-background-color: #161b22;
+    -fx-border-color: #2d333b;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-min-width: 44;
+    -fx-min-height: 36;
+    -fx-alignment: CENTER;
+}
+
+.array-cell:hover {
+    -fx-effect: dropshadow(gaussian, rgba(148, 163, 184, 0.15), 6, 0, 0, 0);
+}
+
+.array-cell-value {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
+}
+
+.array-cell-separator {
+    -fx-min-width: 2;
+    -fx-pref-width: 2;
+}
+
+/* ── Fixed array specific ───────────────────────────────── */
+.array-impl-badge-fixed {
+    -fx-background-color: rgba(100, 116, 139, 0.15);
+    -fx-text-fill: #94a3b8;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 2 8 2 8;
+    -fx-background-radius: 4;
+    -fx-border-color: #64748b;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+}
+
+.array-cell-fixed {
+    -fx-border-color: #475569;
+}
+
+.array-cell-fixed:hover {
+    -fx-border-color: #94a3b8;
+}
+
+.array-cell-fixed.array-cell-occupied {
+    -fx-border-color: #64748b;
+    -fx-background-color: rgba(100, 116, 139, 0.12);
+}
+
+.array-cell-fixed.array-cell-occupied .array-cell-value {
+    -fx-text-fill: #cbd5e1;
+}
+
+.array-cell-fixed.array-cell-empty {
+    -fx-border-color: #334155;
+    -fx-background-color: rgba(51, 65, 85, 0.08);
+    -fx-opacity: 0.50;
+}
+
+.array-cell-empty-marker {
+    -fx-font-size: 16px;
+    -fx-text-fill: #475569;
+    -fx-alignment: CENTER;
+}
+
+.array-boundary-fixed {
+    -fx-text-fill: #64748b;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+/* ── Dynamic array specific ─────────────────────────────── */
+.array-impl-badge-dynamic {
+    -fx-background-color: rgba(56, 189, 248, 0.12);
+    -fx-text-fill: #38bdf8;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 2 8 2 8;
+    -fx-background-radius: 4;
+    -fx-border-color: #0ea5e9;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+}
+
+.array-reserved-meta {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 11px;
+    -fx-text-fill: #22d3ee;
+    -fx-padding: 0 0 0 4;
+}
+
+.array-cell-dynamic {
+    -fx-border-color: #1e3a5f;
+}
+
+.array-cell-dynamic:hover {
+    -fx-border-color: #38bdf8;
+}
+
+.array-cell-dynamic.array-cell-occupied {
+    -fx-border-color: #0ea5e9;
+    -fx-background-color: rgba(14, 165, 233, 0.10);
+}
+
+.array-cell-dynamic.array-cell-occupied .array-cell-value {
+    -fx-text-fill: #7dd3fc;
+}
+
+.array-cell-dynamic.array-cell-reserved {
+    -fx-border-color: #1e3a5f;
+    -fx-background-color: rgba(30, 58, 95, 0.15);
+    -fx-border-style: segments(4, 4);
+    -fx-opacity: 0.55;
+}
+
+.array-cell-reserved-marker {
+    -fx-font-size: 14px;
+    -fx-text-fill: #1e3a5f;
+    -fx-alignment: CENTER;
+}
+
+.array-size-boundary {
+    -fx-text-fill: #22d3ee;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.array-boundary-dynamic {
+    -fx-text-fill: #0ea5e9;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-opacity: 0.60;
+}

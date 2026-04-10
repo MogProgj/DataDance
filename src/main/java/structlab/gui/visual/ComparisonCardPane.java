@@ -39,6 +39,8 @@ public class ComparisonCardPane extends VBox {
     private DoublyLinkedListVisualPane doublyLinkedListPane;
     private ArrayDequeVisualPane arrayDequePane;
     private LinkedDequeVisualPane linkedDequePane;
+    private FixedArrayVisualPane fixedArrayPane;
+    private DynamicArrayVisualPane dynamicArrayPane;
 
     public ComparisonCardPane() {
         getStyleClass().add("comparison-card");
@@ -244,6 +246,16 @@ public class ComparisonCardPane extends VBox {
                 if (linkedDequePane == null) linkedDequePane = new LinkedDequeVisualPane();
                 linkedDequePane.update(StateModelParser.parseLinkedDeque(snapshot));
                 yield linkedDequePane;
+            }
+            case "FixedArray" -> {
+                if (fixedArrayPane == null) fixedArrayPane = new FixedArrayVisualPane();
+                fixedArrayPane.update(StateModelParser.parseFixedArray(snapshot));
+                yield fixedArrayPane;
+            }
+            case "DynamicArray" -> {
+                if (dynamicArrayPane == null) dynamicArrayPane = new DynamicArrayVisualPane();
+                dynamicArrayPane.update(StateModelParser.parseDynamicArray(snapshot));
+                yield dynamicArrayPane;
             }
             default -> null;
         };

@@ -23,6 +23,8 @@ public final class VisualStateFactory {
     private static DoublyLinkedListVisualPane doublyLinkedListPane;
     private static ArrayDequeVisualPane arrayDequePane;
     private static LinkedDequeVisualPane linkedDequePane;
+    private static FixedArrayVisualPane fixedArrayPane;
+    private static DynamicArrayVisualPane dynamicArrayPane;
 
     /**
      * Returns true if the given snapshot type has a visual state component.
@@ -37,7 +39,8 @@ public final class VisualStateFactory {
                  "HashTableChaining", "HashTableOpenAddressing",
                  "HashSetCustom",
                  "SinglyLinkedList", "DoublyLinkedList",
-                 "ArrayDequeCustom", "LinkedDeque" -> true;
+                 "ArrayDequeCustom", "LinkedDeque",
+                 "FixedArray", "DynamicArray" -> true;
             default -> false;
         };
     }
@@ -119,6 +122,16 @@ public final class VisualStateFactory {
                 linkedDequePane.update(StateModelParser.parseLinkedDeque(snapshot));
                 yield linkedDequePane;
             }
+            case "FixedArray" -> {
+                if (fixedArrayPane == null) fixedArrayPane = new FixedArrayVisualPane();
+                fixedArrayPane.update(StateModelParser.parseFixedArray(snapshot));
+                yield fixedArrayPane;
+            }
+            case "DynamicArray" -> {
+                if (dynamicArrayPane == null) dynamicArrayPane = new DynamicArrayVisualPane();
+                dynamicArrayPane.update(StateModelParser.parseDynamicArray(snapshot));
+                yield dynamicArrayPane;
+            }
             default -> null;
         };
     }
@@ -140,5 +153,7 @@ public final class VisualStateFactory {
         doublyLinkedListPane = null;
         arrayDequePane = null;
         linkedDequePane = null;
+        fixedArrayPane = null;
+        dynamicArrayPane = null;
     }
 }

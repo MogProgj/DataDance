@@ -80,6 +80,15 @@ public final class CanonicalOperationRegistry {
                 new CanonicalOperation("peekfirst", Set.of("front", "first"), "View front element", 0),
                 new CanonicalOperation("peeklast", Set.of("back", "last", "rear"), "View back element", 0)
         ));
+
+        // ── Array family ────────────────────────────────────
+        FAMILY_MAP.put("array", List.of(
+                new CanonicalOperation("append", Set.of("add", "push"), "Append element at end", 1),
+                new CanonicalOperation("insert", Set.of("insertat"), "Insert element at index", 2),
+                new CanonicalOperation("removeat", Set.of("remove", "delete"), "Remove element at index", 1),
+                new CanonicalOperation("get", Set.of("getat", "access"), "Get element by index", 1),
+                new CanonicalOperation("set", Set.of("setat", "update"), "Set element at index", 2)
+        ));
     }
 
     private CanonicalOperationRegistry() {}
