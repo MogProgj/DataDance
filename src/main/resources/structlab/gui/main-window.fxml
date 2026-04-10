@@ -4,134 +4,165 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="structlab.gui.controller.MainWindowController"
-            stylesheets="@styles.css"
-            prefWidth="1400" prefHeight="850">
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="structlab.gui.controller.MainWindowController"
+      stylesheets="@styles.css"
+      prefWidth="1400" prefHeight="850">
 
-    <!-- Top: App header bar -->
-    <top>
-        <HBox styleClass="toolbar" alignment="CENTER_LEFT" spacing="12">
-            <padding><Insets top="10" bottom="10" left="20" right="20"/></padding>
-            <Label text="StructLab" styleClass="app-title"/>
-            <Label text="Data Structure Simulator" styleClass="status-label">
-                <padding><Insets left="8"/></padding>
-            </Label>
-            <Region HBox.hgrow="ALWAYS"/>
-            <Label fx:id="statusLabel" text="Discovery Mode" styleClass="status-label"/>
-        </HBox>
-    </top>
+    <!-- ═══════════════════════════════════════════════════════
+         Main body: nav-rail | context-panel | workspace | inspector
+         ═══════════════════════════════════════════════════════ -->
+    <HBox VBox.vgrow="ALWAYS">
 
-    <!-- Left: Discovery panel -->
-    <left>
-        <VBox prefWidth="280" styleClass="side-panel" spacing="10">
-            <padding><Insets top="16" bottom="16" left="14" right="14"/></padding>
+        <!-- ═══ Navigation Rail (far-left, slim) ═══ -->
+        <VBox styleClass="nav-rail" prefWidth="56" minWidth="56" maxWidth="56"
+              alignment="TOP_CENTER">
+            <padding><Insets top="14" bottom="14" left="0" right="0"/></padding>
+
+            <Label text="SL" styleClass="nav-logo"/>
+            <Region prefHeight="20"/>
+
+            <VBox spacing="2" alignment="TOP_CENTER">
+                <Button fx:id="navExploreBtn" text="Explore"
+                        styleClass="nav-btn" onAction="#onNavExplore"/>
+                <Button fx:id="navCompareBtn" text="Compare"
+                        styleClass="nav-btn" onAction="#onNavCompare"/>
+            </VBox>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <VBox spacing="2" alignment="BOTTOM_CENTER">
+                <Button text="History" styleClass="nav-btn" disable="true"/>
+                <Button text="Settings" styleClass="nav-btn" disable="true"/>
+            </VBox>
+        </VBox>
+
+        <!-- ═══ Context Panel (structures + implementations) ═══ -->
+        <VBox styleClass="context-panel" prefWidth="252" spacing="8">
+            <padding><Insets top="16" bottom="16" left="12" right="12"/></padding>
 
             <Label text="STRUCTURES" styleClass="section-header"/>
             <ListView fx:id="structureListView" VBox.vgrow="ALWAYS"/>
 
-            <Separator/>
-
             <Label text="IMPLEMENTATIONS" styleClass="section-header"/>
-            <ListView fx:id="implementationListView" prefHeight="160"/>
+            <ListView fx:id="implementationListView" prefHeight="140"/>
 
             <VBox spacing="6">
+                <padding><Insets top="4"/></padding>
                 <Button fx:id="openSessionButton" text="Open Session"
                         onAction="#onOpenSession" maxWidth="Infinity"
                         styleClass="primary-button" disable="true"/>
-
                 <Button fx:id="compareAllButton" text="Compare All"
                         onAction="#onCompareAll" maxWidth="Infinity"
-                        styleClass="secondary-button" disable="true"/>
+                        styleClass="accent-button" disable="true"/>
             </VBox>
         </VBox>
-    </left>
 
-    <!-- Center: Main workspace -->
-    <center>
-        <VBox styleClass="center-panel" spacing="8">
-            <padding><Insets top="14" bottom="14" left="14" right="14"/></padding>
+        <!-- ═══ Center Workspace ═══ -->
+        <VBox styleClass="workspace" HBox.hgrow="ALWAYS">
 
-            <!-- Structure details card -->
-            <TitledPane text="Structure Details" expanded="true" animated="false"
-                        styleClass="section-pane">
-                <VBox fx:id="structureDetailBox" spacing="6" styleClass="detail-box">
-                    <padding><Insets top="10" bottom="10" left="12" right="12"/></padding>
-                    <Label fx:id="detailNameLabel" text="Select a structure to view details." styleClass="detail-name"/>
-                    <Label fx:id="detailCategoryLabel" text="" styleClass="info-label"/>
-                    <Label fx:id="detailDescriptionLabel" text="" wrapText="true" styleClass="detail-description"/>
-                    <Label fx:id="detailKeywordsLabel" text="" styleClass="detail-keywords"/>
+            <!-- Workspace header bar -->
+            <HBox styleClass="workspace-header" alignment="CENTER_LEFT" spacing="12">
+                <padding><Insets top="10" bottom="10" left="20" right="20"/></padding>
+                <Label fx:id="workspaceTitleLabel" text="StructLab" styleClass="workspace-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="statusLabel" text="Discovery" styleClass="mode-badge"/>
+            </HBox>
+
+            <!-- Workspace content area -->
+            <VBox styleClass="workspace-content" spacing="12" VBox.vgrow="ALWAYS">
+                <padding><Insets top="16" bottom="16" left="20" right="20"/></padding>
+
+                <!-- Structure Details Card -->
+                <VBox styleClass="card">
+                    <HBox styleClass="card-header" alignment="CENTER_LEFT">
+                        <Label text="Structure Details" styleClass="card-title"/>
+                    </HBox>
+                    <VBox styleClass="card-body" spacing="4">
+                        <Label fx:id="detailNameLabel"
+                               text="Select a structure to begin exploring."
+                               styleClass="detail-name"/>
+                        <Label fx:id="detailCategoryLabel" text="" styleClass="info-label"/>
+                        <Label fx:id="detailDescriptionLabel" text=""
+                               wrapText="true" styleClass="detail-description"/>
+                        <Label fx:id="detailKeywordsLabel" text="" styleClass="detail-keywords"/>
+                    </VBox>
                 </VBox>
-            </TitledPane>
 
-            <!-- Structure State — main workspace area -->
-            <TitledPane text="Structure State" expanded="true" animated="false"
-                        styleClass="section-pane" VBox.vgrow="ALWAYS">
-                <TextArea fx:id="stateArea" editable="false" wrapText="true"
-                          styleClass="mono-area"
-                          promptText="Open a session to see structure state here."/>
-            </TitledPane>
+                <!-- Structure State Card (fills remaining space) -->
+                <VBox styleClass="card" VBox.vgrow="ALWAYS">
+                    <HBox styleClass="card-header" alignment="CENTER_LEFT">
+                        <Label text="Structure State" styleClass="card-title"/>
+                    </HBox>
+                    <VBox styleClass="card-body" VBox.vgrow="ALWAYS">
+                        <TextArea fx:id="stateArea" editable="false" wrapText="true"
+                                  styleClass="mono-area" VBox.vgrow="ALWAYS"
+                                  promptText="Open a session to see the live structure state."/>
+                    </VBox>
+                </VBox>
 
-            <!-- Trace output -->
-            <TitledPane text="Trace Log" expanded="true" animated="false"
-                        styleClass="section-pane">
-                <TextArea fx:id="traceArea" editable="false" wrapText="true"
-                          prefHeight="180" styleClass="mono-area"
-                          promptText="Trace output will appear here after operations."/>
-            </TitledPane>
+                <!-- Trace Log Card -->
+                <VBox styleClass="card">
+                    <HBox styleClass="card-header" alignment="CENTER_LEFT">
+                        <Label text="Trace Log" styleClass="card-title"/>
+                    </HBox>
+                    <VBox styleClass="card-body">
+                        <TextArea fx:id="traceArea" editable="false" wrapText="true"
+                                  prefHeight="150" styleClass="mono-area"
+                                  promptText="Execution traces appear here after operations."/>
+                    </VBox>
+                </VBox>
+            </VBox>
         </VBox>
-    </center>
 
-    <!-- Right: Session inspector / operations panel -->
-    <right>
-        <VBox prefWidth="300" styleClass="side-panel" spacing="10">
-            <padding><Insets top="16" bottom="16" left="14" right="14"/></padding>
+        <!-- ═══ Inspector Panel (session + operations + history) ═══ -->
+        <VBox styleClass="inspector-panel" prefWidth="280" spacing="8">
+            <padding><Insets top="16" bottom="16" left="12" right="12"/></padding>
 
-            <!-- Session info card -->
-            <Label text="SESSION" styleClass="section-header"/>
-            <VBox fx:id="sessionInfoBox" spacing="4">
-                <Label fx:id="sessionStructureLabel" text="No active session" styleClass="info-label"/>
+            <!-- Session card -->
+            <VBox styleClass="inspector-card" spacing="4">
+                <Label text="SESSION" styleClass="section-header"/>
+                <Label fx:id="sessionStructureLabel" text="No active session"
+                       styleClass="info-label"/>
                 <Label fx:id="sessionImplLabel" text="" styleClass="info-label"/>
                 <Label fx:id="sessionOpsCountLabel" text="" styleClass="info-label"/>
+                <HBox spacing="6">
+                    <padding><Insets top="6"/></padding>
+                    <Button fx:id="resetButton" text="Reset" onAction="#onReset"
+                            styleClass="secondary-button" disable="true"
+                            HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    <Button fx:id="closeSessionButton" text="Close" onAction="#onCloseSession"
+                            styleClass="secondary-button" disable="true"
+                            HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                </HBox>
             </VBox>
-
-            <HBox spacing="8">
-                <Button fx:id="resetButton" text="Reset" onAction="#onReset"
-                        styleClass="secondary-button" disable="true" HBox.hgrow="ALWAYS"
-                        maxWidth="Infinity"/>
-                <Button fx:id="closeSessionButton" text="Close" onAction="#onCloseSession"
-                        styleClass="secondary-button" disable="true" HBox.hgrow="ALWAYS"
-                        maxWidth="Infinity"/>
-            </HBox>
 
             <Separator/>
 
             <!-- Operations -->
             <Label text="OPERATIONS" styleClass="section-header"/>
-            <ListView fx:id="operationListView" prefHeight="150"/>
+            <ListView fx:id="operationListView" prefHeight="130"/>
 
-            <HBox spacing="8" alignment="CENTER_LEFT">
+            <HBox spacing="6" alignment="CENTER_LEFT">
                 <TextField fx:id="argField" promptText="select an operation"
-                           onAction="#onExecuteOperation"
-                           HBox.hgrow="ALWAYS"/>
+                           onAction="#onExecuteOperation" HBox.hgrow="ALWAYS"/>
                 <Button fx:id="executeButton" text="Run" onAction="#onExecuteOperation"
                         styleClass="primary-button" disable="true"/>
             </HBox>
 
             <Separator/>
 
-            <!-- History -->
-            <Label text="HISTORY" styleClass="section-header"/>
+            <!-- Activity / History -->
+            <Label text="ACTIVITY" styleClass="section-header"/>
             <ListView fx:id="historyListView" VBox.vgrow="ALWAYS"/>
         </VBox>
-    </right>
 
-    <!-- Bottom: Status bar -->
-    <bottom>
-        <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="8">
-            <padding><Insets top="5" bottom="5" left="16" right="16"/></padding>
-            <Label fx:id="bottomStatusLabel" text="Ready" styleClass="status-text"/>
-        </HBox>
-    </bottom>
+    </HBox>
 
-</BorderPane>
+    <!-- ═══ Status Bar ═══ -->
+    <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="10">
+        <padding><Insets top="4" bottom="4" left="16" right="16"/></padding>
+        <Label fx:id="bottomStatusLabel" text="Ready" styleClass="status-text"/>
+    </HBox>
+
+</VBox>

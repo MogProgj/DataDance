@@ -50,6 +50,13 @@ public class MainWindowController {
     @FXML private Label statusLabel;
     @FXML private Label bottomStatusLabel;
 
+    // ── Navigation rail ─────────────────────────────────────────
+    @FXML private Button navExploreBtn;
+    @FXML private Button navCompareBtn;
+
+    // ── Workspace header ────────────────────────────────────────
+    @FXML private Label workspaceTitleLabel;
+
     private StructLabService service;
     private boolean comparisonMode = false;
 
@@ -65,6 +72,9 @@ public class MainWindowController {
     public void initialize() {
         setupCellFactories();
         setupSelectionListeners();
+        if (navExploreBtn != null) {
+            navExploreBtn.getStyleClass().add("nav-btn-active");
+        }
     }
 
     // ── Cell factories ──────────────────────────────────────────
@@ -165,7 +175,9 @@ public class MainWindowController {
             refreshHistory();
             refreshTrace();
             setSessionButtonStates(true);
-            statusLabel.setText("Session: " + snapshot.structureName() + " / " + snapshot.implementationName());
+            statusLabel.setText("Session");
+            workspaceTitleLabel.setText(snapshot.structureName() + " \u2014 " + snapshot.implementationName());
+            updateNavState();
             setStatus("Session opened for " + snapshot.implementationName() + ".");
         } catch (Exception e) {
             showError("Failed to open session", e.getMessage());
@@ -200,7 +212,9 @@ public class MainWindowController {
             historyListView.setItems(FXCollections.observableArrayList());
 
             setSessionButtonStates(true);
-            statusLabel.setText("Compare: " + cs.getStructureName());
+            statusLabel.setText("Compare");
+            workspaceTitleLabel.setText("Compare \u2014 " + cs.getStructureName());
+            updateNavState();
             setStatus("Comparison session opened for " + cs.getStructureName() + " with " + cs.entryCount() + " implementations.");
         } catch (Exception e) {
             showError("Failed to open comparison session", e.getMessage());
@@ -344,7 +358,7 @@ public class MainWindowController {
     }
 
     private void clearStructureDetail() {
-        detailNameLabel.setText("Select a structure to view details.");
+        detailNameLabel.setText("Select a structure to begin exploring.");
         detailCategoryLabel.setText("");
         detailDescriptionLabel.setText("");
         detailKeywordsLabel.setText("");
@@ -438,7 +452,9 @@ public class MainWindowController {
         historyListView.getItems().clear();
         argField.clear();
 
-        statusLabel.setText("Discovery Mode");
+        statusLabel.setText("Discovery");
+        workspaceTitleLabel.setText("StructLab");
+        updateNavState();
         setSessionButtonStates(false);
     }
 
@@ -453,5 +469,34 @@ public class MainWindowController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    // ── Navigation rail ─────────────────────────────────────────
+
+    @FXML
+    private void onNavExplore() {
+        if (comparisonMode) {
+            onCloseSession();
+        }
+        updateNavState();
+    }
+
+    @FXML
+    private void onNavCompare() {
+        if (!comparisonMode && !service.hasActiveSession()) {
+            onCompareAll();
+        } else if (service.hasActiveSession() && !comparisonMode) {
+            setStatus("Close the current session before comparing.");
+        }
+    }
+
+    private void updateNavState() {
+        navExploreBtn.getStyleClass().removeAll("nav-btn-active");
+        navCompareBtn.getStyleClass().removeAll("nav-btn-active");
+        if (comparisonMode) {
+            navCompareBtn.getStyleClass().add("nav-btn-active");
+        } else {
+            navExploreBtn.getStyleClass().add("nav-btn-active");
+        }
     }
 }
