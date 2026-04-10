@@ -8,7 +8,10 @@ import structlab.trace.TraceStep;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * A comparison session holds multiple runtimes for the same structure family
@@ -50,7 +53,10 @@ public class ComparisonSession implements StructureSession {
 
     /**
      * Returns the common operations across all participating implementations.
-     * Only operations supported by every runtime are considered comparable.
+     * Uses alias-aware matching: operations are considered equivalent if they share
+     * the same canonical name or any known aliases. This prevents comparison mode
+     * from collapsing to a minimal set when implementations use different naming
+     * conventions (e.g., "insert" vs "enqueue" in the heap family).
      */
     public List<OperationDescriptor> getCommonOperations() {
         if (entries.isEmpty()) return List.of();
@@ -58,15 +64,40 @@ public class ComparisonSession implements StructureSession {
         // Start with the first runtime's operations
         List<OperationDescriptor> common = new ArrayList<>(entries.get(0).getRuntime().getAvailableOperations());
 
-        // Retain only those whose names appear in every other runtime
+        // Retain only those that have a semantic match in every other runtime
         for (int i = 1; i < entries.size(); i++) {
             StructureRuntime runtime = entries.get(i).getRuntime();
-            List<String> names = runtime.getAvailableOperations().stream()
-                    .map(OperationDescriptor::name)
-                    .toList();
-            common.removeIf(op -> !names.contains(op.name()));
+            Set<String> allNames = collectAllNames(runtime);
+            common.removeIf(op -> !matchesAny(op, allNames));
         }
         return Collections.unmodifiableList(common);
+    }
+
+    /**
+     * Collects all operation names AND aliases from a runtime into a lower-case set.
+     */
+    private Set<String> collectAllNames(StructureRuntime runtime) {
+        Set<String> names = new HashSet<>();
+        for (OperationDescriptor op : runtime.getAvailableOperations()) {
+            names.add(op.name().toLowerCase(Locale.ROOT));
+            if (op.aliases() != null) {
+                op.aliases().forEach(a -> names.add(a.toLowerCase(Locale.ROOT)));
+            }
+        }
+        return names;
+    }
+
+    /**
+     * Returns true if the operation's name or any of its aliases appear in the name set.
+     */
+    private boolean matchesAny(OperationDescriptor op, Set<String> nameSet) {
+        if (nameSet.contains(op.name().toLowerCase(Locale.ROOT))) return true;
+        if (op.aliases() != null) {
+            for (String alias : op.aliases()) {
+                if (nameSet.contains(alias.toLowerCase(Locale.ROOT))) return true;
+            }
+        }
+        return false;
     }
 
     /**

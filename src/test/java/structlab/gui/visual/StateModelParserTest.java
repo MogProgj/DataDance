@@ -190,4 +190,68 @@ class StateModelParserTest {
         assertEquals("10", model.front());
         assertEquals("20", model.rear());
     }
+
+    // ── parseBinaryHeap ─────────────────────────────────────
+
+    @Test
+    void parseBinaryHeapEmpty() {
+        String snap = "BinaryHeap{size=0, min=null, elements=DynamicArray{size=0, capacity=4, elements=[], raw=[null, null, null, null]}}";
+        HeapStateModel model = StateModelParser.parseBinaryHeap(snap);
+        assertEquals(0, model.size());
+        assertEquals("null", model.minValue());
+        assertTrue(model.elements().isEmpty());
+        assertTrue(model.isEmpty());
+    }
+
+    @Test
+    void parseBinaryHeapWithElements() {
+        String snap = "BinaryHeap{size=3, min=5, elements=DynamicArray{size=3, capacity=4, elements=[5, 10, 15], raw=[5, 10, 15, null]}}";
+        HeapStateModel model = StateModelParser.parseBinaryHeap(snap);
+        assertEquals(3, model.size());
+        assertEquals("5", model.minValue());
+        assertEquals(List.of("5", "10", "15"), model.elements());
+        assertEquals(4, model.capacity());
+    }
+
+    @Test
+    void parseBinaryHeapSingleElement() {
+        String snap = "BinaryHeap{size=1, min=42, elements=DynamicArray{size=1, capacity=4, elements=[42], raw=[42, null, null, null]}}";
+        HeapStateModel model = StateModelParser.parseBinaryHeap(snap);
+        assertEquals(1, model.size());
+        assertEquals("42", model.minValue());
+        assertEquals(List.of("42"), model.elements());
+    }
+
+    // ── parseHeapPriorityQueue ──────────────────────────────
+
+    @Test
+    void parseHeapPriorityQueueEmpty() {
+        String snap = "HeapPriorityQueue{size=0, front=null, heap=BinaryHeap{size=0, min=null, elements=DynamicArray{size=0, capacity=4, elements=[], raw=[null, null, null, null]}}}";
+        HeapStateModel model = StateModelParser.parseHeapPriorityQueue(snap);
+        assertEquals(0, model.size());
+        assertTrue(model.isEmpty());
+    }
+
+    @Test
+    void parseHeapPriorityQueueWithElements() {
+        String snap = "HeapPriorityQueue{size=3, front=5, heap=BinaryHeap{size=3, min=5, elements=DynamicArray{size=3, capacity=4, elements=[5, 10, 15], raw=[5, 10, 15, null]}}}";
+        HeapStateModel model = StateModelParser.parseHeapPriorityQueue(snap);
+        assertEquals(3, model.size());
+        assertEquals("5", model.minValue());
+        assertEquals(List.of("5", "10", "15"), model.elements());
+    }
+
+    // ── structureType for heaps ─────────────────────────────
+
+    @Test
+    void structureTypeExtractsBinaryHeap() {
+        assertEquals("BinaryHeap",
+                StateModelParser.structureType("BinaryHeap{size=0, min=null, elements=DynamicArray{size=0, capacity=4, elements=[], raw=[null, null, null, null]}}"));
+    }
+
+    @Test
+    void structureTypeExtractsHeapPriorityQueue() {
+        assertEquals("HeapPriorityQueue",
+                StateModelParser.structureType("HeapPriorityQueue{size=0, front=null, heap=BinaryHeap{size=0, min=null, elements=DynamicArray{size=0, capacity=4, elements=[], raw=[null, null, null, null]}}}"));
+    }
 }

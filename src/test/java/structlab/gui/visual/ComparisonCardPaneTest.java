@@ -39,9 +39,9 @@ class ComparisonCardPaneTest {
     @Test
     void updateStateWithUnsupportedFallsBack() {
         ComparisonCardPane card = new ComparisonCardPane();
-        String snap = "BinaryHeap{size=2, root=5, elements=[5, 10]}";
-        String rendered = "BinaryHeap rendered text";
-        assertDoesNotThrow(() -> card.updateState("BinaryHeap", snap, rendered));
+        String snap = "SinglyLinkedList{size=2, head=5, chain=[5 -> 10]}";
+        String rendered = "SinglyLinkedList rendered text";
+        assertDoesNotThrow(() -> card.updateState("SinglyLinkedList", snap, rendered));
     }
 
     @Test

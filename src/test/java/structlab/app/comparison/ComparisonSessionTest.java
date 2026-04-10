@@ -58,6 +58,15 @@ class ComparisonSessionTest {
         return new ComparisonSession("struct-hash", "Hash Table", entries);
     }
 
+    private ComparisonSession openHeapComparison() {
+        StructureMetadata sm = registry.getStructureById("struct-heap").orElseThrow();
+        List<ImplementationMetadata> impls = registry.getImplementationsFor("struct-heap");
+        List<ComparisonRuntimeEntry> entries = impls.stream()
+                .map(im -> new ComparisonRuntimeEntry(im.id(), im.name(), RuntimeFactory.createRuntime(sm, im)))
+                .toList();
+        return new ComparisonSession("struct-heap", "Heap", entries);
+    }
+
     // ── Construction ──────────────────────────────────────
 
     @Nested
@@ -112,6 +121,35 @@ class ComparisonSessionTest {
             assertFalse(ops.isEmpty());
             assertTrue(ops.stream().anyMatch(o -> o.name().equals("enqueue")));
             assertTrue(ops.stream().anyMatch(o -> o.name().equals("dequeue")));
+        }
+
+        @Test
+        void heapComparisonHasAllThreeCanonicalOps() {
+            ComparisonSession cs = openHeapComparison();
+            List<OperationDescriptor> ops = cs.getCommonOperations();
+            // Must NOT collapse to just peek — should have insert, extractmin, peek
+            assertEquals(3, ops.size(), "Heap comparison should expose all 3 canonical operations");
+            assertTrue(ops.stream().anyMatch(o -> o.name().equals("insert")),
+                    "Heap comparison should include insert");
+            assertTrue(ops.stream().anyMatch(o -> o.name().equals("extractmin")),
+                    "Heap comparison should include extractmin");
+            assertTrue(ops.stream().anyMatch(o -> o.name().equals("peek")),
+                    "Heap comparison should include peek");
+        }
+
+        @Test
+        void heapComparisonMatchesByAlias() {
+            // Verify alias-aware matching: even though HeapPriorityQueue natively
+            // uses enqueue/dequeue, the adapter normalizes to insert/extractmin.
+            // The alias-aware getCommonOperations() ensures this works even if
+            // adapters use different naming.
+            ComparisonSession cs = openHeapComparison();
+            List<OperationDescriptor> ops = cs.getCommonOperations();
+            // insert should have "enqueue" alias
+            OperationDescriptor insertOp = ops.stream()
+                    .filter(o -> o.name().equals("insert")).findFirst().orElseThrow();
+            assertTrue(insertOp.aliases().contains("enqueue"),
+                    "insert op should list enqueue as alias");
         }
 
         @Test
@@ -227,6 +265,29 @@ class ComparisonSessionTest {
             for (ComparisonEntryResult entry : getResult.entryResults()) {
                 assertEquals("100", entry.returnedValue(),
                         "get(1) should return 100 for " + entry.implementationName());
+            }
+        }
+
+        @Test
+        void heapComparisonInsertAndExtractMin() {
+            ComparisonSession cs = openHeapComparison();
+
+            cs.executeAll("insert", List.of("30"));
+            cs.executeAll("insert", List.of("10"));
+            cs.executeAll("insert", List.of("20"));
+
+            ComparisonOperationResult peekResult = cs.executeAll("peek", List.of());
+            assertTrue(peekResult.allSucceeded());
+            for (ComparisonEntryResult entry : peekResult.entryResults()) {
+                assertEquals("10", entry.returnedValue(),
+                        "peek should return min (10) for " + entry.implementationName());
+            }
+
+            ComparisonOperationResult extractResult = cs.executeAll("extractmin", List.of());
+            assertTrue(extractResult.allSucceeded());
+            for (ComparisonEntryResult entry : extractResult.entryResults()) {
+                assertEquals("10", entry.returnedValue(),
+                        "extractmin should return 10 for " + entry.implementationName());
             }
         }
     }

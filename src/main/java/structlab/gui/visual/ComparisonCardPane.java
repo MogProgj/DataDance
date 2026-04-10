@@ -30,6 +30,7 @@ public class ComparisonCardPane extends VBox {
     private StackVisualPane stackPane;
     private QueueVisualPane queuePane;
     private CircularQueueVisualPane circularQueuePane;
+    private HeapVisualPane heapPane;
 
     public ComparisonCardPane() {
         getStyleClass().add("comparison-card");
@@ -190,6 +191,16 @@ public class ComparisonCardPane extends VBox {
                 if (queuePane == null) queuePane = new QueueVisualPane();
                 queuePane.update(StateModelParser.parseTwoStackQueue(snapshot));
                 yield queuePane;
+            }
+            case "BinaryHeap" -> {
+                if (heapPane == null) heapPane = new HeapVisualPane();
+                heapPane.update(StateModelParser.parseBinaryHeap(snapshot));
+                yield heapPane;
+            }
+            case "HeapPriorityQueue" -> {
+                if (heapPane == null) heapPane = new HeapVisualPane();
+                heapPane.update(StateModelParser.parseHeapPriorityQueue(snapshot));
+                yield heapPane;
             }
             default -> null;
         };

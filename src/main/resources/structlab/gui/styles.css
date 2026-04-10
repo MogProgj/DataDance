@@ -1173,3 +1173,99 @@
 .inspector-card:hover {
     -fx-background-color: #282e36;
 }
+
+/* ══════════════════════════════════════════════════════════
+   Phase 2C1 — Heap Visual Pane
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Heap min badge (header accent) ─────────────────────── */
+.heap-min-badge {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 12px;
+    -fx-text-fill: #a78bfa;
+    -fx-background-color: rgba(124, 58, 237, 0.15);
+    -fx-padding: 2 8 2 8;
+    -fx-background-radius: 6;
+    -fx-border-color: rgba(124, 58, 237, 0.35);
+    -fx-border-radius: 6;
+}
+
+/* ── Tree level section ─────────────────────────────────── */
+.heap-tree-section {
+    -fx-padding: 6 0 4 0;
+}
+
+.heap-level-label {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 10px;
+    -fx-text-fill: #6b7280;
+    -fx-padding: 0 6 0 0;
+}
+
+/* ── Tree cells ─────────────────────────────────────────── */
+.heap-tree-cell {
+    -fx-background-color: #1e2530;
+    -fx-border-color: #3b4252;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 4 10 4 10;
+}
+
+.heap-tree-cell-root {
+    -fx-border-color: #7c3aed;
+    -fx-background-color: rgba(124, 58, 237, 0.12);
+    -fx-effect: dropshadow(gaussian, rgba(124, 58, 237, 0.2), 6, 0, 0, 1);
+}
+
+.heap-tree-cell-value {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 13px;
+    -fx-text-fill: #e2e8f0;
+    -fx-font-weight: bold;
+}
+
+.heap-tree-cell-root .heap-tree-cell-value {
+    -fx-text-fill: #c4b5fd;
+}
+
+/* ── Array strip section ────────────────────────────────── */
+.heap-array-section {
+    -fx-padding: 4 0 2 0;
+    -fx-border-color: #2d333b;
+    -fx-border-width: 1 0 0 0;
+}
+
+.heap-array-label {
+    -fx-font-size: 10px;
+    -fx-text-fill: #6b7280;
+    -fx-padding: 0 6 0 0;
+    -fx-alignment: CENTER;
+}
+
+.heap-array-index {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 9px;
+    -fx-text-fill: #4b5563;
+    -fx-alignment: CENTER;
+}
+
+.heap-array-cell {
+    -fx-background-color: #161b22;
+    -fx-border-color: #2d333b;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 2 6 2 6;
+}
+
+.heap-array-cell-root {
+    -fx-border-color: rgba(124, 58, 237, 0.5);
+    -fx-background-color: rgba(124, 58, 237, 0.08);
+}
+
+.heap-array-cell-value {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 11px;
+    -fx-text-fill: #d1d5db;
+}

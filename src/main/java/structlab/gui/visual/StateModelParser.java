@@ -100,4 +100,28 @@ public final class StateModelParser {
 
         return new QueueStateModel(queueOrder, size, front, rear);
     }
+
+    // ── Heap family ─────────────────────────────────────────────────
+
+    /**
+     * Parses a BinaryHeap snapshot into a HeapStateModel.
+     * Snapshot: BinaryHeap{size=N, min=V, elements=DynamicArray{size=N, capacity=C, elements=[...], raw=[...]}}
+     */
+    public static HeapStateModel parseBinaryHeap(String snapshot) {
+        int size = SnapshotParser.intField(snapshot, "size");
+        String min = SnapshotParser.stringField(snapshot, "min");
+        String embedded = SnapshotParser.embeddedSnapshot(snapshot, "elements");
+        List<String> elements = SnapshotParser.listField(embedded, "elements");
+        int capacity = SnapshotParser.intField(embedded, "capacity");
+        return new HeapStateModel(elements, size, min, capacity);
+    }
+
+    /**
+     * Parses a HeapPriorityQueue snapshot into a HeapStateModel.
+     * Snapshot: HeapPriorityQueue{size=N, front=V, heap=BinaryHeap{size=N, min=V, elements=DynamicArray{...}}}
+     */
+    public static HeapStateModel parseHeapPriorityQueue(String snapshot) {
+        String heapSnap = SnapshotParser.embeddedSnapshot(snapshot, "heap");
+        return parseBinaryHeap(heapSnap);
+    }
 }

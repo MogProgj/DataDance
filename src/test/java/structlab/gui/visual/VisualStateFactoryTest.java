@@ -43,8 +43,20 @@ class VisualStateFactoryTest {
     }
 
     @Test
-    void isSupportedReturnsFalseForBinaryHeap() {
+    void isSupportedReturnsTrueForBinaryHeap() {
+        assertTrue(VisualStateFactory.isSupported(
+                "BinaryHeap{size=2, min=5, elements=DynamicArray{size=2, capacity=4, elements=[5, 10], raw=[5, 10, null, null]}}"));
+    }
+
+    @Test
+    void isSupportedReturnsTrueForHeapPriorityQueue() {
+        assertTrue(VisualStateFactory.isSupported(
+                "HeapPriorityQueue{size=2, front=5, heap=BinaryHeap{size=2, min=5, elements=DynamicArray{size=2, capacity=4, elements=[5, 10], raw=[5, 10, null, null]}}}"));
+    }
+
+    @Test
+    void isSupportedReturnsFalseForSinglyLinkedList() {
         assertFalse(VisualStateFactory.isSupported(
-                "BinaryHeap{size=2, root=5, elements=[5, 10]}"));
+                "SinglyLinkedList{size=2, head=5, chain=[5 -> 10]}"));
     }
 }

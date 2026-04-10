@@ -14,6 +14,7 @@ public final class VisualStateFactory {
     private static StackVisualPane stackPane;
     private static QueueVisualPane queuePane;
     private static CircularQueueVisualPane circularQueuePane;
+    private static HeapVisualPane heapPane;
 
     /**
      * Returns true if the given snapshot type has a visual state component.
@@ -23,7 +24,8 @@ public final class VisualStateFactory {
         return switch (type) {
             case "ArrayStack", "LinkedStack",
                  "LinkedQueue", "TwoStackQueue",
-                 "CircularArrayQueue" -> true;
+                 "CircularArrayQueue",
+                 "BinaryHeap", "HeapPriorityQueue" -> true;
             default -> false;
         };
     }
@@ -60,6 +62,16 @@ public final class VisualStateFactory {
                 queuePane.update(StateModelParser.parseTwoStackQueue(snapshot));
                 yield queuePane;
             }
+            case "BinaryHeap" -> {
+                if (heapPane == null) heapPane = new HeapVisualPane();
+                heapPane.update(StateModelParser.parseBinaryHeap(snapshot));
+                yield heapPane;
+            }
+            case "HeapPriorityQueue" -> {
+                if (heapPane == null) heapPane = new HeapVisualPane();
+                heapPane.update(StateModelParser.parseHeapPriorityQueue(snapshot));
+                yield heapPane;
+            }
             default -> null;
         };
     }
@@ -72,5 +84,6 @@ public final class VisualStateFactory {
         stackPane = null;
         queuePane = null;
         circularQueuePane = null;
+        heapPane = null;
     }
 }
