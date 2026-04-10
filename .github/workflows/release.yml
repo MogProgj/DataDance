@@ -59,6 +59,7 @@ jobs:
 
       - name: Set Maven version from tag
         run: |
+          chmod +x ./mvnw
           ./mvnw -B -ntp versions:set -DnewVersion=${{ steps.version.outputs.version }}
           ./mvnw -B -ntp versions:commit
 

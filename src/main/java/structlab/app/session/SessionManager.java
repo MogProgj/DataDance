@@ -1,5 +1,7 @@
 package structlab.app.session;
 
+import structlab.app.comparison.ComparisonSession;
+
 import java.util.Optional;
 
 public class SessionManager {
@@ -18,6 +20,17 @@ public class SessionManager {
             return Optional.of(ass);
         }
         return Optional.empty();
+    }
+
+    public Optional<ComparisonSession> getComparisonSession() {
+        if (activeSession instanceof ComparisonSession cs) {
+            return Optional.of(cs);
+        }
+        return Optional.empty();
+    }
+
+    public boolean isComparisonMode() {
+        return activeSession instanceof ComparisonSession;
     }
 
     public void startSession(StructureSession session) {

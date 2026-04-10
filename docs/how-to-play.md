@@ -122,3 +122,82 @@ structlab[stack/linked-stack]> close
 
 structlab> quit
 ```
+
+---
+
+## 3. Comparison Mode
+
+Comparison mode lets you run the same operations on all implementations of a
+structure simultaneously and see the results side-by-side.
+
+### Entering Comparison Mode
+
+```
+structlab> compare stack
+```
+
+This opens a comparison session for all Stack implementations (Array Stack and
+Linked Stack). Your prompt changes to:
+
+```
+structlab[compare:stack]>
+```
+
+To compare only specific implementations:
+
+```
+structlab> compare queue impl-linked-queue impl-two-stack-queue
+```
+
+### Running Operations
+
+Type operations directly — they execute on all implementations at once:
+
+```
+structlab[compare:stack]> push 42
+structlab[compare:stack]> push 99
+structlab[compare:stack]> pop
+```
+
+Each operation shows a side-by-side comparison of the result, returned value,
+state, and trace step count for every implementation.
+
+### Comparison Commands
+
+| Command | Alias | Description |
+|---|---|---|
+| `compare <id>` | `cmp` | Open comparison mode (no args = list eligible) |
+| `compare-ops` | `cmp-ops` | List common operations |
+| `compare-state` | `cmp-state` | Show all implementation states |
+| `compare-trace` | `cmp-trace` | Show traces from last operation |
+| `compare-history` | `cmp-history` | Show comparison history |
+| `compare-session` | `cmp-session` | Show session info |
+| `compare-reset` | `cmp-reset` | Reset all to empty |
+| `close` | `back` | Exit comparison mode |
+
+### Example Comparison Flow
+
+```text
+structlab> compare stack
+(Opens comparison session with Array Stack and Linked Stack)
+
+structlab[compare:stack]> push 42
+(Both implementations push 42 — results shown side-by-side)
+
+structlab[compare:stack]> push 99
+
+structlab[compare:stack]> cmp-state
+(Shows the internal state of both Array Stack and Linked Stack)
+
+structlab[compare:stack]> pop
+(Both return 99 — shows consistency across implementations)
+
+structlab[compare:stack]> cmp-trace
+(Shows the step-by-step trace for each implementation's last pop)
+
+structlab[compare:stack]> cmp-reset
+(Both implementations reset to empty)
+
+structlab[compare:stack]> close
+(Back to Discovery Mode)
+```

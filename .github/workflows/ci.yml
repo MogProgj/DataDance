@@ -44,7 +44,9 @@ jobs:
           restore-keys: ${{ runner.os }}-maven-
 
       - name: mvn verify
-        run: ./mvnw -B -ntp clean verify
+        run: |
+          chmod +x ./mvnw
+          ./mvnw -B -ntp clean verify
 
       - name: Upload JaCoCo report
         if: always()
@@ -77,7 +79,9 @@ jobs:
           restore-keys: ${{ runner.os }}-maven-
 
       - name: Build package (skip tests — already passed)
-        run: ./mvnw -B -ntp clean package -DskipTests
+        run: |
+          chmod +x ./mvnw
+          ./mvnw -B -ntp clean package -DskipTests
 
       - name: Upload packaged JAR
         uses: actions/upload-artifact@v4

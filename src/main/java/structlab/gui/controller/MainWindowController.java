@@ -4,7 +4,10 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
+import structlab.app.comparison.ComparisonOperationResult;
+import structlab.app.comparison.ComparisonSession;
 import structlab.app.service.*;
+import structlab.gui.GuiComparisonRenderer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +19,7 @@ public class MainWindowController {
     @FXML private ListView<StructureSummary> structureListView;
     @FXML private ListView<ImplementationSummary> implementationListView;
     @FXML private Button openSessionButton;
+    @FXML private Button compareAllButton;
 
     // ── Center panel: structure details ──────────────────────────
     @FXML private Label detailNameLabel;
@@ -47,6 +51,7 @@ public class MainWindowController {
     @FXML private Label bottomStatusLabel;
 
     private StructLabService service;
+    private boolean comparisonMode = false;
 
     // ── Lifecycle ───────────────────────────────────────────────
 
@@ -89,13 +94,14 @@ public class MainWindowController {
                     setText(null);
                     setTooltip(null);
                 } else {
-                    String aliases = item.aliases().isEmpty() ? "" : " (" + String.join(", ", item.aliases()) + ")";
                     String mutatesMark = item.mutates() ? " [mut]" : "";
-                    setText(item.name() + aliases + "  " + item.complexityNote() + mutatesMark);
+                    setText(item.name() + "  " + item.complexityNote() + mutatesMark);
                     setTooltip(new Tooltip(
-                            item.description() + "\nUsage: " + item.usage() +
-                            "\nMutates: " + (item.mutates() ? "Yes" : "No") +
-                            "\nComplexity: " + item.complexityNote()
+                            item.description()
+                            + (item.aliases().isEmpty() ? "" : "\nAliases: " + String.join(", ", item.aliases()))
+                            + "\nUsage: " + item.usage()
+                            + "\nMutates: " + (item.mutates() ? "Yes" : "No")
+                            + "\nComplexity: " + item.complexityNote()
                     ));
                 }
             }
@@ -130,11 +136,13 @@ public class MainWindowController {
         implementationListView.getItems().clear();
         if (selected == null) {
             clearStructureDetail();
+            compareAllButton.setDisable(true);
             return;
         }
         refreshStructureDetail(selected);
         List<ImplementationSummary> impls = service.getImplementations(selected.id());
         implementationListView.setItems(FXCollections.observableArrayList(impls));
+        compareAllButton.setDisable(impls.size() < 2 || service.hasActiveSession() || comparisonMode);
         updateOpenButtonState();
     }
 
@@ -150,6 +158,7 @@ public class MainWindowController {
 
         try {
             SessionSnapshot snapshot = service.openSession(impl.parentStructureId(), impl.id());
+            comparisonMode = false;
             refreshSessionInfo(snapshot);
             refreshState();
             refreshOperations();
@@ -164,7 +173,43 @@ public class MainWindowController {
     }
 
     @FXML
+    private void onCompareAll() {
+        StructureSummary selected = structureListView.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            setStatus("Select a structure first.");
+            return;
+        }
+
+        try {
+            ComparisonSession cs = service.openComparisonSession(selected.id(), List.of());
+            comparisonMode = true;
+
+            sessionStructureLabel.setText("Compare: " + cs.getStructureName());
+            sessionImplLabel.setText(cs.entryCount() + " implementations");
+            sessionOpsCountLabel.setText("Operations: 0");
+
+            stateArea.setText(GuiComparisonRenderer.renderStates(cs));
+            traceArea.clear();
+
+            List<OperationInfo> ops = cs.getCommonOperations().stream()
+                    .map(o -> new OperationInfo(
+                            o.name(), o.aliases(), o.description(),
+                            o.argCount(), o.usage(), o.mutates(), o.complexityNote()))
+                    .toList();
+            operationListView.setItems(FXCollections.observableArrayList(ops));
+            historyListView.setItems(FXCollections.observableArrayList());
+
+            setSessionButtonStates(true);
+            statusLabel.setText("Compare: " + cs.getStructureName());
+            setStatus("Comparison session opened for " + cs.getStructureName() + " with " + cs.entryCount() + " implementations.");
+        } catch (Exception e) {
+            showError("Failed to open comparison session", e.getMessage());
+        }
+    }
+
+    @FXML
     private void onCloseSession() {
+        comparisonMode = false;
         service.closeSession();
         clearSessionUI();
         setStatus("Session closed.");
@@ -173,12 +218,22 @@ public class MainWindowController {
     @FXML
     private void onReset() {
         try {
-            service.resetSession();
-            refreshState();
-            refreshHistory();
-            refreshTrace();
-            refreshSessionOpsCount();
-            setStatus("Session reset to empty state.");
+            if (comparisonMode) {
+                service.resetComparisonSession();
+                ComparisonSession cs = service.requireComparisonSession();
+                stateArea.setText(GuiComparisonRenderer.renderStates(cs));
+                traceArea.clear();
+                historyListView.setItems(FXCollections.observableArrayList());
+                sessionOpsCountLabel.setText("Operations: 0");
+                setStatus("All comparison implementations reset.");
+            } else {
+                service.resetSession();
+                refreshState();
+                refreshHistory();
+                refreshTrace();
+                refreshSessionOpsCount();
+                setStatus("Session reset to empty state.");
+            }
         } catch (Exception e) {
             showError("Reset failed", e.getMessage());
         }
@@ -204,6 +259,19 @@ public class MainWindowController {
             return;
         }
 
+        if (args.size() > selectedOp.argCount()) {
+            setStatus("Too many arguments. Expected " + selectedOp.argCount() + ", got " + args.size() + ". Usage: " + selectedOp.usage());
+            return;
+        }
+
+        if (comparisonMode) {
+            executeComparisonOperation(selectedOp.name(), args);
+        } else {
+            executeSingleOperation(selectedOp, args);
+        }
+    }
+
+    private void executeSingleOperation(OperationInfo selectedOp, List<String> args) {
         try {
             ExecutionResult result = service.executeOperation(selectedOp.name(), args);
             refreshState();
@@ -223,6 +291,38 @@ public class MainWindowController {
             }
         } catch (Exception e) {
             showError("Execution error", e.getMessage());
+        }
+    }
+
+    private void executeComparisonOperation(String opName, List<String> args) {
+        try {
+            ComparisonOperationResult result = service.executeComparisonOperation(opName, args);
+            ComparisonSession cs = service.requireComparisonSession();
+
+            stateArea.setText(GuiComparisonRenderer.renderStates(cs));
+            traceArea.setText(GuiComparisonRenderer.renderCompactTraces(cs));
+            sessionOpsCountLabel.setText("Operations: " + cs.historySize());
+            argField.clear();
+
+            // Refresh history list
+            List<ComparisonOperationResult> history = cs.getHistory();
+            List<String> items = new java.util.ArrayList<>();
+            for (int i = 0; i < history.size(); i++) {
+                ComparisonOperationResult op = history.get(i);
+                String status = op.allSucceeded() ? "[OK]" : "[PARTIAL]";
+                String argsStr = op.args().isEmpty() ? "" : " " + String.join(" ", op.args());
+                items.add(status + " " + (i + 1) + ". " + op.operationName() + argsStr);
+            }
+            historyListView.setItems(FXCollections.observableArrayList(items));
+
+            if (result.allSucceeded()) {
+                setStatus("Compared: " + opName + " — all succeeded");
+            } else {
+                long failCount = result.entryResults().stream().filter(e -> !e.success()).count();
+                setStatus("Compared: " + opName + " — " + failCount + " failed");
+            }
+        } catch (Exception e) {
+            showError("Comparison error", e.getMessage());
         }
     }
 
@@ -324,10 +424,11 @@ public class MainWindowController {
 
     private void updateOpenButtonState() {
         ImplementationSummary sel = implementationListView.getSelectionModel().getSelectedItem();
-        openSessionButton.setDisable(sel == null || service.hasActiveSession());
+        openSessionButton.setDisable(sel == null || service.hasActiveSession() || comparisonMode);
     }
 
     private void clearSessionUI() {
+        comparisonMode = false;
         sessionStructureLabel.setText("No active session");
         sessionImplLabel.setText("");
         sessionOpsCountLabel.setText("");

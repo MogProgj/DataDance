@@ -53,24 +53,30 @@ a swamp.
 
 ## Project status
 
-> **Phase 6 — JavaFX GUI Shell and Service Layer (active)**
+> **Phase 7 — Comparison Mode (active)**
 >
-> Phases 1–5 are complete.  A terminal simulator backend and a JavaFX GUI
-> alpha are both functional.  The project now has a dual-interface
-> architecture: a GUI for primary manual testing and a terminal for
-> secondary smoke/debug usage.
+> Phases 1–6 are complete.  A terminal simulator backend and a JavaFX GUI
+> are both functional.  Phase 7 adds **comparison mode**: run the same
+> operation sequence against multiple implementations of the same ADT and
+> compare results, state, and traces side-by-side.
 >
 > **What works:**
-> - Terminal simulator: full discovery, session, and operation flow
+> - Terminal simulator: full discovery, session, operation, and comparison flow
 > - JavaFX GUI: structure browsing, detail display, session lifecycle,
->   operation execution, state/trace/history rendering
-> - Service facade: clean API consumed by the GUI, tested independently
-> - Backend tests: 280+ automated tests covering core, trace, render,
->   and service layers
+>   operation execution, state/trace/history rendering, comparison mode
+>   via "Compare All" button
+> - Comparison mode: open a comparison session for any structure with 2+
+>   implementations, execute operations across all implementations,
+>   view side-by-side state/trace/history, reset all, close
+> - Supported comparison families: Stack (2), Queue (3), Deque (2),
+>   Heap (2), Array (2), Linked List (2), Hash Table (5)
+> - Service facade: clean API consumed by the GUI and terminal, tested
+>   independently
+> - Backend tests: 400+ automated tests covering core, trace, render,
+>   service, and comparison layers
 >
 > **Current limitations:**
-> - Comparison mode is not yet built
-> - GUI visualisation is ASCII-based; richer graphics are future work
+> - GUI comparison view uses text-based rendering (not rich graphics)
 > - Operations use integer-based interactive values
 
 ---
@@ -94,6 +100,9 @@ a swamp.
 | Heap | Priority queue | `HeapPriorityQueue` | yes | yes | yes |
 | Hash | Hash table (chaining) | `HashTableChaining` | yes | yes | yes |
 | Hash | Hash set | `HashSetCustom` | yes | yes | yes |
+| Hash | Hash table OA (linear) | `HashTableOpenAddressing` | yes | yes | yes |
+| Hash | Hash table OA (quadratic) | `HashTableOpenAddressing` | yes | yes | yes |
+| Hash | Hash table OA (double) | `HashTableOpenAddressing` | yes | yes | yes |
 
 ---
 
@@ -287,6 +296,54 @@ For full details, see:
 - [`docs/gui-playthrough-manual.md`](docs/gui-playthrough-manual.md) — GUI testing manual
 - [`docs/testing-strategy.md`](docs/testing-strategy.md) — testing policy and checklist
 - [`docs/how-to-play.md`](docs/how-to-play.md) — terminal simulator guide
+
+---
+
+## Comparison mode
+
+Comparison mode lets you run the same operation sequence against every
+implementation of an ADT and immediately see how each one behaves.
+
+### Terminal
+
+```
+structlab> compare stack
+  → opens comparison session for all Stack implementations
+
+structlab[compare:stack]> push 42
+  → executes push(42) on Array Stack and Linked Stack, shows side-by-side results
+
+structlab[compare:stack]> cmp-state
+  → shows current state of all implementations
+
+structlab[compare:stack]> cmp-trace
+  → shows trace output from the last operation
+
+structlab[compare:stack]> cmp-reset
+  → resets all implementations to empty
+
+structlab[compare:stack]> close
+  → exits comparison mode
+```
+
+**Commands:**
+
+| Command | Alias | Description |
+|---|---|---|
+| `compare <structure>` | `cmp` | Open comparison mode (or list eligible structures) |
+| `compare-ops` | `cmp-ops` | List operations common to all implementations |
+| `compare-state` | `cmp-state` | Show state of all implementations |
+| `compare-trace` | `cmp-trace` | Show trace from last operation |
+| `compare-history` | `cmp-history` | Show comparison operation history |
+| `compare-session` | `cmp-session` | Show comparison session info |
+| `compare-reset` | `cmp-reset` | Reset all implementations |
+
+### GUI
+
+Select a structure in the left panel and click **Compare All** to open a
+comparison session with all available implementations.  Operations,
+state, and traces update across all implementations in the existing
+center panel.  Click **Close Session** to exit comparison mode.
 
 ---
 

@@ -27,6 +27,7 @@ public class AppShell {
         // Register phase 5 command packages
         DiscoveryCommands.registerAll(this.router);
         structlab.app.command.handlers.SessionCommands.registerAll(this.router);
+        structlab.app.command.handlers.ComparisonCommands.registerAll(this.router);
     }
 
     public void run() {

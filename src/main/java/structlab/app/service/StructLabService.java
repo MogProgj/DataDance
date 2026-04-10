@@ -1,5 +1,9 @@
 package structlab.app.service;
 
+import structlab.app.comparison.ComparisonOperationResult;
+import structlab.app.comparison.ComparisonRuntimeEntry;
+import structlab.app.comparison.ComparisonSession;
+import structlab.app.runtime.OperationDescriptor;
 import structlab.app.runtime.OperationExecutionResult;
 import structlab.app.runtime.RuntimeFactory;
 import structlab.app.runtime.StructureRuntime;
@@ -12,8 +16,8 @@ import structlab.registry.StructureMetadata;
 import structlab.registry.StructureRegistry;
 import structlab.trace.TraceStep;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Facade layer for GUI and programmatic consumers.
@@ -163,6 +167,108 @@ public class StructLabService {
         ActiveStructureSession session = requireSession();
         session.getRuntime().reset();
         session.clearHistory();
+    }
+
+    // ── Comparison mode ────────────────────────────────────────
+
+    /**
+     * List structure families that have 2+ implementations eligible for comparison.
+     */
+    public List<StructureSummary> getComparableStructures() {
+        return registry.getAllStructures().stream()
+                .filter(m -> registry.getImplementationsFor(m.id()).size() >= 2)
+                .map(m -> new StructureSummary(m.id(), m.name(), m.category(), m.keywords(), m.description()))
+                .toList();
+    }
+
+    /**
+     * Open a comparison session for a structure family with the given implementation IDs.
+     * If implIds is empty, auto-groups implementations by their operation signatures
+     * and selects the largest compatible group (>= 2 implementations).
+     */
+    public ComparisonSession openComparisonSession(String structureId, List<String> implIds) {
+        String sId = normalizeStructureId(structureId);
+
+        StructureMetadata sm = registry.getStructureById(sId)
+                .orElseThrow(() -> new IllegalArgumentException("Structure not found: " + sId));
+
+        List<ImplementationMetadata> allImpls = registry.getImplementationsFor(sId);
+        if (allImpls.size() < 2) {
+            throw new IllegalArgumentException("Structure '" + sId + "' has fewer than 2 implementations.");
+        }
+
+        List<ImplementationMetadata> selected;
+        if (implIds == null || implIds.isEmpty()) {
+            selected = selectLargestCompatibleGroup(sm, allImpls);
+        } else {
+            selected = new ArrayList<>();
+            for (String rawId : implIds) {
+                String iId = normalizeImplementationId(rawId);
+                ImplementationMetadata found = allImpls.stream()
+                        .filter(im -> im.id().equals(iId))
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalArgumentException("Implementation not found: " + iId));
+                selected.add(found);
+            }
+            if (selected.size() < 2) {
+                throw new IllegalArgumentException("Comparison requires at least 2 implementations.");
+            }
+        }
+
+        List<ComparisonRuntimeEntry> entries = new ArrayList<>();
+        for (ImplementationMetadata im : selected) {
+            StructureRuntime runtime = RuntimeFactory.createRuntime(sm, im);
+            entries.add(new ComparisonRuntimeEntry(im.id(), im.name(), runtime));
+        }
+
+        ComparisonSession session = new ComparisonSession(sId, sm.name(), entries);
+        sessionManager.startSession(session);
+        return session;
+    }
+
+    public boolean isComparisonMode() {
+        return sessionManager.isComparisonMode();
+    }
+
+    /**
+     * Groups implementations by their operation-name signature and returns
+     * the largest group containing at least 2 implementations.
+     * Falls back to all implementations if every group has only 1 member.
+     */
+    private List<ImplementationMetadata> selectLargestCompatibleGroup(
+            StructureMetadata sm, List<ImplementationMetadata> impls) {
+
+        // Build a map: operation-name-set -> list of impls sharing that set
+        Map<Set<String>, List<ImplementationMetadata>> groups = new LinkedHashMap<>();
+        for (ImplementationMetadata im : impls) {
+            StructureRuntime tmp = RuntimeFactory.createRuntime(sm, im);
+            Set<String> opNames = tmp.getAvailableOperations().stream()
+                    .map(OperationDescriptor::name)
+                    .collect(Collectors.toCollection(TreeSet::new));
+            groups.computeIfAbsent(opNames, k -> new ArrayList<>()).add(im);
+        }
+
+        // Pick the largest group with >= 2 members
+        List<ImplementationMetadata> best = groups.values().stream()
+                .filter(g -> g.size() >= 2)
+                .max(Comparator.comparingInt(List::size))
+                .orElse(impls);  // fallback to all if no group qualifies
+
+        return best;
+    }
+
+
+    public ComparisonSession requireComparisonSession() {
+        return sessionManager.getComparisonSession()
+                .orElseThrow(() -> new IllegalStateException("No active comparison session."));
+    }
+
+    public ComparisonOperationResult executeComparisonOperation(String operation, List<String> args) {
+        return requireComparisonSession().executeAll(operation, args);
+    }
+
+    public void resetComparisonSession() {
+        requireComparisonSession().resetAll();
     }
 
     // ── Internal ───────────────────────────────────────────────

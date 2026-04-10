@@ -1,5 +1,6 @@
 package structlab.app.ui;
 
+import structlab.app.comparison.ComparisonSession;
 import structlab.app.session.SessionManager;
 import structlab.app.session.StructureSession;
 import java.util.Optional;
@@ -11,12 +12,20 @@ public class PromptBuilder {
 
         if (session.isEmpty()) {
             return TerminalTheme.BOLD + TerminalTheme.MAGENTA + "structlab" + TerminalTheme.RESET + "> ";
-        } else {
-            String struct = session.get().getStructureId();
-            String impl = session.get().getImplementationId().replace("impl-", "");
+        }
+
+        if (session.get() instanceof ComparisonSession cs) {
+            String struct = cs.getStructureId().replace("struct-", "");
             return TerminalTheme.BOLD + TerminalTheme.MAGENTA + "structlab"
-                 + TerminalTheme.GRAY + "[" + TerminalTheme.CYAN + struct + "/" + impl + TerminalTheme.GRAY + "]"
+                 + TerminalTheme.GRAY + "[" + TerminalTheme.YELLOW + "compare:" + struct
+                 + TerminalTheme.GRAY + "]"
                  + TerminalTheme.RESET + "> ";
         }
+
+        String struct = session.get().getStructureId();
+        String impl = session.get().getImplementationId().replace("impl-", "");
+        return TerminalTheme.BOLD + TerminalTheme.MAGENTA + "structlab"
+             + TerminalTheme.GRAY + "[" + TerminalTheme.CYAN + struct + "/" + impl + TerminalTheme.GRAY + "]"
+             + TerminalTheme.RESET + "> ";
     }
 }
