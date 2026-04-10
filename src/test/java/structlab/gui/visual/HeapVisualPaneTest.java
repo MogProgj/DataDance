@@ -14,7 +14,7 @@ class HeapVisualPaneTest {
     static void initToolkit() {
         try {
             Platform.startup(() -> {});
-        } catch (IllegalStateException ignored) {
+        } catch (IllegalStateException | UnsupportedOperationException ignored) {
             // toolkit already initialised
         }
     }

@@ -14,7 +14,7 @@ class HashChainingVisualPaneTest {
     static void initToolkit() {
         try {
             Platform.startup(() -> {});
-        } catch (IllegalStateException ignored) {}
+        } catch (IllegalStateException | UnsupportedOperationException ignored) {}
     }
 
     @Test
