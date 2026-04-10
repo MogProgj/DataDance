@@ -1,35 +1,29 @@
 /* ═══════════════════════════════════════════════════════════════
-   StructLab — Premium Dark Workspace Design System
+   StructLab — Premium Dark Workspace Design System v2
    ═══════════════════════════════════════════════════════════════
-   Palette inspired by GitHub Dark Dimmed + Massively typography
-   hierarchy + violet accent for simulation workstation identity.
+   Multi-page architecture with Massively-inspired hierarchy,
+   fade transitions, card-based pages, and editorial spacing.
 
    Design Tokens
    ─────────────────────────────────────────────────────────────
-   Canvas:       #0d1117   deepest void background
-   Default:      #161b22   nav rail, deepest panels
-   Subtle:       #1c2128   side panels, context areas
-   Muted:        #21262d   cards, elevated surfaces
-   Emphasis:     #282e36   hover, input backgrounds
-   Border:       #30363d   all standard borders
-   Border-Muted: #21262d   very subtle dividers
+   Canvas:       #0d1117      deepest void
+   Default:      #161b22      panels, header
+   Subtle:       #1c2128      elevated surfaces
+   Muted:        #21262d      cards
+   Emphasis:     #282e36      hover, inputs
+   Border:       #30363d      standard
+   Border-Muted: #21262d      very subtle
 
-   Accent:       #7c3aed   violet primary
-   Accent-Light: #a78bfa   violet hover / highlight
-   Accent-Muted: rgba(124,58,237,0.15)  selection tint
-   Accent-Emph:  rgba(124,58,237,0.35)  strong selection
-
-   Text-Primary: #e6edf3   near-white
-   Text-Muted:   #8b949e   secondary
-   Text-Subtle:  #6e7681   tertiary / dim
-
+   Accent:       #7c3aed      violet primary
+   Accent-Light: #a78bfa      violet hover
+   Accent-Muted: rgba(124,58,237,0.15)
    Success:      #3fb950
    Danger:       #f85149
    Warning:      #d29922
 
-   Radius-SM:    4px
-   Radius-MD:    8px
-   Radius-LG:    12px
+   Text-Primary: #e6edf3
+   Text-Muted:   #8b949e
+   Text-Subtle:  #6e7681
    ─────────────────────────────────────────────────────────── */
 
 
@@ -42,6 +36,48 @@
 }
 
 
+/* ══ App Header ═══════════════════════════════════════════ */
+.app-header {
+    -fx-background-color: #161b22;
+    -fx-border-color: transparent transparent #30363d transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-min-height: 44;
+    -fx-max-height: 44;
+}
+
+.brand-area {
+    -fx-background-color: #0d1117;
+    -fx-border-color: transparent #21262d transparent transparent;
+    -fx-border-width: 0 1 0 0;
+}
+
+.brand-logo {
+    -fx-text-fill: #a78bfa;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.header-sep {
+    -fx-padding: 8 0;
+}
+
+.header-sep .line {
+    -fx-border-color: #30363d;
+    -fx-border-width: 0 1 0 0;
+}
+
+.page-title {
+    -fx-text-fill: #e6edf3;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.page-subtitle {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 12px;
+}
+
+
 /* ══ Navigation Rail ══════════════════════════════════════ */
 .nav-rail {
     -fx-background-color: #0d1117;
@@ -49,35 +85,21 @@
     -fx-border-width: 0 1 0 0;
 }
 
-.nav-logo {
-    -fx-text-fill: #a78bfa;
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
-    -fx-alignment: center;
-    -fx-padding: 4 0;
-}
-
 .nav-btn {
     -fx-background-color: transparent;
     -fx-text-fill: #6e7681;
-    -fx-font-size: 9px;
+    -fx-font-size: 10px;
     -fx-font-weight: bold;
-    -fx-padding: 10 2;
+    -fx-padding: 10 4;
     -fx-background-radius: 6;
     -fx-cursor: hand;
-    -fx-min-width: 48;
-    -fx-max-width: 48;
     -fx-alignment: center;
+    -fx-content-display: center;
 }
 
 .nav-btn:hover {
     -fx-background-color: #21262d;
     -fx-text-fill: #e6edf3;
-}
-
-.nav-btn:disabled {
-    -fx-text-fill: #484f58;
-    -fx-cursor: default;
 }
 
 .nav-btn-active {
@@ -91,7 +113,13 @@
 }
 
 
-/* ══ Context Panel (left: structures/implementations) ════ */
+/* ══ Page Host ════════════════════════════════════════════ */
+.page-host {
+    -fx-background-color: #0d1117;
+}
+
+
+/* ══ Context Panel ════════════════════════════════════════ */
 .context-panel {
     -fx-background-color: #161b22;
     -fx-border-color: transparent #30363d transparent transparent;
@@ -99,7 +127,7 @@
 }
 
 
-/* ══ Inspector Panel (right: session/ops/history) ════════ */
+/* ══ Inspector Panel ══════════════════════════════════════ */
 .inspector-panel {
     -fx-background-color: #161b22;
     -fx-border-color: transparent transparent transparent #30363d;
@@ -115,38 +143,17 @@
 }
 
 
-/* ══ Center Workspace ════════════════════════════════════ */
+/* ══ Workspace ════════════════════════════════════════════ */
 .workspace {
     -fx-background-color: #0d1117;
-}
-
-.workspace-header {
-    -fx-background-color: #161b22;
-    -fx-border-color: transparent transparent #30363d transparent;
-    -fx-border-width: 0 0 1 0;
-}
-
-.workspace-title {
-    -fx-text-fill: #e6edf3;
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
 }
 
 .workspace-content {
     -fx-background-color: #0d1117;
 }
 
-.mode-badge {
-    -fx-background-color: rgba(124, 58, 237, 0.15);
-    -fx-text-fill: #a78bfa;
-    -fx-padding: 3 12;
-    -fx-background-radius: 12;
-    -fx-font-size: 11px;
-    -fx-font-weight: bold;
-}
 
-
-/* ══ Cards (elevated content panels) ════════════════════ */
+/* ══ Cards ════════════════════════════════════════════════ */
 .card {
     -fx-background-color: #21262d;
     -fx-border-color: #30363d;
@@ -176,7 +183,120 @@
 }
 
 
-/* ══ Section Headers ═════════════════════════════════════ */
+/* ══ Settings Cards ═══════════════════════════════════════ */
+.settings-card {
+    -fx-background-color: #21262d;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.settings-card-header {
+    -fx-padding: 14 18;
+    -fx-background-color: #282e36;
+    -fx-background-radius: 8 8 0 0;
+    -fx-border-color: transparent transparent #30363d transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-radius: 8 8 0 0;
+}
+
+.settings-card-title {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.settings-card-desc {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 12px;
+}
+
+.settings-card-body {
+    -fx-padding: 16 18;
+    -fx-background-color: #21262d;
+    -fx-background-radius: 0 0 8 8;
+}
+
+.settings-check {
+    -fx-text-fill: #c9d1d9;
+    -fx-font-size: 13px;
+}
+
+.settings-check .box {
+    -fx-background-color: #0d1117;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-pref-width: 18;
+    -fx-pref-height: 18;
+}
+
+.settings-check:selected .box {
+    -fx-background-color: #7c3aed;
+    -fx-border-color: #7c3aed;
+}
+
+.settings-check .mark {
+    -fx-background-color: #ffffff;
+}
+
+.settings-check:hover .box {
+    -fx-border-color: #8b949e;
+}
+
+
+/* ══ Learn Cards ══════════════════════════════════════════ */
+.learn-card {
+    -fx-background-color: #21262d;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0, 0, 2);
+}
+
+.learn-card:hover {
+    -fx-border-color: #484f58;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 8, 0, 0, 3);
+}
+
+.learn-card-title {
+    -fx-text-fill: #e6edf3;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.learn-card-desc {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 12px;
+}
+
+.learn-card-section {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 2 0;
+}
+
+.learn-impl-name {
+    -fx-text-fill: #c9d1d9;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.learn-complexity-detail {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 11px;
+    -fx-padding: 0 0 0 8;
+}
+
+.learn-card-keywords {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 11px;
+    -fx-font-style: italic;
+}
+
+
+/* ══ Section Headers ══════════════════════════════════════ */
 .section-header {
     -fx-font-size: 10px;
     -fx-font-weight: bold;
@@ -190,7 +310,7 @@
 }
 
 
-/* ══ Structure Detail Labels ════════════════════════════ */
+/* ══ Detail Labels ════════════════════════════════════════ */
 .detail-name {
     -fx-font-size: 15px;
     -fx-font-weight: bold;
@@ -209,7 +329,7 @@
 }
 
 
-/* ══ Monospace Text Areas (state / trace) ════════════════ */
+/* ══ Monospace Text Areas ═════════════════════════════════ */
 .mono-area {
     -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", "Courier New", monospace;
     -fx-font-size: 12px;
@@ -229,9 +349,7 @@
 }
 
 
-/* ══ Buttons ═════════════════════════════════════════════ */
-
-/* Primary: solid, strong action */
+/* ══ Buttons ══════════════════════════════════════════════ */
 .primary-button {
     -fx-background-color: #7c3aed;
     -fx-text-fill: #ffffff;
@@ -259,7 +377,6 @@
     -fx-effect: none;
 }
 
-/* Secondary: subtle, outlined */
 .secondary-button {
     -fx-background-color: #161b22;
     -fx-text-fill: #8b949e;
@@ -289,7 +406,6 @@
     -fx-cursor: default;
 }
 
-/* Accent: violet ghost for special actions (Compare) */
 .accent-button {
     -fx-background-color: rgba(124, 58, 237, 0.12);
     -fx-text-fill: #a78bfa;
@@ -321,7 +437,7 @@
 }
 
 
-/* ══ ListView ═══════════════════════════════════════════ */
+/* ══ ListView ═════════════════════════════════════════════ */
 .list-view {
     -fx-background-color: #161b22;
     -fx-border-color: #30363d;
@@ -353,7 +469,7 @@
 }
 
 
-/* ══ ScrollBar ══════════════════════════════════════════ */
+/* ══ ScrollBar ════════════════════════════════════════════ */
 .scroll-bar {
     -fx-background-color: transparent;
 }
@@ -385,7 +501,24 @@
 }
 
 
-/* ══ TextField ══════════════════════════════════════════ */
+/* ══ ScrollPane (page-level) ══════════════════════════════ */
+.page-scroll {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.page-scroll > .viewport {
+    -fx-background-color: #0d1117;
+}
+
+.page-scroll .scroll-bar:horizontal {
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
+}
+
+
+/* ══ TextField ════════════════════════════════════════════ */
 .text-field {
     -fx-background-color: #0d1117;
     -fx-text-fill: #e6edf3;
@@ -402,14 +535,14 @@
 }
 
 
-/* ══ Separator ══════════════════════════════════════════ */
+/* ══ Separator ════════════════════════════════════════════ */
 .separator .line {
     -fx-border-color: #21262d;
     -fx-border-width: 1 0 0 0;
 }
 
 
-/* ══ Status Bar ═════════════════════════════════════════ */
+/* ══ Status Bar ═══════════════════════════════════════════ */
 .status-bar {
     -fx-background-color: #0d1117;
     -fx-border-color: #21262d;
@@ -422,7 +555,106 @@
 }
 
 
-/* ══ Tooltip ════════════════════════════════════════════ */
+/* ══ Mode Badge ═══════════════════════════════════════════ */
+.mode-badge {
+    -fx-background-color: rgba(124, 58, 237, 0.15);
+    -fx-text-fill: #a78bfa;
+    -fx-padding: 3 12;
+    -fx-background-radius: 12;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.mode-session {
+    -fx-background-color: rgba(63, 185, 80, 0.15);
+    -fx-text-fill: #3fb950;
+}
+
+.mode-compare {
+    -fx-background-color: rgba(210, 153, 34, 0.15);
+    -fx-text-fill: #d29922;
+}
+
+
+/* ══ Hero Sections ════════════════════════════════════════ */
+.hero-section {
+    -fx-padding: 0 0 8 0;
+}
+
+.hero-title {
+    -fx-text-fill: #e6edf3;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.hero-subtitle {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 14px;
+}
+
+
+/* ══ Page Content (full-width pages) ══════════════════════ */
+.page-content {
+    -fx-background-color: #0d1117;
+}
+
+
+/* ══ Category Headers ═════════════════════════════════════ */
+.category-header {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 8 0 8 0;
+    -fx-border-color: transparent transparent #21262d transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+
+/* ══ Card Grid (FlowPane) ════════════════════════════════ */
+.card-grid {
+    -fx-padding: 4 0;
+}
+
+
+/* ══ Activity Feed ════════════════════════════════════════ */
+.activity-feed {
+    -fx-background-color: #161b22;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.activity-entry {
+    -fx-border-color: transparent transparent #21262d transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.activity-entry:hover {
+    -fx-background-color: rgba(124, 58, 237, 0.04);
+}
+
+.activity-icon {
+    -fx-text-fill: #7c3aed;
+    -fx-font-size: 12px;
+}
+
+.activity-action {
+    -fx-text-fill: #c9d1d9;
+    -fx-font-size: 13px;
+}
+
+.activity-detail {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 11px;
+}
+
+.activity-time {
+    -fx-text-fill: #484f58;
+    -fx-font-size: 11px;
+}
+
+
+/* ══ Tooltip ══════════════════════════════════════════════ */
 .tooltip {
     -fx-background-color: #282e36;
     -fx-text-fill: #c9d1d9;
@@ -435,7 +667,7 @@
 }
 
 
-/* ══ Alert Dialogs ══════════════════════════════════════ */
+/* ══ Alert Dialogs ════════════════════════════════════════ */
 .alert .dialog-pane {
     -fx-background-color: #21262d;
     -fx-border-color: #30363d;
@@ -450,16 +682,15 @@
 }
 
 
-/* ══ Empty State ════════════════════════════════════════ */
-.empty-state {
+/* ══ Empty State ══════════════════════════════════════════ */
+.empty-state-text {
     -fx-text-fill: #484f58;
-    -fx-font-size: 12px;
+    -fx-font-size: 13px;
     -fx-font-style: italic;
-    -fx-alignment: center;
 }
 
 
-/* ══ Semantic State Classes ═════════════════════════════ */
+/* ══ Semantic Colors ══════════════════════════════════════ */
 .history-success {
     -fx-text-fill: #3fb950;
 }
@@ -469,7 +700,7 @@
 }
 
 
-/* ══ Accent Badge ═══════════════════════════════════════ */
+/* ══ Accent Badge ═════════════════════════════════════════ */
 .accent-badge {
     -fx-background-color: rgba(124, 58, 237, 0.15);
     -fx-text-fill: #a78bfa;
