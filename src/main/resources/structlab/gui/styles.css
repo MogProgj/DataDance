@@ -1580,3 +1580,356 @@
     -fx-text-fill: #f87171;
     -fx-alignment: CENTER;
 }
+
+/* ================================================================
+   Phase 2C3 — Linked List Visual Panes
+   Color accent: emerald/green (#10b981, #34d399)
+   ================================================================ */
+
+.list-impl-badge {
+    -fx-background-color: rgba(16, 185, 129, 0.15);
+    -fx-text-fill: #34d399;
+    -fx-padding: 2 8 2 8;
+    -fx-background-radius: 8;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.list-doubly-impl-badge {
+    -fx-background-color: rgba(99, 102, 241, 0.15);
+    -fx-text-fill: #818cf8;
+    -fx-padding: 2 8 2 8;
+    -fx-background-radius: 8;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.list-chain-container {
+    -fx-padding: 4 0 4 0;
+}
+
+/* ── Node markers (head / tail) ──────────────────── */
+
+.list-node-marker {
+    -fx-font-size: 9px;
+    -fx-text-fill: transparent;
+    -fx-alignment: CENTER;
+    -fx-min-height: 16;
+}
+
+.list-marker-head {
+    -fx-text-fill: #34d399;
+    -fx-font-weight: bold;
+}
+
+.list-marker-tail {
+    -fx-text-fill: #94a3b8;
+    -fx-font-weight: bold;
+}
+
+/* ── Singly-linked node chip ─────────────────────── */
+
+.list-node-chip {
+    -fx-background-color: #1e293b;
+    -fx-border-color: #334155;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-alignment: CENTER;
+    -fx-cursor: hand;
+}
+
+.list-node-chip:hover {
+    -fx-border-color: #34d399;
+    -fx-background-color: rgba(16, 185, 129, 0.08);
+}
+
+.list-node-singly {
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.list-node-head {
+    -fx-border-color: #10b981;
+}
+
+.list-node-tail {
+    -fx-border-color: #64748b;
+}
+
+/* ── Doubly-linked node chip — wider, different shape ── */
+
+.list-node-doubly {
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-border-width: 1.5;
+    -fx-border-color: #6366f1;
+}
+
+.list-node-doubly:hover {
+    -fx-border-color: #818cf8;
+    -fx-background-color: rgba(99, 102, 241, 0.08);
+}
+
+.list-node-doubly.list-node-head {
+    -fx-border-color: #818cf8;
+}
+
+.list-node-doubly.list-node-tail {
+    -fx-border-color: #818cf8;
+}
+
+.list-node-value {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 12px;
+    -fx-text-fill: #e2e8f0;
+    -fx-font-weight: bold;
+}
+
+/* ── Link indicators inside doubly-linked nodes ──── */
+
+.list-link-indicator {
+    -fx-font-size: 9px;
+    -fx-text-fill: #6366f1;
+}
+
+.list-link-null {
+    -fx-text-fill: #475569;
+}
+
+/* ── Arrows ──────────────────────────────────────── */
+
+.list-forward-arrow {
+    -fx-text-fill: #10b981;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.list-bidi-arrow {
+    -fx-text-fill: #818cf8;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.list-null-terminator {
+    -fx-text-fill: #475569;
+    -fx-font-size: 14px;
+}
+
+/* ================================================================
+   Phase 2C3 — Deque Visual Panes
+   Array deque accent: teal (#14b8a6, #2dd4bf)
+   Linked deque accent: rose (#f43f5e, #fb7185)
+   ================================================================ */
+
+.deque-impl-badge {
+    -fx-background-color: rgba(20, 184, 166, 0.15);
+    -fx-text-fill: #2dd4bf;
+    -fx-padding: 2 8 2 8;
+    -fx-background-radius: 8;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.deque-linked-impl-badge {
+    -fx-background-color: rgba(244, 63, 94, 0.15);
+    -fx-text-fill: #fb7185;
+    -fx-padding: 2 8 2 8;
+    -fx-background-radius: 8;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+/* ── Metrics strip (shared with hash via addMetric) ── */
+
+.deque-metrics-strip {
+    -fx-padding: 4 0 4 0;
+}
+
+.deque-section-label {
+    -fx-text-fill: #64748b;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 4 0 0 0;
+}
+
+/* ── Direction labels ────────────────────────────── */
+
+.deque-direction-label {
+    -fx-text-fill: #64748b;
+    -fx-font-size: 10px;
+    -fx-font-style: italic;
+}
+
+/* ── Logical lane (front-to-back ordered cells) ──── */
+
+.deque-logical-lane {
+    -fx-padding: 4 0 4 0;
+}
+
+.deque-cell-marker {
+    -fx-font-size: 9px;
+    -fx-text-fill: transparent;
+    -fx-alignment: CENTER;
+    -fx-min-height: 14;
+}
+
+.deque-marker-front {
+    -fx-text-fill: #2dd4bf;
+    -fx-font-weight: bold;
+}
+
+.deque-marker-back {
+    -fx-text-fill: #fb7185;
+    -fx-font-weight: bold;
+}
+
+.deque-logical-cell {
+    -fx-background-color: #1e293b;
+    -fx-border-color: #334155;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-alignment: CENTER;
+}
+
+.deque-logical-cell:hover {
+    -fx-border-color: #2dd4bf;
+    -fx-background-color: rgba(20, 184, 166, 0.08);
+}
+
+.deque-cell-front {
+    -fx-border-color: #14b8a6;
+}
+
+.deque-cell-back {
+    -fx-border-color: #f43f5e;
+}
+
+.deque-cell-value {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 12px;
+    -fx-text-fill: #e2e8f0;
+    -fx-font-weight: bold;
+}
+
+.deque-logical-sep {
+    -fx-text-fill: #475569;
+    -fx-font-size: 12px;
+}
+
+/* ── Backing array slot grid ─────────────────────── */
+
+.deque-slot-grid {
+    -fx-padding: 4;
+}
+
+.deque-slot-index {
+    -fx-font-size: 8px;
+    -fx-text-fill: #475569;
+    -fx-alignment: CENTER;
+}
+
+.deque-slot-cell {
+    -fx-background-color: #0f172a;
+    -fx-border-color: #1e293b;
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-alignment: CENTER;
+    -fx-cursor: hand;
+}
+
+.deque-slot-cell:hover {
+    -fx-border-color: #2dd4bf;
+}
+
+.deque-slot-occupied {
+    -fx-border-color: #14b8a6;
+    -fx-background-color: rgba(20, 184, 166, 0.10);
+}
+
+.deque-slot-empty {
+    -fx-border-color: #1e293b;
+    -fx-background-color: rgba(15, 23, 42, 0.6);
+}
+
+.deque-slot-empty-text {
+    -fx-text-fill: #334155;
+    -fx-font-size: 14px;
+}
+
+.deque-slot-value {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 11px;
+    -fx-text-fill: #2dd4bf;
+    -fx-font-weight: bold;
+}
+
+.deque-slot-front {
+    -fx-border-color: #2dd4bf;
+    -fx-border-width: 2;
+}
+
+/* ── Linked deque chain ──────────────────────────── */
+
+.deque-chain-container {
+    -fx-padding: 4 0 4 0;
+}
+
+.deque-node-chip {
+    -fx-background-color: #1e293b;
+    -fx-border-color: #334155;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-alignment: CENTER;
+    -fx-cursor: hand;
+}
+
+.deque-node-chip:hover {
+    -fx-border-color: #fb7185;
+    -fx-background-color: rgba(244, 63, 94, 0.08);
+}
+
+.deque-node-front {
+    -fx-border-color: #f43f5e;
+}
+
+.deque-node-rear {
+    -fx-border-color: #f43f5e;
+}
+
+.deque-node-value {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 12px;
+    -fx-text-fill: #e2e8f0;
+    -fx-font-weight: bold;
+}
+
+.deque-node-marker {
+    -fx-font-size: 9px;
+    -fx-text-fill: transparent;
+    -fx-alignment: CENTER;
+    -fx-min-height: 16;
+}
+
+.deque-link-indicator {
+    -fx-font-size: 9px;
+    -fx-text-fill: #f43f5e;
+}
+
+.deque-link-null {
+    -fx-text-fill: #475569;
+}
+
+.deque-bidi-arrow {
+    -fx-text-fill: #fb7185;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.deque-null-terminator {
+    -fx-text-fill: #475569;
+    -fx-font-size: 14px;
+}

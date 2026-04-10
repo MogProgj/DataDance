@@ -55,9 +55,27 @@ class VisualStateFactoryTest {
     }
 
     @Test
-    void isSupportedReturnsFalseForSinglyLinkedList() {
-        assertFalse(VisualStateFactory.isSupported(
-                "SinglyLinkedList{size=2, head=5, chain=[5 -> 10]}"));
+    void isSupportedReturnsTrueForSinglyLinkedList() {
+        assertTrue(VisualStateFactory.isSupported(
+                "SinglyLinkedList{size=2, head=5, tail=10, chain=[5 -> 10]}"));
+    }
+
+    @Test
+    void isSupportedReturnsTrueForDoublyLinkedList() {
+        assertTrue(VisualStateFactory.isSupported(
+                "DoublyLinkedList{size=2, head=5, tail=10, chain=[5 <-> 10]}"));
+    }
+
+    @Test
+    void isSupportedReturnsTrueForArrayDequeCustom() {
+        assertTrue(VisualStateFactory.isSupported(
+                "ArrayDequeCustom{size=0, capacity=4, frontIndex=0, logical=[], raw=[null, null, null, null]}"));
+    }
+
+    @Test
+    void isSupportedReturnsTrueForLinkedDeque() {
+        assertTrue(VisualStateFactory.isSupported(
+                "LinkedDeque{size=0, front=null, rear=null, chain=[]}"));
     }
 
     @Test

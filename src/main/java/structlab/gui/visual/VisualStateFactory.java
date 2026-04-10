@@ -19,6 +19,10 @@ public final class VisualStateFactory {
     private static HashChainingVisualPane hashChainingPane;
     private static HashOpenAddressingVisualPane hashOpenAddressingPane;
     private static HashSetVisualPane hashSetPane;
+    private static SinglyLinkedListVisualPane singlyLinkedListPane;
+    private static DoublyLinkedListVisualPane doublyLinkedListPane;
+    private static ArrayDequeVisualPane arrayDequePane;
+    private static LinkedDequeVisualPane linkedDequePane;
 
     /**
      * Returns true if the given snapshot type has a visual state component.
@@ -31,7 +35,9 @@ public final class VisualStateFactory {
                  "CircularArrayQueue",
                  "BinaryHeap", "HeapPriorityQueue",
                  "HashTableChaining", "HashTableOpenAddressing",
-                 "HashSetCustom" -> true;
+                 "HashSetCustom",
+                 "SinglyLinkedList", "DoublyLinkedList",
+                 "ArrayDequeCustom", "LinkedDeque" -> true;
             default -> false;
         };
     }
@@ -93,6 +99,26 @@ public final class VisualStateFactory {
                 hashSetPane.update(StateModelParser.parseHashSetCustom(snapshot));
                 yield hashSetPane;
             }
+            case "SinglyLinkedList" -> {
+                if (singlyLinkedListPane == null) singlyLinkedListPane = new SinglyLinkedListVisualPane();
+                singlyLinkedListPane.update(StateModelParser.parseSinglyLinkedList(snapshot));
+                yield singlyLinkedListPane;
+            }
+            case "DoublyLinkedList" -> {
+                if (doublyLinkedListPane == null) doublyLinkedListPane = new DoublyLinkedListVisualPane();
+                doublyLinkedListPane.update(StateModelParser.parseDoublyLinkedList(snapshot));
+                yield doublyLinkedListPane;
+            }
+            case "ArrayDequeCustom" -> {
+                if (arrayDequePane == null) arrayDequePane = new ArrayDequeVisualPane();
+                arrayDequePane.update(StateModelParser.parseArrayDequeCustom(snapshot));
+                yield arrayDequePane;
+            }
+            case "LinkedDeque" -> {
+                if (linkedDequePane == null) linkedDequePane = new LinkedDequeVisualPane();
+                linkedDequePane.update(StateModelParser.parseLinkedDeque(snapshot));
+                yield linkedDequePane;
+            }
             default -> null;
         };
     }
@@ -110,5 +136,9 @@ public final class VisualStateFactory {
         hashChainingPane = null;
         hashOpenAddressingPane = null;
         hashSetPane = null;
+        singlyLinkedListPane = null;
+        doublyLinkedListPane = null;
+        arrayDequePane = null;
+        linkedDequePane = null;
     }
 }

@@ -60,6 +60,26 @@ public final class CanonicalOperationRegistry {
                 new CanonicalOperation("remove", Set.of("delete"), "Remove entry by key", 1),
                 new CanonicalOperation("containskey", Set.of("contains", "has"), "Check if key is present", 1)
         ));
+
+        // ── Linked list family ──────────────────────────────
+        FAMILY_MAP.put("list", List.of(
+                new CanonicalOperation("addfirst", Set.of("prepend", "addhead"), "Add element at head", 1),
+                new CanonicalOperation("addlast", Set.of("append", "addtail", "add"), "Add element at tail", 1),
+                new CanonicalOperation("removefirst", Set.of("removehead", "pollFirst"), "Remove element at head", 0),
+                new CanonicalOperation("removelast", Set.of("removetail", "pollLast"), "Remove element at tail", 0),
+                new CanonicalOperation("get", Set.of("getat"), "Get element by index", 1),
+                new CanonicalOperation("contains", Set.of("search", "find"), "Check if element exists", 1)
+        ));
+
+        // ── Deque family ────────────────────────────────────
+        FAMILY_MAP.put("deque", List.of(
+                new CanonicalOperation("addfirst", Set.of("pushfront", "offerfirst"), "Add element at front", 1),
+                new CanonicalOperation("addlast", Set.of("pushback", "offerlast", "add"), "Add element at back", 1),
+                new CanonicalOperation("removefirst", Set.of("popfront", "pollfirst"), "Remove element at front", 0),
+                new CanonicalOperation("removelast", Set.of("popback", "polllast"), "Remove element at back", 0),
+                new CanonicalOperation("peekfirst", Set.of("front", "first"), "View front element", 0),
+                new CanonicalOperation("peeklast", Set.of("back", "last", "rear"), "View back element", 0)
+        ));
     }
 
     private CanonicalOperationRegistry() {}

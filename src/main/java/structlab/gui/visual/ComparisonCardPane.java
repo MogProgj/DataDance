@@ -35,6 +35,10 @@ public class ComparisonCardPane extends VBox {
     private HashChainingVisualPane hashChainingPane;
     private HashOpenAddressingVisualPane hashOpenAddressingPane;
     private HashSetVisualPane hashSetPane;
+    private SinglyLinkedListVisualPane singlyLinkedListPane;
+    private DoublyLinkedListVisualPane doublyLinkedListPane;
+    private ArrayDequeVisualPane arrayDequePane;
+    private LinkedDequeVisualPane linkedDequePane;
 
     public ComparisonCardPane() {
         getStyleClass().add("comparison-card");
@@ -220,6 +224,26 @@ public class ComparisonCardPane extends VBox {
                 if (hashSetPane == null) hashSetPane = new HashSetVisualPane();
                 hashSetPane.update(StateModelParser.parseHashSetCustom(snapshot));
                 yield hashSetPane;
+            }
+            case "SinglyLinkedList" -> {
+                if (singlyLinkedListPane == null) singlyLinkedListPane = new SinglyLinkedListVisualPane();
+                singlyLinkedListPane.update(StateModelParser.parseSinglyLinkedList(snapshot));
+                yield singlyLinkedListPane;
+            }
+            case "DoublyLinkedList" -> {
+                if (doublyLinkedListPane == null) doublyLinkedListPane = new DoublyLinkedListVisualPane();
+                doublyLinkedListPane.update(StateModelParser.parseDoublyLinkedList(snapshot));
+                yield doublyLinkedListPane;
+            }
+            case "ArrayDequeCustom" -> {
+                if (arrayDequePane == null) arrayDequePane = new ArrayDequeVisualPane();
+                arrayDequePane.update(StateModelParser.parseArrayDequeCustom(snapshot));
+                yield arrayDequePane;
+            }
+            case "LinkedDeque" -> {
+                if (linkedDequePane == null) linkedDequePane = new LinkedDequeVisualPane();
+                linkedDequePane.update(StateModelParser.parseLinkedDeque(snapshot));
+                yield linkedDequePane;
             }
             default -> null;
         };

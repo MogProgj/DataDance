@@ -245,4 +245,63 @@ public final class StateModelParser {
                 rehashes < 0 ? 0 : rehashes,
                 Collections.unmodifiableList(buckets));
     }
+
+    // ── Linked-list family ──────────────────────────────────────
+
+    /**
+     * Parses a SinglyLinkedList snapshot.
+     * Snapshot: SinglyLinkedList{size=N, head=V, tail=V, chain=[v1 -> v2 -> v3]}
+     */
+    public static SinglyLinkedListStateModel parseSinglyLinkedList(String snapshot) {
+        int size = SnapshotParser.intField(snapshot, "size");
+        String head = SnapshotParser.stringField(snapshot, "head");
+        String tail = SnapshotParser.stringField(snapshot, "tail");
+        List<String> chain = SnapshotParser.chainField(snapshot, "chain");
+        return new SinglyLinkedListStateModel(
+                Collections.unmodifiableList(chain), size, head, tail);
+    }
+
+    /**
+     * Parses a DoublyLinkedList snapshot.
+     * Snapshot: DoublyLinkedList{size=N, head=V, tail=V, chain=[v1 <-> v2 <-> v3]}
+     */
+    public static DoublyLinkedListStateModel parseDoublyLinkedList(String snapshot) {
+        int size = SnapshotParser.intField(snapshot, "size");
+        String head = SnapshotParser.stringField(snapshot, "head");
+        String tail = SnapshotParser.stringField(snapshot, "tail");
+        List<String> chain = SnapshotParser.doublyLinkedChainField(snapshot, "chain");
+        return new DoublyLinkedListStateModel(
+                Collections.unmodifiableList(chain), size, head, tail);
+    }
+
+    // ── Deque family ────────────────────────────────────────────
+
+    /**
+     * Parses an ArrayDequeCustom snapshot.
+     * Snapshot: ArrayDequeCustom{size=N, capacity=C, frontIndex=F, logical=[...], raw=[...]}
+     */
+    public static ArrayDequeStateModel parseArrayDequeCustom(String snapshot) {
+        int size = SnapshotParser.intField(snapshot, "size");
+        int capacity = SnapshotParser.intField(snapshot, "capacity");
+        int frontIndex = SnapshotParser.intField(snapshot, "frontIndex");
+        List<String> logical = SnapshotParser.listField(snapshot, "logical");
+        List<String> raw = SnapshotParser.listField(snapshot, "raw");
+        return new ArrayDequeStateModel(
+                Collections.unmodifiableList(logical),
+                Collections.unmodifiableList(raw),
+                size, capacity, frontIndex);
+    }
+
+    /**
+     * Parses a LinkedDeque snapshot.
+     * Snapshot: LinkedDeque{size=N, front=V, rear=V, chain=[v1 <-> v2 <-> v3]}
+     */
+    public static LinkedDequeStateModel parseLinkedDeque(String snapshot) {
+        int size = SnapshotParser.intField(snapshot, "size");
+        String front = SnapshotParser.stringField(snapshot, "front");
+        String rear = SnapshotParser.stringField(snapshot, "rear");
+        List<String> chain = SnapshotParser.doublyLinkedChainField(snapshot, "chain");
+        return new LinkedDequeStateModel(
+                Collections.unmodifiableList(chain), size, front, rear);
+    }
 }

@@ -164,4 +164,60 @@ class CanonicalOperationRegistryTest {
     void registeredFamiliesContainsHash() {
         assertTrue(CanonicalOperationRegistry.registeredFamilies().contains("hash"));
     }
+
+    // ── Linked list family ───────────────────────────────────
+
+    @Test
+    void listFamilyHasSixCanonicalOps() {
+        var ops = CanonicalOperationRegistry.forFamily("list");
+        assertEquals(6, ops.size());
+    }
+
+    @Test
+    void listFamilyHasMapping() {
+        assertTrue(CanonicalOperationRegistry.hasMapping("list"));
+    }
+
+    @Test
+    void listAddFirstResolvesFromPrepend() {
+        assertEquals("addfirst", CanonicalOperationRegistry.resolveCanonical("list", "prepend"));
+    }
+
+    @Test
+    void listAddLastResolvesFromAppend() {
+        assertEquals("addlast", CanonicalOperationRegistry.resolveCanonical("list", "append"));
+    }
+
+    @Test
+    void registeredFamiliesContainsList() {
+        assertTrue(CanonicalOperationRegistry.registeredFamilies().contains("list"));
+    }
+
+    // ── Deque family ────────────────────────────────────────
+
+    @Test
+    void dequeFamilyHasSixCanonicalOps() {
+        var ops = CanonicalOperationRegistry.forFamily("deque");
+        assertEquals(6, ops.size());
+    }
+
+    @Test
+    void dequeFamilyHasMapping() {
+        assertTrue(CanonicalOperationRegistry.hasMapping("deque"));
+    }
+
+    @Test
+    void dequeAddFirstResolvesFromPushFront() {
+        assertEquals("addfirst", CanonicalOperationRegistry.resolveCanonical("deque", "pushfront"));
+    }
+
+    @Test
+    void dequeRemoveLastResolvesFromPopBack() {
+        assertEquals("removelast", CanonicalOperationRegistry.resolveCanonical("deque", "popback"));
+    }
+
+    @Test
+    void registeredFamiliesContainsDeque() {
+        assertTrue(CanonicalOperationRegistry.registeredFamilies().contains("deque"));
+    }
 }
