@@ -16,6 +16,7 @@ import structlab.app.comparison.ComparisonOperationResult;
 import structlab.app.comparison.ComparisonSession;
 import structlab.app.service.*;
 import structlab.gui.*;
+import structlab.gui.visual.VisualStateFactory;
 
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -51,6 +52,7 @@ public class MainWindowController {
     private Button explOpenBtn;
     private Label explDetailName, explDetailCat, explDetailDesc, explDetailKw;
     private TextArea explState, explTrace;
+    private StackPane explStateHost;
     private Label explSessStruct, explSessImpl, explSessOps;
     private Button explResetBtn, explCloseBtn;
     private ListView<OperationInfo> explOpList;
@@ -236,7 +238,9 @@ public class MainWindowController {
         VBox.setVgrow(stateBody, Priority.ALWAYS);
         explState = monoArea("Open a session to see the live structure state.");
         VBox.setVgrow(explState, Priority.ALWAYS);
-        stateBody.getChildren().add(explState);
+        explStateHost = new StackPane(explState);
+        VBox.setVgrow(explStateHost, Priority.ALWAYS);
+        stateBody.getChildren().add(explStateHost);
 
         VBox traceCard = buildCard("TRACE LOG");
         VBox traceBody = cardBody(traceCard);
@@ -452,8 +456,24 @@ public class MainWindowController {
     // ── Explore refresh helpers ─────────────────────────────
 
     private void refreshExploreState() {
-        if (!service.hasActiveSession()) { explState.clear(); return; }
+        if (!service.hasActiveSession()) {
+            explStateHost.getChildren().setAll(explState);
+            explState.clear();
+            return;
+        }
+        String raw = service.getRawState();
+        if (VisualStateFactory.isSupported(raw)) {
+            Node visual = VisualStateFactory.createOrUpdate(raw);
+            if (visual != null) {
+                ScrollPane scroll = new ScrollPane(visual);
+                scroll.setFitToWidth(true);
+                scroll.getStyleClass().add("visual-scroll");
+                explStateHost.getChildren().setAll(scroll);
+                return;
+            }
+        }
         explState.setText(service.getRenderedState());
+        explStateHost.getChildren().setAll(explState);
     }
 
     private void refreshExploreTrace() {
@@ -506,9 +526,11 @@ public class MainWindowController {
 
     private void clearExploreSession() {
         sessionActive = false;
+        VisualStateFactory.reset();
         explSessStruct.setText("No active session");
         explSessImpl.setText("");
         explSessOps.setText("");
+        explStateHost.getChildren().setAll(explState);
         explState.clear();
         explTrace.clear();
         explOpList.getItems().clear();

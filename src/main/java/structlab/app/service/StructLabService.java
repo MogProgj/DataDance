@@ -134,6 +134,10 @@ public class StructLabService {
         return requireSession().getRuntime().renderCurrentState();
     }
 
+    public String getRawState() {
+        return requireSession().getRuntime().getCurrentState();
+    }
+
     public List<ExecutionResult> getHistory() {
         return requireSession().getHistory().stream()
                 .map(this::toExecutionResult)

@@ -709,3 +709,236 @@
     -fx-font-size: 11px;
     -fx-font-weight: bold;
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   Phase 2A — Visual State Components
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Shared ─────────────────────────────────────────────── */
+.visual-state-pane {
+    -fx-background-color: #161b22;
+    -fx-background-radius: 8;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-padding: 14;
+}
+
+.visual-state-title {
+    -fx-text-fill: #e6edf3;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.visual-state-meta {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 12px;
+}
+
+.visual-empty-state {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 13px;
+    -fx-font-style: italic;
+    -fx-padding: 20 0;
+}
+
+.visual-section-label {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 6 0 2 0;
+}
+
+.visual-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+.visual-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* ── Stack ──────────────────────────────────────────────── */
+.stack-container {
+    -fx-padding: 8 0;
+}
+
+.stack-cell {
+    -fx-background-color: #21262d;
+    -fx-border-color: #30363d;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-alignment: center;
+}
+
+.stack-cell-top {
+    -fx-background-color: rgba(124, 58, 237, 0.18);
+    -fx-border-color: #7c3aed;
+}
+
+.stack-cell-value {
+    -fx-text-fill: #e6edf3;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+}
+
+.stack-marker {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 11px;
+}
+
+.stack-marker-top {
+    -fx-text-fill: #a78bfa;
+    -fx-font-weight: bold;
+}
+
+.stack-marker-bottom {
+    -fx-text-fill: #6e7681;
+}
+
+.stack-plate {
+    -fx-background-color: #30363d;
+    -fx-background-radius: 2;
+    -fx-border-color: transparent;
+}
+
+/* ── Queue ──────────────────────────────────────────────── */
+.queue-container {
+    -fx-padding: 8 0;
+}
+
+.queue-cell {
+    -fx-background-color: #21262d;
+    -fx-border-color: #30363d;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-alignment: center;
+    -fx-padding: 4 10;
+}
+
+.queue-cell-front {
+    -fx-background-color: rgba(63, 185, 80, 0.15);
+    -fx-border-color: #3fb950;
+}
+
+.queue-cell-rear {
+    -fx-background-color: rgba(210, 153, 34, 0.15);
+    -fx-border-color: #d29922;
+}
+
+.queue-cell-value {
+    -fx-text-fill: #e6edf3;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+}
+
+.queue-arrow {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 14px;
+    -fx-alignment: center;
+    -fx-padding: 16 0 0 0;
+}
+
+.queue-direction-label {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 11px;
+    -fx-font-style: italic;
+    -fx-padding: 16 0 0 0;
+}
+
+.queue-marker {
+    -fx-text-fill: transparent;
+    -fx-font-size: 10px;
+    -fx-alignment: center;
+}
+
+.queue-marker-front {
+    -fx-text-fill: #3fb950;
+    -fx-font-weight: bold;
+}
+
+.queue-marker-rear {
+    -fx-text-fill: #d29922;
+    -fx-font-weight: bold;
+}
+
+/* ── Circular Queue ─────────────────────────────────────── */
+.cq-slot-container {
+    -fx-padding: 4 0;
+}
+
+.cq-slot {
+    -fx-border-color: #30363d;
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-alignment: center;
+    -fx-padding: 4 6;
+}
+
+.cq-slot-occupied {
+    -fx-background-color: #21262d;
+}
+
+.cq-slot-empty {
+    -fx-background-color: #161b22;
+}
+
+.cq-slot-front {
+    -fx-border-color: #3fb950;
+}
+
+.cq-slot-rear {
+    -fx-border-color: #d29922;
+}
+
+.cq-slot-value {
+    -fx-text-fill: #e6edf3;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+}
+
+.cq-slot-empty-value {
+    -fx-text-fill: #30363d;
+    -fx-font-size: 13px;
+}
+
+.cq-slot-index {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 9px;
+    -fx-alignment: center;
+}
+
+.cq-slot-marker {
+    -fx-text-fill: transparent;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+.cq-marker-front {
+    -fx-text-fill: #3fb950;
+}
+
+.cq-marker-rear {
+    -fx-text-fill: #d29922;
+}
+
+.cq-logical-container {
+    -fx-padding: 4 0;
+}
+
+.cq-logical-cell {
+    -fx-background-color: #21262d;
+    -fx-border-color: #30363d;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-alignment: center;
+    -fx-padding: 4 8;
+}
