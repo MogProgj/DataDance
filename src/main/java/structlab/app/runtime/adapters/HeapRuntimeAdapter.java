@@ -18,19 +18,14 @@ public class HeapRuntimeAdapter extends AbstractRuntimeAdapter {
 
     @Override
     public List<OperationDescriptor> getAvailableOperations() {
-        if (activeHeap instanceof TracedHeapPriorityQueue) {
-            return List.of(
-                    new OperationDescriptor("enqueue", List.of(), "Enqueue an element into the priority queue", 1, "enqueue <value>", true, "enqueue <value>", "O(log N)"),
-                    new OperationDescriptor("dequeue", List.of(), "Dequeue the min priority element", 0, "dequeue", true, "dequeue", "O(log N)"),
-                    new OperationDescriptor("peek", List.of(), "Look at the min element", 0, "peek", false, "peek", "O(log N)")
-            );
-        } else {
-            return List.of(
-                    new OperationDescriptor("insert", List.of(), "Insert an element into the heap", 1, "insert <value>", true, "insert <value>", "O(log N)"),
-                    new OperationDescriptor("extractmin", List.of(), "Extract the minimum element", 0, "extractmin", true, "extractmin", "O(log N)"),
-                    new OperationDescriptor("peek", List.of(), "Look at the minimum element", 0, "peek", false, "peek", "O(log N)")
-            );
-        }
+        // Canonical operation names shared by both BinaryHeap and HeapPriorityQueue
+        // so that comparison mode intersects all 3 operations, not just peek.
+        // The execute() method already handles both naming conventions.
+        return List.of(
+                new OperationDescriptor("insert", List.of("enqueue"), "Insert an element into the heap", 1, "insert <value>", true, "insert <value>", "O(log N)"),
+                new OperationDescriptor("extractmin", List.of("dequeue"), "Extract the minimum element", 0, "extractmin", true, "extractmin", "O(log N)"),
+                new OperationDescriptor("peek", List.of(), "Look at the minimum element", 0, "peek", false, "peek", "O(1)")
+        );
     }
 
     @Override
