@@ -5,9 +5,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
 import structlab.app.comparison.ComparisonOperationResult;
-import structlab.app.comparison.ComparisonRenderer;
 import structlab.app.comparison.ComparisonSession;
 import structlab.app.service.*;
+import structlab.gui.GuiComparisonRenderer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -94,13 +94,14 @@ public class MainWindowController {
                     setText(null);
                     setTooltip(null);
                 } else {
-                    String aliases = item.aliases().isEmpty() ? "" : " (" + String.join(", ", item.aliases()) + ")";
                     String mutatesMark = item.mutates() ? " [mut]" : "";
-                    setText(item.name() + aliases + "  " + item.complexityNote() + mutatesMark);
+                    setText(item.name() + "  " + item.complexityNote() + mutatesMark);
                     setTooltip(new Tooltip(
-                            item.description() + "\nUsage: " + item.usage() +
-                            "\nMutates: " + (item.mutates() ? "Yes" : "No") +
-                            "\nComplexity: " + item.complexityNote()
+                            item.description()
+                            + (item.aliases().isEmpty() ? "" : "\nAliases: " + String.join(", ", item.aliases()))
+                            + "\nUsage: " + item.usage()
+                            + "\nMutates: " + (item.mutates() ? "Yes" : "No")
+                            + "\nComplexity: " + item.complexityNote()
                     ));
                 }
             }
@@ -187,7 +188,7 @@ public class MainWindowController {
             sessionImplLabel.setText(cs.entryCount() + " implementations");
             sessionOpsCountLabel.setText("Operations: 0");
 
-            stateArea.setText(ComparisonRenderer.renderStates(cs));
+            stateArea.setText(GuiComparisonRenderer.renderStates(cs));
             traceArea.clear();
 
             List<OperationInfo> ops = cs.getCommonOperations().stream()
@@ -220,7 +221,7 @@ public class MainWindowController {
             if (comparisonMode) {
                 service.resetComparisonSession();
                 ComparisonSession cs = service.requireComparisonSession();
-                stateArea.setText(ComparisonRenderer.renderStates(cs));
+                stateArea.setText(GuiComparisonRenderer.renderStates(cs));
                 traceArea.clear();
                 historyListView.setItems(FXCollections.observableArrayList());
                 sessionOpsCountLabel.setText("Operations: 0");
@@ -255,6 +256,11 @@ public class MainWindowController {
 
         if (args.size() < selectedOp.argCount()) {
             setStatus("This operation requires " + selectedOp.argCount() + " argument(s). Usage: " + selectedOp.usage());
+            return;
+        }
+
+        if (args.size() > selectedOp.argCount()) {
+            setStatus("Too many arguments. Expected " + selectedOp.argCount() + ", got " + args.size() + ". Usage: " + selectedOp.usage());
             return;
         }
 
@@ -293,8 +299,8 @@ public class MainWindowController {
             ComparisonOperationResult result = service.executeComparisonOperation(opName, args);
             ComparisonSession cs = service.requireComparisonSession();
 
-            stateArea.setText(ComparisonRenderer.renderStates(cs));
-            traceArea.setText(ComparisonRenderer.renderTraces(cs));
+            stateArea.setText(GuiComparisonRenderer.renderStates(cs));
+            traceArea.setText(GuiComparisonRenderer.renderCompactTraces(cs));
             sessionOpsCountLabel.setText("Operations: " + cs.historySize());
             argField.clear();
 

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import structlab.app.runtime.OperationDescriptor;
 import structlab.app.service.StructLabService;
 import structlab.app.service.StructureSummary;
 
@@ -281,6 +282,65 @@ class ComparisonServiceTest {
         void queueComparisonHasThreeImpls() {
             ComparisonSession cs = service.requireComparisonSession();
             assertEquals(3, cs.entryCount());
+        }
+    }
+
+    // ── Comparison Grouping ───────────────────────────────
+
+    @Nested
+    class ComparisonGroupingTests {
+
+        @Test
+        void hashAutoGroupExcludesHashSet() {
+            // When opening with empty implIds, Hash Set (add/contains/remove)
+            // should be excluded because it's incompatible with Hash Map ops (put/get/remove/contains)
+            ComparisonSession cs = service.openComparisonSession("struct-hash", List.of());
+            for (ComparisonRuntimeEntry entry : cs.getEntries()) {
+                assertNotEquals("impl-hash-set", entry.getImplementationId(),
+                        "Hash Set should not be mixed with Hash Map implementations");
+            }
+        }
+
+        @Test
+        void hashAutoGroupSelectsMapImpls() {
+            ComparisonSession cs = service.openComparisonSession("struct-hash", List.of());
+            // Should select the 4 Hash Map impls (chaining + 3 OA variants)
+            assertEquals(4, cs.entryCount(),
+                    "Auto-grouping should select 4 compatible Hash Map implementations");
+        }
+
+        @Test
+        void hashAutoGroupHasFullOperationSet() {
+            ComparisonSession cs = service.openComparisonSession("struct-hash", List.of());
+            List<String> opNames = cs.getCommonOperations().stream()
+                    .map(o -> o.name())
+                    .toList();
+            assertTrue(opNames.contains("put"), "Should have 'put' operation");
+            assertTrue(opNames.contains("get"), "Should have 'get' operation");
+            assertTrue(opNames.contains("remove"), "Should have 'remove' operation");
+            assertTrue(opNames.contains("contains"), "Should have 'contains' operation");
+        }
+
+        @Test
+        void stackAutoGroupIncludesAllImpls() {
+            // Stack impls (ArrayStack, LinkedStack) share the same ops — all should be included
+            ComparisonSession cs = service.openComparisonSession("struct-stack", List.of());
+            assertEquals(2, cs.entryCount());
+        }
+
+        @Test
+        void queueAutoGroupIncludesAllImpls() {
+            // All queue impls share the same ops
+            ComparisonSession cs = service.openComparisonSession("struct-queue", List.of());
+            assertEquals(3, cs.entryCount());
+        }
+
+        @Test
+        void explicitImplIdsBypassGrouping() {
+            // Explicitly requesting Hash Set + Hash Table Chaining should still work
+            ComparisonSession cs = service.openComparisonSession("struct-hash",
+                    List.of("impl-hash-set", "impl-hash-table-chaining"));
+            assertEquals(2, cs.entryCount());
         }
     }
 }
