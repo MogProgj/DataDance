@@ -26,21 +26,8 @@ public class ComparisonCardPane extends VBox {
     private final Label traceToggle;
     private boolean traceExpanded = false;
 
-    // own visual pane instances — not shared with explore or other cards
-    private StackVisualPane stackPane;
-    private QueueVisualPane queuePane;
-    private CircularQueueVisualPane circularQueuePane;
-    private HeapVisualPane heapPane;
-    private PriorityQueueVisualPane priorityQueuePane;
-    private HashChainingVisualPane hashChainingPane;
-    private HashOpenAddressingVisualPane hashOpenAddressingPane;
-    private HashSetVisualPane hashSetPane;
-    private SinglyLinkedListVisualPane singlyLinkedListPane;
-    private DoublyLinkedListVisualPane doublyLinkedListPane;
-    private ArrayDequeVisualPane arrayDequePane;
-    private LinkedDequeVisualPane linkedDequePane;
-    private FixedArrayVisualPane fixedArrayPane;
-    private DynamicArrayVisualPane dynamicArrayPane;
+    // own visual pane cache — not shared with explore or other cards
+    private final VisualPaneCache paneCache = new VisualPaneCache();
 
     public ComparisonCardPane() {
         getStyleClass().add("comparison-card");
@@ -172,93 +159,18 @@ public class ComparisonCardPane extends VBox {
     }
 
     /**
-     * Per-card visual pane creation (not shared singletons).
+     * Per-card visual pane creation via shared {@link VisualPaneCache}.
      */
     private Node createOrUpdateVisual(String snapshot) {
         String type = StateModelParser.structureType(snapshot);
-        return switch (type) {
-            case "ArrayStack" -> {
-                if (stackPane == null) stackPane = new StackVisualPane();
-                stackPane.update(StateModelParser.parseArrayStack(snapshot));
-                yield stackPane;
-            }
-            case "LinkedStack" -> {
-                if (stackPane == null) stackPane = new StackVisualPane();
-                stackPane.update(StateModelParser.parseLinkedStack(snapshot));
-                yield stackPane;
-            }
-            case "CircularArrayQueue" -> {
-                if (circularQueuePane == null) circularQueuePane = new CircularQueueVisualPane();
-                circularQueuePane.update(StateModelParser.parseCircularArrayQueue(snapshot));
-                yield circularQueuePane;
-            }
-            case "LinkedQueue" -> {
-                if (queuePane == null) queuePane = new QueueVisualPane();
-                queuePane.update(StateModelParser.parseLinkedQueue(snapshot));
-                yield queuePane;
-            }
-            case "TwoStackQueue" -> {
-                if (queuePane == null) queuePane = new QueueVisualPane();
-                queuePane.update(StateModelParser.parseTwoStackQueue(snapshot));
-                yield queuePane;
-            }
-            case "BinaryHeap" -> {
-                if (heapPane == null) heapPane = new HeapVisualPane();
-                heapPane.update(StateModelParser.parseBinaryHeap(snapshot));
-                yield heapPane;
-            }
-            case "HeapPriorityQueue" -> {
-                if (priorityQueuePane == null) priorityQueuePane = new PriorityQueueVisualPane();
-                priorityQueuePane.update(StateModelParser.parseHeapPriorityQueue(snapshot));
-                yield priorityQueuePane;
-            }
-            case "HashTableChaining" -> {
-                if (hashChainingPane == null) hashChainingPane = new HashChainingVisualPane();
-                hashChainingPane.update(StateModelParser.parseHashTableChaining(snapshot));
-                yield hashChainingPane;
-            }
-            case "HashTableOpenAddressing" -> {
-                if (hashOpenAddressingPane == null) hashOpenAddressingPane = new HashOpenAddressingVisualPane();
-                hashOpenAddressingPane.update(StateModelParser.parseHashTableOpenAddressing(snapshot));
-                yield hashOpenAddressingPane;
-            }
-            case "HashSetCustom" -> {
-                if (hashSetPane == null) hashSetPane = new HashSetVisualPane();
-                hashSetPane.update(StateModelParser.parseHashSetCustom(snapshot));
-                yield hashSetPane;
-            }
-            case "SinglyLinkedList" -> {
-                if (singlyLinkedListPane == null) singlyLinkedListPane = new SinglyLinkedListVisualPane();
-                singlyLinkedListPane.update(StateModelParser.parseSinglyLinkedList(snapshot));
-                yield singlyLinkedListPane;
-            }
-            case "DoublyLinkedList" -> {
-                if (doublyLinkedListPane == null) doublyLinkedListPane = new DoublyLinkedListVisualPane();
-                doublyLinkedListPane.update(StateModelParser.parseDoublyLinkedList(snapshot));
-                yield doublyLinkedListPane;
-            }
-            case "ArrayDequeCustom" -> {
-                if (arrayDequePane == null) arrayDequePane = new ArrayDequeVisualPane();
-                arrayDequePane.update(StateModelParser.parseArrayDequeCustom(snapshot));
-                yield arrayDequePane;
-            }
-            case "LinkedDeque" -> {
-                if (linkedDequePane == null) linkedDequePane = new LinkedDequeVisualPane();
-                linkedDequePane.update(StateModelParser.parseLinkedDeque(snapshot));
-                yield linkedDequePane;
-            }
-            case "FixedArray" -> {
-                if (fixedArrayPane == null) fixedArrayPane = new FixedArrayVisualPane();
-                fixedArrayPane.update(StateModelParser.parseFixedArray(snapshot));
-                yield fixedArrayPane;
-            }
-            case "DynamicArray" -> {
-                if (dynamicArrayPane == null) dynamicArrayPane = new DynamicArrayVisualPane();
-                dynamicArrayPane.update(StateModelParser.parseDynamicArray(snapshot));
-                yield dynamicArrayPane;
-            }
-            default -> null;
-        };
+        if ("HeapPriorityQueue".equals(type)) {
+            HeapStateModel m = StateModelParser.parseHeapPriorityQueue(snapshot);
+            return paneCache.updateAsPriorityQueue(m);
+        }
+
+        VisualState state = StateModelParser.parse(snapshot);
+        if (state == null) return null;
+        return paneCache.update(state);
     }
 
     private void toggleTrace() {

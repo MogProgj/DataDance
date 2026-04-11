@@ -50,6 +50,57 @@ class StateModelParserTest {
         assertFalse(model.isEmpty());
     }
 
+    // ── unified parse() ─────────────────────────────────────
+
+    @Test
+    void parseReturnsStackStateModelForArrayStack() {
+        String snap = "ArrayStack{size=1, top=10, elements=DynamicArray{size=1, capacity=4, elements=[10], raw=[10, null, null, null]}}";
+        VisualState state = StateModelParser.parse(snap);
+        assertInstanceOf(StackStateModel.class, state);
+        assertEquals(1, ((StackStateModel) state).size());
+    }
+
+    @Test
+    void parseReturnsNullForUnknownType() {
+        assertNull(StateModelParser.parse("UnknownStructure{size=0}"));
+    }
+
+    @Test
+    void parseReturnCorrectTypeForEveryFamily() {
+        assertInstanceOf(StackStateModel.class, StateModelParser.parse(
+                "LinkedStack{size=0, top=null, chain=[]}"));
+        assertInstanceOf(QueueStateModel.class, StateModelParser.parse(
+                "LinkedQueue{size=0, front=null, rear=null, chain=[]}"));
+        assertInstanceOf(CircularQueueStateModel.class, StateModelParser.parse(
+                "CircularArrayQueue{size=0, capacity=4, frontIndex=0, logical=[], raw=[null, null, null, null]}"));
+        assertInstanceOf(HeapStateModel.class, StateModelParser.parse(
+                "BinaryHeap{size=1, min=5, elements=DynamicArray{size=1, capacity=4, elements=[5], raw=[5, null, null, null]}}"));
+        assertInstanceOf(HeapStateModel.class, StateModelParser.parse(
+                "HeapPriorityQueue{size=1, front=5, heap=BinaryHeap{size=1, min=5, elements=DynamicArray{size=1, capacity=4, elements=[5], raw=[5, null, null, null]}}}"));
+        assertInstanceOf(SinglyLinkedListStateModel.class, StateModelParser.parse(
+                "SinglyLinkedList{size=0, head=null, tail=null, chain=[]}"));
+        assertInstanceOf(DoublyLinkedListStateModel.class, StateModelParser.parse(
+                "DoublyLinkedList{size=0, head=null, tail=null, chain=[]}"));
+        assertInstanceOf(ArrayDequeStateModel.class, StateModelParser.parse(
+                "ArrayDequeCustom{size=0, capacity=4, frontIndex=0, logical=[], raw=[null, null, null, null]}"));
+        assertInstanceOf(LinkedDequeStateModel.class, StateModelParser.parse(
+                "LinkedDeque{size=0, front=null, rear=null, chain=[]}"));
+        assertInstanceOf(FixedArrayStateModel.class, StateModelParser.parse(
+                "FixedArray{size=0, capacity=4, elements=[], raw=[null, null, null, null]}"));
+        assertInstanceOf(DynamicArrayStateModel.class, StateModelParser.parse(
+                "DynamicArray{size=0, capacity=4, elements=[], raw=[null, null, null, null]}"));
+    }
+
+    @Test
+    void allStateModelsImplementVisualState() {
+        var stack = new StackStateModel(List.of(), 0, "null");
+        var queue = new QueueStateModel(List.of(), 0, "null", "null");
+        assertInstanceOf(VisualState.class, stack);
+        assertInstanceOf(VisualState.class, queue);
+        assertTrue(stack.isEmpty());
+        assertTrue(queue.isEmpty());
+    }
+
     @Test
     void parseArrayStackSingleElement() {
         String snap = "ArrayStack{size=1, top=42, elements=DynamicArray{size=1, capacity=4, elements=[42], raw=[42, null, null, null]}}";

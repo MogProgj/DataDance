@@ -11,7 +11,7 @@ import java.util.List;
  * @param head  display string for head node, or "null" if empty
  * @param tail  display string for tail node, or "null" if empty
  */
-public record DoublyLinkedListStateModel(List<String> nodes, int size, String head, String tail) {
+public record DoublyLinkedListStateModel(List<String> nodes, int size, String head, String tail) implements VisualState {
 
     public boolean isEmpty() {
         return size == 0;

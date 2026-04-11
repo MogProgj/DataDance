@@ -16,7 +16,7 @@ public record CircularQueueStateModel(
         List<String> logical,
         int size,
         int capacity,
-        int frontIndex) {
+        int frontIndex) implements VisualState {
 
     public boolean isEmpty() {
         return size == 0;

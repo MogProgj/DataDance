@@ -15,7 +15,7 @@ public record HeapStateModel(
         int size,
         String minValue,
         int capacity
-) {
+) implements VisualState {
 
     public boolean isEmpty() {
         return size == 0;

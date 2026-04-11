@@ -13,7 +13,7 @@ public record HashSetStateModel(
         int maxChainSize,
         int rehashes,
         List<SetBucket> buckets
-) {
+) implements VisualState {
     /**
      * A bucket holding set members (values only, no key-value mapping).
      */

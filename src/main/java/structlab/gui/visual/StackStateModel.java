@@ -9,7 +9,7 @@ import java.util.List;
  * @param size     number of elements
  * @param topValue display string for the top element, or "null" if empty
  */
-public record StackStateModel(List<String> elements, int size, String topValue) {
+public record StackStateModel(List<String> elements, int size, String topValue) implements VisualState {
 
     public boolean isEmpty() {
         return size == 0;

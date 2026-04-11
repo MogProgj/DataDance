@@ -13,7 +13,7 @@ public record HashOpenAddressingStateModel(
         String hashType,
         int rehashes,
         List<Slot> slots
-) {
+) implements VisualState {
     public enum SlotState { EMPTY, OCCUPIED, DELETED }
 
     /**

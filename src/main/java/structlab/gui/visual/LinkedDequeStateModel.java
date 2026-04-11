@@ -11,7 +11,7 @@ import java.util.List;
  * @param front display string for front node, or "null" if empty
  * @param rear  display string for rear node, or "null" if empty
  */
-public record LinkedDequeStateModel(List<String> nodes, int size, String front, String rear) {
+public record LinkedDequeStateModel(List<String> nodes, int size, String front, String rear) implements VisualState {
 
     public boolean isEmpty() {
         return size == 0;

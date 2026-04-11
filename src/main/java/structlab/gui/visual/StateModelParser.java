@@ -24,6 +24,34 @@ public final class StateModelParser {
     }
 
     /**
+     * Unified entry point: parses any supported snapshot string into the
+     * appropriate {@link VisualState} subtype.  Returns {@code null} for
+     * unrecognised snapshot formats.
+     */
+    public static VisualState parse(String snapshot) {
+        String type = structureType(snapshot);
+        return switch (type) {
+            case "ArrayStack"               -> parseArrayStack(snapshot);
+            case "LinkedStack"              -> parseLinkedStack(snapshot);
+            case "CircularArrayQueue"       -> parseCircularArrayQueue(snapshot);
+            case "LinkedQueue"              -> parseLinkedQueue(snapshot);
+            case "TwoStackQueue"            -> parseTwoStackQueue(snapshot);
+            case "BinaryHeap"              -> parseBinaryHeap(snapshot);
+            case "HeapPriorityQueue"       -> parseHeapPriorityQueue(snapshot);
+            case "HashTableChaining"       -> parseHashTableChaining(snapshot);
+            case "HashTableOpenAddressing" -> parseHashTableOpenAddressing(snapshot);
+            case "HashSetCustom"           -> parseHashSetCustom(snapshot);
+            case "SinglyLinkedList"        -> parseSinglyLinkedList(snapshot);
+            case "DoublyLinkedList"        -> parseDoublyLinkedList(snapshot);
+            case "ArrayDequeCustom"        -> parseArrayDequeCustom(snapshot);
+            case "LinkedDeque"             -> parseLinkedDeque(snapshot);
+            case "FixedArray"              -> parseFixedArray(snapshot);
+            case "DynamicArray"            -> parseDynamicArray(snapshot);
+            default                        -> null;
+        };
+    }
+
+    /**
      * Parses an ArrayStack snapshot into a StackStateModel.
      * ArrayStack stores elements bottom-to-top in a DynamicArray.
      * Snapshot: ArrayStack{size=N, top=V, elements=DynamicArray{size=N, capacity=N, elements=[...], raw=[...]}}

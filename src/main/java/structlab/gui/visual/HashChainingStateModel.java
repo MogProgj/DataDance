@@ -13,7 +13,7 @@ public record HashChainingStateModel(
         int maxChainSize,
         int rehashes,
         List<Bucket> buckets
-) {
+) implements VisualState {
     /**
      * A single bucket in the hash table.
      */

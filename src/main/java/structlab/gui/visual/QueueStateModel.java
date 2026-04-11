@@ -11,7 +11,7 @@ import java.util.List;
  * @param front    display string for the front element, or "null" if empty
  * @param rear     display string for the rear element, or "null" if empty
  */
-public record QueueStateModel(List<String> elements, int size, String front, String rear) {
+public record QueueStateModel(List<String> elements, int size, String front, String rear) implements VisualState {
 
     public boolean isEmpty() {
         return size == 0;

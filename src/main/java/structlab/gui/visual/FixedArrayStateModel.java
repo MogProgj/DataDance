@@ -10,7 +10,7 @@ import java.util.List;
  * @param size     number of occupied slots
  * @param capacity total fixed capacity
  */
-public record FixedArrayStateModel(List<String> elements, List<String> raw, int size, int capacity) {
+public record FixedArrayStateModel(List<String> elements, List<String> raw, int size, int capacity) implements VisualState {
 
     public boolean isEmpty() {
         return size == 0;
