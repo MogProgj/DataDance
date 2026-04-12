@@ -36,7 +36,7 @@ public final class BfsRunner {
         visited.add(source);
         discoveryOrder.add(source);
 
-        frames.add(new AlgorithmFrame(
+        frames.add(AlgorithmFrame.traversal(
                 AlgorithmFrame.AlgorithmType.BFS, step++, null,
                 Set.copyOf(visited), List.copyOf(queue), List.copyOf(discoveryOrder),
                 Map.copyOf(parentMap), Set.copyOf(treeEdges),
@@ -52,7 +52,7 @@ public final class BfsRunner {
             depth = depthMap.getOrDefault(current, 0);
 
             // Frame: processing current node
-            frames.add(new AlgorithmFrame(
+            frames.add(AlgorithmFrame.traversal(
                     AlgorithmFrame.AlgorithmType.BFS, step++, current,
                     Set.copyOf(visited), List.copyOf(queue), List.copyOf(discoveryOrder),
                     Map.copyOf(parentMap), Set.copyOf(treeEdges),
@@ -69,7 +69,7 @@ public final class BfsRunner {
                     depthMap.put(neighbor, depth + 1);
 
                     // Frame: discovered new neighbor
-                    frames.add(new AlgorithmFrame(
+                    frames.add(AlgorithmFrame.traversal(
                             AlgorithmFrame.AlgorithmType.BFS, step++, current,
                             Set.copyOf(visited), List.copyOf(queue), List.copyOf(discoveryOrder),
                             Map.copyOf(parentMap), Set.copyOf(treeEdges),
@@ -80,7 +80,7 @@ public final class BfsRunner {
         }
 
         // Final frame
-        frames.add(new AlgorithmFrame(
+        frames.add(AlgorithmFrame.traversal(
                 AlgorithmFrame.AlgorithmType.BFS, step, null,
                 Set.copyOf(visited), List.of(), List.copyOf(discoveryOrder),
                 Map.copyOf(parentMap), Set.copyOf(treeEdges),

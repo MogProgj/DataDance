@@ -50,8 +50,24 @@ class GraphPresetsTest {
     }
 
     @Test
-    void eightPresetsExist() {
-        assertEquals(8, GraphPresets.all().size());
+    void fourteenPresetsExist() {
+        assertEquals(14, GraphPresets.all().size());
+    }
+
+    @Test
+    void unweightedFilterReturnsEight() {
+        assertEquals(8, GraphPresets.unweighted().size());
+        for (GraphPresets.Preset p : GraphPresets.unweighted()) {
+            assertFalse(p.weighted(), "Preset '" + p.name() + "' should be unweighted");
+        }
+    }
+
+    @Test
+    void weightedFilterReturnsSix() {
+        assertEquals(6, GraphPresets.weighted().size());
+        for (GraphPresets.Preset p : GraphPresets.weighted()) {
+            assertTrue(p.weighted(), "Preset '" + p.name() + "' should be weighted");
+        }
     }
 
     @Test
@@ -67,6 +83,26 @@ class GraphPresetsTest {
         for (GraphPresets.Preset p : GraphPresets.all()) {
             List<AlgorithmFrame> frames = DfsRunner.run(p.graph(), p.suggestedSource());
             assertFalse(frames.isEmpty(), "DFS produced no frames for preset '" + p.name() + "'");
+        }
+    }
+
+    @Test
+    void dijkstraRunsOnAllPresets() {
+        for (GraphPresets.Preset p : GraphPresets.all()) {
+            List<AlgorithmFrame> frames = DijkstraRunner.run(p.graph(), p.suggestedSource());
+            assertFalse(frames.isEmpty(), "Dijkstra produced no frames for preset '" + p.name() + "'");
+        }
+    }
+
+    @Test
+    void dijkstraRunsWithTargetOnWeightedPresets() {
+        for (GraphPresets.Preset p : GraphPresets.weighted()) {
+            if (p.suggestedTarget() != null) {
+                List<AlgorithmFrame> frames = DijkstraRunner.run(
+                        p.graph(), p.suggestedSource(), p.suggestedTarget());
+                assertFalse(frames.isEmpty(),
+                        "Dijkstra with target produced no frames for '" + p.name() + "'");
+            }
         }
     }
 }

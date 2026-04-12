@@ -9,13 +9,15 @@ import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.Polygon;
 import structlab.core.graph.AlgorithmFrame;
+import structlab.core.graph.DijkstraRunner;
 import structlab.core.graph.Graph;
 
 import java.util.*;
 
 /**
  * Premium graph visualization pane for the Algorithm Lab.
- * Renders a node-link graph with algorithm state highlighting.
+ * Renders a node-link graph with algorithm state highlighting, edge weight
+ * labels, distance badges, and shortest-path highlighting.
  *
  * <p>Uses a layered/hierarchical auto-layout computed from BFS layering
  * of the graph, similar in spirit to the existing {@link structlab.gui.visual.tree.TreeCanvas}
@@ -25,8 +27,8 @@ public class GraphVisualPane extends VBox {
 
     private static final double NODE_RADIUS = 22;
     private static final double NODE_SIZE = NODE_RADIUS * 2;
-    private static final double LEVEL_HEIGHT = 80;
-    private static final double H_SPACING = 72;
+    private static final double LEVEL_HEIGHT = 90;
+    private static final double H_SPACING = 80;
     private static final double V_PADDING = 30;
     private static final double H_PADDING = 30;
 
@@ -36,6 +38,7 @@ public class GraphVisualPane extends VBox {
     private final Label stepLabel;
 
     private Graph currentGraph;
+    private boolean weightedMode;
     private Map<String, double[]> nodePositions = new LinkedHashMap<>();
 
     public GraphVisualPane() {
@@ -49,6 +52,7 @@ public class GraphVisualPane extends VBox {
         topBar.setPadding(new Insets(8, 14, 8, 14));
         statusLabel = new Label("Select a graph preset and algorithm to begin.");
         statusLabel.getStyleClass().add("graph-status-label");
+        statusLabel.setWrapText(true);
         stepLabel = new Label("");
         stepLabel.getStyleClass().add("graph-step-label");
         Region spacer = new Region();
@@ -66,15 +70,22 @@ public class GraphVisualPane extends VBox {
         legendBar.getStyleClass().add("graph-legend-bar");
         legendBar.setAlignment(Pos.CENTER_LEFT);
         legendBar.setPadding(new Insets(6, 14, 6, 14));
-        buildLegend();
+        buildLegend(false);
 
         getChildren().addAll(topBar, canvas, legendBar);
     }
 
     /** Sets up the graph topology and computes layout positions. */
     public void setGraph(Graph graph) {
+        setGraph(graph, false);
+    }
+
+    /** Sets up the graph topology with explicit weighted mode flag. */
+    public void setGraph(Graph graph, boolean weighted) {
         this.currentGraph = graph;
+        this.weightedMode = weighted;
         this.nodePositions = computeLayout(graph);
+        buildLegend(weighted);
         renderIdle();
     }
 
@@ -84,8 +95,10 @@ public class GraphVisualPane extends VBox {
         if (currentGraph == null) return;
         drawEdges(null);
         drawNodes(null);
-        statusLabel.setText(currentGraph.nodeCount() + " nodes, " + currentGraph.edgeCount() + " edges"
-                + (currentGraph.isDirected() ? " (directed)" : " (undirected)"));
+        String info = currentGraph.nodeCount() + " nodes, " + currentGraph.edgeCount() + " edges"
+                + (currentGraph.isDirected() ? " (directed)" : " (undirected)");
+        if (weightedMode) info += " — weighted";
+        statusLabel.setText(info);
         stepLabel.setText("");
     }
 
@@ -106,10 +119,6 @@ public class GraphVisualPane extends VBox {
 
     // ── Layout computation ──────────────────────────────────
 
-    /**
-     * Computes a layered layout using BFS from the first node.
-     * Falls back to a simple ring if the graph is disconnected.
-     */
     private Map<String, double[]> computeLayout(Graph graph) {
         Map<String, double[]> positions = new LinkedHashMap<>();
         if (graph.nodeCount() == 0) return positions;
@@ -134,7 +143,7 @@ public class GraphVisualPane extends VBox {
             }
         }
 
-        // Handle disconnected nodes — assign to their own extra layer
+        // Handle disconnected nodes
         int maxLayer = layerMap.values().stream().mapToInt(Integer::intValue).max().orElse(0);
         for (String node : nodes) {
             if (!layerMap.containsKey(node)) {
@@ -182,6 +191,8 @@ public class GraphVisualPane extends VBox {
     private void drawEdges(AlgorithmFrame frame) {
         if (currentGraph == null) return;
         Set<AlgorithmFrame.TraversalEdge> treeEdges = frame != null ? frame.treeEdges() : Set.of();
+        List<String> shortestPath = frame != null ? frame.shortestPath() : List.of();
+        Set<String> spEdgeKeys = buildShortestPathEdgeSet(shortestPath);
 
         for (Graph.Edge edge : currentGraph.edges()) {
             double[] from = nodePositions.get(edge.from());
@@ -193,7 +204,17 @@ public class GraphVisualPane extends VBox {
                     || treeEdges.contains(
                     new AlgorithmFrame.TraversalEdge(edge.to(), edge.from()));
 
-            String edgeClass = isTreeEdge ? "graph-edge-tree" : "graph-edge-default";
+            boolean isShortestPathEdge = spEdgeKeys.contains(edge.from() + "\0" + edge.to())
+                    || spEdgeKeys.contains(edge.to() + "\0" + edge.from());
+
+            String edgeClass;
+            if (isShortestPathEdge) {
+                edgeClass = "graph-edge-shortest-path";
+            } else if (isTreeEdge) {
+                edgeClass = "graph-edge-tree";
+            } else {
+                edgeClass = "graph-edge-default";
+            }
 
             // Compute slight curve via control points
             double dx = to[0] - from[0];
@@ -201,7 +222,6 @@ public class GraphVisualPane extends VBox {
             double midX = (from[0] + to[0]) / 2;
             double midY = (from[1] + to[1]) / 2;
 
-            // Add slight perpendicular offset for curved feel
             double len = Math.sqrt(dx * dx + dy * dy);
             double offset = len > 0 ? Math.min(12, len * 0.08) : 0;
             double nx = len > 0 ? -dy / len * offset : 0;
@@ -225,18 +245,36 @@ public class GraphVisualPane extends VBox {
 
             // Draw arrowhead for directed graphs
             if (currentGraph.isDirected()) {
-                drawArrowhead(from, to, isTreeEdge);
+                drawArrowhead(from, to, isShortestPathEdge || isTreeEdge);
+            }
+
+            // Draw weight label for weighted graphs
+            if (weightedMode && edge.weight() != 1.0) {
+                drawEdgeWeight(midX + nx * 2.5, midY + ny * 2.5, edge.weight(),
+                        isShortestPathEdge);
             }
         }
     }
 
-    private void drawArrowhead(double[] from, double[] to, boolean isTreeEdge) {
+    private void drawEdgeWeight(double x, double y, double weight, boolean highlighted) {
+        Label wLabel = new Label(DijkstraRunner.formatDist(weight));
+        wLabel.getStyleClass().add("graph-edge-weight");
+        if (highlighted) {
+            wLabel.getStyleClass().add("graph-edge-weight-highlighted");
+        }
+        wLabel.setMouseTransparent(true);
+        // Offset slightly from the edge midpoint
+        wLabel.setLayoutX(x - 8);
+        wLabel.setLayoutY(y - 10);
+        canvas.getChildren().add(wLabel);
+    }
+
+    private void drawArrowhead(double[] from, double[] to, boolean highlighted) {
         double dx = to[0] - from[0];
         double dy = to[1] - from[1];
         double len = Math.sqrt(dx * dx + dy * dy);
         if (len < 1) return;
 
-        // Shorten to node border
         double ux = dx / len;
         double uy = dy / len;
         double tipX = to[0] - ux * NODE_RADIUS;
@@ -251,7 +289,7 @@ public class GraphVisualPane extends VBox {
         double by = tipY - uy * arrowLen + ux * arrowWidth;
 
         Polygon arrow = new Polygon(tipX, tipY, ax, ay, bx, by);
-        arrow.getStyleClass().add(isTreeEdge ? "graph-arrow-tree" : "graph-arrow-default");
+        arrow.getStyleClass().add(highlighted ? "graph-arrow-tree" : "graph-arrow-default");
         arrow.setMouseTransparent(true);
         canvas.getChildren().add(arrow);
     }
@@ -261,26 +299,41 @@ public class GraphVisualPane extends VBox {
         Set<String> visited = frame != null ? frame.visited() : Set.of();
         List<String> frontier = frame != null ? frame.frontier() : List.of();
         String currentNode = frame != null ? frame.currentNode() : null;
+        String targetNode = frame != null ? frame.targetNode() : null;
+        Map<String, Double> distances = frame != null ? frame.distances() : Map.of();
+        List<String> shortestPath = frame != null ? frame.shortestPath() : List.of();
+        boolean isDijkstra = frame != null
+                && frame.algorithm() == AlgorithmFrame.AlgorithmType.DIJKSTRA;
 
         for (String nodeLabel : currentGraph.nodes()) {
             double[] pos = nodePositions.get(nodeLabel);
             if (pos == null) continue;
 
-            StackPane node = new StackPane();
-            node.getStyleClass().add("graph-node");
-            node.setPrefSize(NODE_SIZE, NODE_SIZE);
-            node.setMinSize(NODE_SIZE, NODE_SIZE);
-            node.setMaxSize(NODE_SIZE, NODE_SIZE);
+            // Container for node circle + optional distance badge
+            VBox nodeGroup = new VBox(2);
+            nodeGroup.setAlignment(Pos.CENTER);
+
+            StackPane nodeCircle = new StackPane();
+            nodeCircle.getStyleClass().add("graph-node");
+            nodeCircle.setPrefSize(NODE_SIZE, NODE_SIZE);
+            nodeCircle.setMinSize(NODE_SIZE, NODE_SIZE);
+            nodeCircle.setMaxSize(NODE_SIZE, NODE_SIZE);
 
             // State-based styling
+            boolean isOnShortestPath = shortestPath.contains(nodeLabel);
             if (nodeLabel.equals(currentNode)) {
-                node.getStyleClass().add("graph-node-current");
+                nodeCircle.getStyleClass().add("graph-node-current");
+            } else if (isOnShortestPath) {
+                nodeCircle.getStyleClass().add("graph-node-shortest-path");
+            } else if (nodeLabel.equals(targetNode)) {
+                nodeCircle.getStyleClass().add(visited.contains(nodeLabel)
+                        ? "graph-node-target-settled" : "graph-node-target");
             } else if (frontier.contains(nodeLabel)) {
-                node.getStyleClass().add("graph-node-frontier");
+                nodeCircle.getStyleClass().add("graph-node-frontier");
             } else if (visited.contains(nodeLabel)) {
-                node.getStyleClass().add("graph-node-visited");
+                nodeCircle.getStyleClass().add("graph-node-visited");
             } else {
-                node.getStyleClass().add("graph-node-idle");
+                nodeCircle.getStyleClass().add("graph-node-idle");
             }
 
             Label label = new Label(nodeLabel);
@@ -289,24 +342,54 @@ public class GraphVisualPane extends VBox {
                 label.getStyleClass().add("graph-node-label-current");
             }
 
-            node.getChildren().add(label);
-            node.setLayoutX(pos[0] - NODE_RADIUS);
-            node.setLayoutY(pos[1] - NODE_RADIUS);
+            nodeCircle.getChildren().add(label);
+            nodeGroup.getChildren().add(nodeCircle);
 
-            canvas.getChildren().add(node);
+            // Distance badge for Dijkstra
+            if (isDijkstra && distances.containsKey(nodeLabel)) {
+                double dist = distances.get(nodeLabel);
+                Label distLabel = new Label(DijkstraRunner.formatDist(dist));
+                distLabel.getStyleClass().add("graph-distance-badge");
+                if (visited.contains(nodeLabel)) {
+                    distLabel.getStyleClass().add("graph-distance-settled");
+                }
+                nodeGroup.getChildren().add(distLabel);
+            }
+
+            nodeGroup.setLayoutX(pos[0] - NODE_RADIUS);
+            nodeGroup.setLayoutY(pos[1] - NODE_RADIUS);
+
+            canvas.getChildren().add(nodeGroup);
         }
+    }
+
+    // ── Shortest-path edge tracking ─────────────────────────
+
+    private static Set<String> buildShortestPathEdgeSet(List<String> path) {
+        Set<String> edgeKeys = new HashSet<>();
+        for (int i = 0; i + 1 < path.size(); i++) {
+            edgeKeys.add(path.get(i) + "\0" + path.get(i + 1));
+        }
+        return edgeKeys;
     }
 
     // ── Legend ───────────────────────────────────────────────
 
-    private void buildLegend() {
+    private void buildLegend(boolean weighted) {
+        legendBar.getChildren().clear();
         legendBar.getChildren().addAll(
                 legendItem("graph-legend-current", "Current"),
                 legendItem("graph-legend-frontier", "Frontier"),
-                legendItem("graph-legend-visited", "Visited"),
+                legendItem("graph-legend-visited", weighted ? "Settled" : "Visited"),
                 legendItem("graph-legend-idle", "Unvisited"),
-                legendItem("graph-legend-tree-edge", "Tree Edge")
+                legendItem("graph-legend-tree-edge", weighted ? "SP Tree" : "Tree Edge")
         );
+        if (weighted) {
+            legendBar.getChildren().addAll(
+                    legendItem("graph-legend-shortest-path", "Shortest Path"),
+                    legendItem("graph-legend-target", "Target")
+            );
+        }
     }
 
     private HBox legendItem(String styleClass, String text) {

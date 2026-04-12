@@ -36,7 +36,7 @@ public final class DfsRunner {
         stack.push(source);
         depthMap.put(source, 0);
 
-        frames.add(new AlgorithmFrame(
+        frames.add(AlgorithmFrame.traversal(
                 AlgorithmFrame.AlgorithmType.DFS, step++, null,
                 Set.copyOf(visited), stackToList(stack), List.copyOf(discoveryOrder),
                 Map.copyOf(parentMap), Set.copyOf(treeEdges),
@@ -47,7 +47,7 @@ public final class DfsRunner {
 
             if (visited.contains(current)) {
                 // Already visited via another path — skip (backtrack frame)
-                frames.add(new AlgorithmFrame(
+                frames.add(AlgorithmFrame.traversal(
                         AlgorithmFrame.AlgorithmType.DFS, step++, current,
                         Set.copyOf(visited), stackToList(stack), List.copyOf(discoveryOrder),
                         Map.copyOf(parentMap), Set.copyOf(treeEdges),
@@ -61,7 +61,7 @@ public final class DfsRunner {
             int depth = depthMap.getOrDefault(current, 0);
 
             // Frame: visiting current node
-            frames.add(new AlgorithmFrame(
+            frames.add(AlgorithmFrame.traversal(
                     AlgorithmFrame.AlgorithmType.DFS, step++, current,
                     Set.copyOf(visited), stackToList(stack), List.copyOf(discoveryOrder),
                     Map.copyOf(parentMap), Set.copyOf(treeEdges),
@@ -90,7 +90,7 @@ public final class DfsRunner {
             }
 
             if (!unvisited.isEmpty()) {
-                frames.add(new AlgorithmFrame(
+                frames.add(AlgorithmFrame.traversal(
                         AlgorithmFrame.AlgorithmType.DFS, step++, current,
                         Set.copyOf(visited), stackToList(stack), List.copyOf(discoveryOrder),
                         Map.copyOf(parentMap), Set.copyOf(treeEdges),
@@ -100,7 +100,7 @@ public final class DfsRunner {
         }
 
         // Final frame
-        frames.add(new AlgorithmFrame(
+        frames.add(AlgorithmFrame.traversal(
                 AlgorithmFrame.AlgorithmType.DFS, step, null,
                 Set.copyOf(visited), List.of(), List.copyOf(discoveryOrder),
                 Map.copyOf(parentMap), Set.copyOf(treeEdges),

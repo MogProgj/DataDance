@@ -28,6 +28,7 @@ public class AlgorithmLabController {
     private ComboBox<String> presetCombo;
     private ComboBox<String> algorithmCombo;
     private ComboBox<String> sourceCombo;
+    private ComboBox<String> targetCombo;
     private Button runBtn, resetBtn;
     private Button playBtn, pauseBtn, nextBtn, prevBtn, toStartBtn, toEndBtn;
     private Slider speedSlider;
@@ -40,6 +41,8 @@ public class AlgorithmLabController {
     private Label visitedLabel;
     private Label depthLabel;
     private Label statusMessageLabel;
+    private Label distancesLabel;
+    private Label pathLabel;
 
     // State
     private Graph currentGraph;
@@ -85,7 +88,7 @@ public class AlgorithmLabController {
         algorithmCombo = new ComboBox<>();
         algorithmCombo.setMaxWidth(Double.MAX_VALUE);
         algorithmCombo.getStyleClass().add("algo-combo");
-        algorithmCombo.setItems(FXCollections.observableArrayList("BFS", "DFS"));
+        algorithmCombo.setItems(FXCollections.observableArrayList("BFS", "DFS", "Dijkstra"));
         algorithmCombo.getSelectionModel().selectFirst();
         sectionBody(algoSection).getChildren().add(algorithmCombo);
 
@@ -96,6 +99,17 @@ public class AlgorithmLabController {
         sourceCombo.getStyleClass().add("algo-combo");
         sourceCombo.setPromptText("Select source...");
         sectionBody(sourceSection).getChildren().add(sourceCombo);
+
+        // Target selection (Dijkstra)
+        VBox targetSection = buildSection("TARGET NODE");
+        targetCombo = new ComboBox<>();
+        targetCombo.setMaxWidth(Double.MAX_VALUE);
+        targetCombo.getStyleClass().add("algo-combo");
+        targetCombo.setPromptText("No target (full tree)");
+        Label targetHint = new Label("Optional — set for shortest-path mode");
+        targetHint.getStyleClass().add("algo-preset-desc");
+        targetHint.setWrapText(true);
+        sectionBody(targetSection).getChildren().addAll(targetCombo, targetHint);
 
         // Run / Reset
         VBox actionSection = new VBox(6);
@@ -115,7 +129,8 @@ public class AlgorithmLabController {
         actionSection.getChildren().addAll(runBtn, resetBtn);
 
         controlPanel.getChildren().addAll(presetSection, new Separator(), algoSection,
-                new Separator(), sourceSection, new Separator(), actionSection);
+                new Separator(), sourceSection, new Separator(), targetSection,
+                new Separator(), actionSection);
 
         // ── Center workspace ────────────────────────────────
         VBox workspace = new VBox();
@@ -221,6 +236,13 @@ public class AlgorithmLabController {
         visitedLabel = new Label("");
         visitedLabel.getStyleClass().add("algo-info-value");
 
+        distancesLabel = new Label("");
+        distancesLabel.getStyleClass().add("algo-info-value");
+        distancesLabel.setWrapText(true);
+        pathLabel = new Label("");
+        pathLabel.getStyleClass().add("algo-info-value");
+        pathLabel.setWrapText(true);
+
         VBox stateBody = sectionBody(stateSection);
         stateBody.getChildren().addAll(
                 statusMessageLabel,
@@ -228,7 +250,10 @@ public class AlgorithmLabController {
                 styledLabel("DEPTH / LAYER", "algo-info-label"), depthLabel,
                 styledLabel("DISCOVERY ORDER", "algo-info-label"), discoveryLabel,
                 styledLabel("FRONTIER", "algo-info-label"), frontierLabel,
-                styledLabel("VISITED", "algo-info-label"), visitedLabel);
+                styledLabel("VISITED / SETTLED", "algo-info-label"), visitedLabel,
+                new Separator(),
+                styledLabel("DISTANCES", "algo-info-label"), distancesLabel,
+                styledLabel("SHORTEST PATH", "algo-info-label"), pathLabel);
 
         panel.getChildren().add(stateSection);
         return panel;
@@ -253,7 +278,24 @@ public class AlgorithmLabController {
             sourceCombo.getSelectionModel().selectFirst();
         }
 
-        graphPane.setGraph(currentGraph);
+        // Populate target nodes
+        List<String> targetOptions = new java.util.ArrayList<>();
+        targetOptions.add("— No target —");
+        targetOptions.addAll(currentGraph.nodes());
+        targetCombo.setItems(FXCollections.observableArrayList(targetOptions));
+        if (currentPreset.suggestedTarget() != null
+                && currentGraph.hasNode(currentPreset.suggestedTarget())) {
+            targetCombo.getSelectionModel().select(currentPreset.suggestedTarget());
+        } else {
+            targetCombo.getSelectionModel().selectFirst();
+        }
+
+        // Auto-select Dijkstra for weighted presets
+        if (currentPreset.weighted()) {
+            algorithmCombo.getSelectionModel().select("Dijkstra");
+        }
+
+        graphPane.setGraph(currentGraph, currentPreset.weighted());
         playback.clear();
         runBtn.setDisable(false);
         resetBtn.setDisable(true);
@@ -274,8 +316,22 @@ public class AlgorithmLabController {
         List<AlgorithmFrame> frames;
         if ("BFS".equals(algo)) {
             frames = BfsRunner.run(currentGraph, source);
-        } else {
+        } else if ("DFS".equals(algo)) {
             frames = DfsRunner.run(currentGraph, source);
+        } else {
+            // Dijkstra
+            String targetVal = targetCombo.getValue();
+            String target = (targetVal == null || targetVal.startsWith("—")) ? null : targetVal;
+            try {
+                frames = DijkstraRunner.run(currentGraph, source, target);
+            } catch (IllegalArgumentException ex) {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Invalid Graph");
+                alert.setHeaderText("Cannot run Dijkstra");
+                alert.setContentText(ex.getMessage());
+                alert.showAndWait();
+                return;
+            }
         }
 
         playback.load(frames);
@@ -382,18 +438,60 @@ public class AlgorithmLabController {
 
     private void updateInfoPanel(AlgorithmFrame frame) {
         statusMessageLabel.setText(frame.statusMessage());
-        depthLabel.setText(String.valueOf(frame.depth()));
+
+        boolean isDijkstra = frame.algorithm() == AlgorithmFrame.AlgorithmType.DIJKSTRA;
+
+        if (isDijkstra) {
+            depthLabel.setText("—");
+        } else {
+            depthLabel.setText(String.valueOf(frame.depth()));
+        }
 
         List<String> disc = frame.discoveryOrder();
         discoveryLabel.setText(disc.isEmpty() ? "—" : String.join(" → ", disc));
 
         List<String> front = frame.frontier();
-        String frontierType = frame.algorithm() == AlgorithmFrame.AlgorithmType.BFS ? "Queue" : "Stack";
+        String frontierType;
+        if (isDijkstra) {
+            frontierType = "PQ";
+        } else if (frame.algorithm() == AlgorithmFrame.AlgorithmType.BFS) {
+            frontierType = "Queue";
+        } else {
+            frontierType = "Stack";
+        }
         frontierLabel.setText(front.isEmpty() ? "— (empty " + frontierType + ")"
                 : frontierType + ": [" + String.join(", ", front) + "]");
 
-        visitedLabel.setText(frame.visited().size() + " of "
+        String visitedWord = isDijkstra ? "Settled" : "Visited";
+        visitedLabel.setText(visitedWord + ": " + frame.visited().size() + " of "
                 + (currentGraph != null ? currentGraph.nodeCount() : "?") + " nodes");
+
+        // Dijkstra-specific: distances and shortest path
+        if (isDijkstra) {
+            java.util.Map<String, Double> dist = frame.distances();
+            if (!dist.isEmpty()) {
+                StringBuilder sb = new StringBuilder();
+                dist.forEach((node, d) -> {
+                    if (sb.length() > 0) sb.append(", ");
+                    sb.append(node).append("=").append(DijkstraRunner.formatDist(d));
+                });
+                distancesLabel.setText(sb.toString());
+            } else {
+                distancesLabel.setText("—");
+            }
+
+            List<String> path = frame.shortestPath();
+            if (!path.isEmpty()) {
+                pathLabel.setText(String.join(" → ", path));
+            } else if (frame.targetNode() != null) {
+                pathLabel.setText("(not yet found)");
+            } else {
+                pathLabel.setText("—");
+            }
+        } else {
+            distancesLabel.setText("—");
+            pathLabel.setText("—");
+        }
     }
 
     private void clearInfoPanel() {
@@ -402,6 +500,8 @@ public class AlgorithmLabController {
         discoveryLabel.setText("");
         frontierLabel.setText("");
         visitedLabel.setText("");
+        distancesLabel.setText("");
+        pathLabel.setText("");
     }
 
     private void updateFrameLabel() {

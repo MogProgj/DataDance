@@ -2510,6 +2510,74 @@
     -fx-opacity: 0.8;
 }
 
+/* ── Dijkstra / shortest-path visuals ──────────────────── */
+
+.graph-node-shortest-path {
+    -fx-background-color: #1a1500;
+    -fx-border-color: #f0b429;
+    -fx-border-width: 2.5;
+}
+
+.graph-node-target {
+    -fx-background-color: #1a0d0d;
+    -fx-border-color: #f85149;
+    -fx-border-width: 2;
+    -fx-border-style: segments(6, 4);
+}
+
+.graph-node-target-settled {
+    -fx-background-color: #1a0d0d;
+    -fx-border-color: #f85149;
+    -fx-border-width: 2.5;
+}
+
+.graph-edge-shortest-path {
+    -fx-stroke: #f0b429;
+    -fx-stroke-width: 3;
+    -fx-opacity: 0.95;
+}
+
+.graph-edge-weight {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 10px;
+    -fx-text-fill: #8b949e;
+    -fx-background-color: rgba(13, 17, 23, 0.85);
+    -fx-padding: 1 4;
+    -fx-background-radius: 3;
+}
+
+.graph-edge-weight-highlighted {
+    -fx-text-fill: #f0b429;
+    -fx-font-weight: bold;
+}
+
+.graph-distance-badge {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 9px;
+    -fx-text-fill: #8b949e;
+    -fx-alignment: center;
+}
+
+.graph-distance-settled {
+    -fx-text-fill: #58a6ff;
+    -fx-font-weight: bold;
+}
+
+.graph-legend-shortest-path {
+    -fx-background-color: #f0b429;
+    -fx-background-radius: 2;
+    -fx-border-radius: 2;
+    -fx-pref-width: 20;
+    -fx-pref-height: 3;
+    -fx-min-width: 20;
+    -fx-min-height: 3;
+    -fx-max-height: 3;
+}
+
+.graph-legend-target {
+    -fx-background-color: #f85149;
+}
+
 /* ── Graph legend bar ──────────────────────────────────── */
 
 .graph-legend-bar {
