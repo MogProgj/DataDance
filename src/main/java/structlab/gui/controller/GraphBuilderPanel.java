@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import structlab.core.graph.Graph;
 
+import java.util.Locale;
 import java.util.function.Consumer;
 
 /**
@@ -16,13 +17,29 @@ import java.util.function.Consumer;
  */
 public class GraphBuilderPanel extends VBox {
 
+    /** Typed edge item — eliminates regex parsing on remove. */
+    public record EdgeItem(String from, String to, double weight, boolean directed) {
+        @Override
+        public String toString() {
+            String sep = directed ? " → " : " — ";
+            return from + sep + to + " (w=" + formatWeight(weight) + ")";
+        }
+
+        private static String formatWeight(double w) {
+            if (w == Math.floor(w) && !Double.isInfinite(w)) {
+                return String.valueOf((long) w);
+            }
+            return String.format(Locale.US, "%.2f", w);
+        }
+    }
+
     private final CheckBox directedCheck;
     private final TextField nodeField;
     private final ComboBox<String> fromCombo;
     private final ComboBox<String> toCombo;
     private final TextField weightField;
     private final ListView<String> nodeList;
-    private final ListView<String> edgeList;
+    private final ListView<EdgeItem> edgeList;
     private final Label summaryLabel;
 
     private Graph graph;
@@ -220,14 +237,9 @@ public class GraphBuilderPanel extends VBox {
     }
 
     private void onRemoveEdge() {
-        String selected = edgeList.getSelectionModel().getSelectedItem();
+        EdgeItem selected = edgeList.getSelectionModel().getSelectedItem();
         if (selected == null) return;
-        // Parse edge label "A → B (w=3)" or "A — B (w=3)"
-        String[] parts = selected.split("\\s*[→—]\\s*");
-        if (parts.length < 2) return;
-        String from = parts[0].trim();
-        String to = parts[1].replaceAll("\\s*\\(.*\\).*", "").trim();
-        graph.removeEdge(from, to);
+        graph.removeEdge(selected.from(), selected.to());
         refreshLists();
         fireChanged();
     }
@@ -266,11 +278,11 @@ public class GraphBuilderPanel extends VBox {
         fromCombo.setItems(FXCollections.observableArrayList(graph.nodes()));
         toCombo.setItems(FXCollections.observableArrayList(graph.nodes()));
 
-        // Edge list
-        String sep = graph.isDirected() ? " → " : " — ";
+        // Edge list — typed items, display via toString()
+        boolean directed = graph.isDirected();
         edgeList.setItems(FXCollections.observableArrayList(
                 graph.edges().stream()
-                        .map(e -> e.from() + sep + e.to() + " (w=" + formatWeight(e.weight()) + ")")
+                        .map(e -> new EdgeItem(e.from(), e.to(), e.weight(), directed))
                         .toList()));
 
         summaryLabel.setText(graph.nodeCount() + " nodes, " + graph.edgeCount() + " edges"
@@ -281,13 +293,6 @@ public class GraphBuilderPanel extends VBox {
         if (onGraphChanged != null) {
             onGraphChanged.accept(graph);
         }
-    }
-
-    private static String formatWeight(double w) {
-        if (w == Math.floor(w) && !Double.isInfinite(w)) {
-            return String.valueOf((long) w);
-        }
-        return String.format(java.util.Locale.US, "%.1f", w);
     }
 
     private static void showWarning(String message) {

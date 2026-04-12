@@ -8,10 +8,13 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
 import javafx.util.Duration;
 import structlab.core.graph.*;
 import structlab.gui.visual.GraphVisualPane;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -112,7 +115,9 @@ public class AlgorithmLabController {
         algorithmCombo.setMaxWidth(Double.MAX_VALUE);
         algorithmCombo.getStyleClass().add("algo-combo");
         algorithmCombo.setItems(FXCollections.observableArrayList(
-                "BFS", "DFS", "Dijkstra", "Bellman-Ford", "Topo Sort", "A*"));
+                "BFS", "DFS", "Dijkstra", "Bellman-Ford", "Topo Sort", "A*",
+                "Prim (MST)", "Kruskal (MST)", "SCC (Kosaraju)",
+                "Bridges", "Articulation Points"));
         algorithmCombo.getSelectionModel().selectFirst();
         sectionBody(algoSection).getChildren().add(algorithmCombo);
 
@@ -173,7 +178,9 @@ public class AlgorithmLabController {
         compareAlgoCombo.setMaxWidth(Double.MAX_VALUE);
         compareAlgoCombo.getStyleClass().add("algo-combo");
         compareAlgoCombo.setItems(FXCollections.observableArrayList(
-                "BFS", "DFS", "Dijkstra", "Bellman-Ford", "Topo Sort", "A*"));
+                "BFS", "DFS", "Dijkstra", "Bellman-Ford", "Topo Sort", "A*",
+                "Prim (MST)", "Kruskal (MST)", "SCC (Kosaraju)",
+                "Bridges", "Articulation Points"));
         compareAlgoCombo.setPromptText("Compare algorithm...");
         compareAlgoCombo.setVisible(false);
         compareAlgoCombo.setManaged(false);
@@ -181,9 +188,23 @@ public class AlgorithmLabController {
         sectionBody(modeSection).getChildren().addAll(
                 editModeToggle, fitViewBtn, compareModeToggle, compareAlgoCombo);
 
+        // ── Save / Load scenario ────────────────────────────
+        VBox scenarioSection = buildSection("SCENARIO");
+        Button saveBtn = new Button("Save Scenario…");
+        saveBtn.getStyleClass().add("secondary-button");
+        saveBtn.setMaxWidth(Double.MAX_VALUE);
+        saveBtn.setOnAction(e -> onSaveScenario());
+
+        Button loadBtn = new Button("Load Scenario…");
+        loadBtn.getStyleClass().add("secondary-button");
+        loadBtn.setMaxWidth(Double.MAX_VALUE);
+        loadBtn.setOnAction(e -> onLoadScenario());
+        sectionBody(scenarioSection).getChildren().addAll(saveBtn, loadBtn);
+
         controlPanel.getChildren().addAll(presetSection, new Separator(), algoSection,
                 new Separator(), sourceSection, new Separator(), targetSection,
-                new Separator(), actionSection, new Separator(), modeSection);
+                new Separator(), actionSection, new Separator(), modeSection,
+                new Separator(), scenarioSection);
 
         ScrollPane controlScroll = new ScrollPane(controlPanel);
         controlScroll.setFitToWidth(true);
@@ -427,8 +448,8 @@ public class AlgorithmLabController {
         String algo = algorithmCombo.getValue();
         if (algo == null) return;
 
+        boolean needsSource = !isSourceFreeAlgorithm(algo);
         String source = sourceCombo.getValue();
-        boolean needsSource = !"Topo Sort".equals(algo);
         if (needsSource && (source == null || source.isEmpty())) return;
 
         // Exit edit mode when running
@@ -461,6 +482,15 @@ public class AlgorithmLabController {
         }
     }
 
+    /** Returns true for algorithms that don't need a source node. */
+    private static boolean isSourceFreeAlgorithm(String algo) {
+        return "Topo Sort".equals(algo)
+                || "Kruskal (MST)".equals(algo)
+                || "SCC (Kosaraju)".equals(algo)
+                || "Bridges".equals(algo)
+                || "Articulation Points".equals(algo);
+    }
+
     private List<AlgorithmFrame> runAlgorithm(String algo, String source) {
         String targetVal = targetCombo.getValue();
         String target = (targetVal == null || targetVal.startsWith("—")) ? null : targetVal;
@@ -481,6 +511,16 @@ public class AlgorithmLabController {
                 }
                 return AStarRunner.run(currentGraph, source, target,
                         graphPane.getNodePositions());
+            } else if ("Prim (MST)".equals(algo)) {
+                return PrimRunner.run(currentGraph, source);
+            } else if ("Kruskal (MST)".equals(algo)) {
+                return KruskalRunner.run(currentGraph);
+            } else if ("SCC (Kosaraju)".equals(algo)) {
+                return SCCRunner.run(currentGraph);
+            } else if ("Bridges".equals(algo)) {
+                return BridgesRunner.run(currentGraph);
+            } else if ("Articulation Points".equals(algo)) {
+                return ArticulationPointsRunner.run(currentGraph);
             } else {
                 return TopologicalSortRunner.run(currentGraph);
             }
@@ -658,9 +698,16 @@ public class AlgorithmLabController {
         boolean isBellmanFord = frame.algorithm() == AlgorithmFrame.AlgorithmType.BELLMAN_FORD;
         boolean isAStar = frame.algorithm() == AlgorithmFrame.AlgorithmType.A_STAR;
         boolean isTopoSort = frame.algorithm() == AlgorithmFrame.AlgorithmType.TOPOLOGICAL_SORT;
+        boolean isPrim = frame.algorithm() == AlgorithmFrame.AlgorithmType.PRIM;
+        boolean isKruskal = frame.algorithm() == AlgorithmFrame.AlgorithmType.KRUSKAL;
+        boolean isSCC = frame.algorithm() == AlgorithmFrame.AlgorithmType.SCC;
+        boolean isBridges = frame.algorithm() == AlgorithmFrame.AlgorithmType.BRIDGES;
+        boolean isAP = frame.algorithm() == AlgorithmFrame.AlgorithmType.ARTICULATION_POINTS;
+        boolean isMST = isPrim || isKruskal;
+        boolean isDiag = isSCC || isBridges || isAP;
         boolean showsDistances = isDijkstra || isBellmanFord || isAStar;
 
-        if (showsDistances || isTopoSort) {
+        if (showsDistances || isTopoSort || isMST || isDiag) {
             depthLabel.setText("—");
         } else {
             depthLabel.setText(String.valueOf(frame.depth()));
@@ -669,6 +716,10 @@ public class AlgorithmLabController {
         List<String> disc = frame.discoveryOrder();
         if (isTopoSort) {
             discoveryLabel.setText(disc.isEmpty() ? "—" : "Order: " + String.join(" → ", disc));
+        } else if (isMST) {
+            discoveryLabel.setText(disc.isEmpty() ? "—" : "Added: " + String.join(" → ", disc));
+        } else if (isSCC) {
+            discoveryLabel.setText(disc.isEmpty() ? "—" : String.join(" → ", disc));
         } else {
             discoveryLabel.setText(disc.isEmpty() ? "—" : String.join(" → ", disc));
         }
@@ -683,6 +734,14 @@ public class AlgorithmLabController {
             frontierType = "Relaxed";
         } else if (isTopoSort) {
             frontierType = "Ready";
+        } else if (isPrim) {
+            frontierType = "PQ (key)";
+        } else if (isKruskal) {
+            frontierType = "Edge";
+        } else if (isSCC) {
+            frontierType = "Stack";
+        } else if (isBridges || isAP) {
+            frontierType = "DFS";
         } else if (frame.algorithm() == AlgorithmFrame.AlgorithmType.BFS) {
             frontierType = "Queue";
         } else {
@@ -691,11 +750,16 @@ public class AlgorithmLabController {
         frontierLabel.setText(front.isEmpty() ? "— (empty " + frontierType + ")"
                 : frontierType + ": [" + String.join(", ", front) + "]");
 
-        String visitedWord = showsDistances ? "Settled" : isTopoSort ? "Processed" : "Visited";
+        String visitedWord;
+        if (showsDistances) visitedWord = "Settled";
+        else if (isTopoSort) visitedWord = "Processed";
+        else if (isMST) visitedWord = "In MST";
+        else if (isDiag) visitedWord = "Visited";
+        else visitedWord = "Visited";
         visitedLabel.setText(visitedWord + ": " + frame.visited().size() + " of "
                 + (currentGraph != null ? currentGraph.nodeCount() : "?") + " nodes");
 
-        // Distances and path for Dijkstra / Bellman-Ford
+        // Distances and path for Dijkstra / Bellman-Ford / A*
         if (showsDistances) {
             java.util.Map<String, Double> dist = frame.distances();
             if (!dist.isEmpty()) {
@@ -729,6 +793,54 @@ public class AlgorithmLabController {
                 distancesLabel.setText("Indegrees: " + sb);
             } else {
                 distancesLabel.setText("—");
+            }
+            pathLabel.setText("—");
+        } else if (isMST) {
+            // Show MST total weight
+            java.util.Map<String, Double> dist = frame.distances();
+            Double total = dist.get("__MST_TOTAL__");
+            if (total != null) {
+                distancesLabel.setText("MST weight: " + DijkstraRunner.formatDist(total));
+            } else {
+                distancesLabel.setText("—");
+            }
+            pathLabel.setText("MST edges: " + frame.treeEdges().size());
+        } else if (isSCC) {
+            // Show component assignments
+            java.util.Map<String, Double> compDist = frame.distances();
+            if (!compDist.isEmpty()) {
+                StringBuilder sb = new StringBuilder();
+                compDist.forEach((node, c) -> {
+                    if (sb.length() > 0) sb.append(", ");
+                    sb.append(node).append("→SCC#").append(c.intValue());
+                });
+                distancesLabel.setText(sb.toString());
+            } else {
+                distancesLabel.setText("—");
+            }
+            pathLabel.setText("—");
+        } else if (isBridges) {
+            // Show bridges found so far
+            List<String> sp = frame.shortestPath();
+            int bridgeCount = sp.size() / 2;
+            if (bridgeCount > 0) {
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i + 1 < sp.size(); i += 2) {
+                    if (sb.length() > 0) sb.append(", ");
+                    sb.append(sp.get(i)).append("-").append(sp.get(i + 1));
+                }
+                distancesLabel.setText("Bridges: " + sb);
+            } else {
+                distancesLabel.setText("No bridges yet");
+            }
+            pathLabel.setText("—");
+        } else if (isAP) {
+            // Show articulation points found so far
+            List<String> aps = frame.shortestPath();
+            if (!aps.isEmpty()) {
+                distancesLabel.setText("Cut vertices: {" + String.join(", ", aps) + "}");
+            } else {
+                distancesLabel.setText("No cut vertices yet");
             }
             pathLabel.setText("—");
         } else {
@@ -769,6 +881,83 @@ public class AlgorithmLabController {
         prevBtn.setDisable(disabled);
         toStartBtn.setDisable(disabled);
         toEndBtn.setDisable(disabled);
+    }
+
+    // ── Scenario persistence ───────────────────────────────
+
+    private void onSaveScenario() {
+        if (currentGraph == null) return;
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Save Graph Scenario");
+        fc.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("DataDance Scenario", "*.dds"));
+        fc.setInitialFileName("scenario.dds");
+        File file = fc.showSaveDialog(graphPane.getScene().getWindow());
+        if (file == null) return;
+
+        String algo = algorithmCombo.getValue();
+        String source = sourceCombo.getValue();
+        String targetVal = targetCombo.getValue();
+        String target = (targetVal != null && !targetVal.startsWith("—")) ? targetVal : null;
+        boolean weighted = currentPreset != null ? currentPreset.weighted() : builderPanel.isWeighted();
+
+        GraphScenario scenario = new GraphScenario(
+                file.getName().replaceFirst("\\.dds$", ""),
+                currentGraph, weighted,
+                graphPane.getNodePositions(), algo, source, target);
+        try {
+            scenario.saveTo(file.toPath());
+        } catch (Exception ex) {
+            showAlgorithmError("Save failed", ex.getMessage());
+        }
+    }
+
+    private void onLoadScenario() {
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Load Graph Scenario");
+        fc.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("DataDance Scenario", "*.dds"));
+        File file = fc.showOpenDialog(graphPane.getScene().getWindow());
+        if (file == null) return;
+
+        try {
+            GraphScenario scenario = GraphScenario.loadFrom(file.toPath());
+            currentGraph = scenario.graph();
+            currentPreset = null;
+
+            // Select custom graph preset
+            presetCombo.getSelectionModel().select(0);
+            builderPanel.setVisible(true);
+            builderPanel.setManaged(true);
+            builderPanel.loadGraph(currentGraph, currentGraph.isDirected());
+            presetDescLabel.setText("Loaded: " + scenario.name());
+
+            populateNodeCombos();
+            graphPane.setGraph(currentGraph, scenario.weighted());
+            if (!scenario.nodePositions().isEmpty()) {
+                graphPane.setNodePositions(scenario.nodePositions());
+                graphPane.renderIdle();
+            }
+
+            if (scenario.algorithm() != null) {
+                algorithmCombo.getSelectionModel().select(scenario.algorithm());
+            }
+            if (scenario.source() != null && currentGraph.hasNode(scenario.source())) {
+                sourceCombo.getSelectionModel().select(scenario.source());
+            }
+            if (scenario.target() != null && currentGraph.hasNode(scenario.target())) {
+                targetCombo.getSelectionModel().select(scenario.target());
+            }
+
+            playback.clear();
+            runBtn.setDisable(currentGraph.nodeCount() == 0);
+            resetBtn.setDisable(true);
+            setPlaybackDisabled(true);
+            clearInfoPanel();
+            updateFrameLabel();
+        } catch (Exception ex) {
+            showAlgorithmError("Load failed", ex.getMessage());
+        }
     }
 
     // ── Helpers ──────────────────────────────────────────────

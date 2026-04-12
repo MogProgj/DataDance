@@ -2874,3 +2874,75 @@
     -fx-text-fill: #d2a8ff;
     -fx-font-weight: bold;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   Phase 4B — MST, SCC, Bridges, Articulation Points
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Bridge edge highlight ── */
+.graph-edge-bridge {
+    -fx-stroke: #f85149;
+    -fx-stroke-width: 3.5;
+    -fx-stroke-dash-array: 8 4;
+}
+
+/* ── Articulation point node ── */
+.graph-node-articulation {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 50%,
+        rgba(248, 81, 73, 0.35), rgba(248, 81, 73, 0.12));
+    -fx-border-color: #f85149;
+    -fx-border-width: 3;
+    -fx-effect: dropshadow(gaussian, rgba(248, 81, 73, 0.45), 10, 0.4, 0, 0);
+}
+
+/* ── Articulation point badge ── */
+.graph-badge-articulation {
+    -fx-text-fill: #f85149;
+    -fx-font-weight: bold;
+}
+
+/* ── SCC component node colors (6 distinct hues) ── */
+.graph-node-scc-1 {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 50%,
+        rgba(88, 166, 255, 0.3), rgba(88, 166, 255, 0.1));
+    -fx-border-color: #58a6ff;
+    -fx-border-width: 2.5;
+}
+.graph-node-scc-2 {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 50%,
+        rgba(63, 185, 80, 0.3), rgba(63, 185, 80, 0.1));
+    -fx-border-color: #3fb950;
+    -fx-border-width: 2.5;
+}
+.graph-node-scc-3 {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 50%,
+        rgba(210, 153, 34, 0.3), rgba(210, 153, 34, 0.1));
+    -fx-border-color: #d29922;
+    -fx-border-width: 2.5;
+}
+.graph-node-scc-4 {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 50%,
+        rgba(210, 168, 255, 0.3), rgba(210, 168, 255, 0.1));
+    -fx-border-color: #d2a8ff;
+    -fx-border-width: 2.5;
+}
+.graph-node-scc-5 {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 50%,
+        rgba(248, 81, 73, 0.3), rgba(248, 81, 73, 0.1));
+    -fx-border-color: #f85149;
+    -fx-border-width: 2.5;
+}
+.graph-node-scc-6 {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 50%,
+        rgba(121, 192, 255, 0.3), rgba(121, 192, 255, 0.1));
+    -fx-border-color: #79c0ff;
+    -fx-border-width: 2.5;
+}
+
+/* ── SCC badge colors matching node colors ── */
+.graph-badge-scc-1 { -fx-text-fill: #58a6ff; -fx-font-weight: bold; }
+.graph-badge-scc-2 { -fx-text-fill: #3fb950; -fx-font-weight: bold; }
+.graph-badge-scc-3 { -fx-text-fill: #d29922; -fx-font-weight: bold; }
+.graph-badge-scc-4 { -fx-text-fill: #d2a8ff; -fx-font-weight: bold; }
+.graph-badge-scc-5 { -fx-text-fill: #f85149; -fx-font-weight: bold; }
+.graph-badge-scc-6 { -fx-text-fill: #79c0ff; -fx-font-weight: bold; }

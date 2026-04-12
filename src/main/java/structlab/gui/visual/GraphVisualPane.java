@@ -221,7 +221,22 @@ public class GraphVisualPane extends VBox {
         if (currentGraph == null) return;
         Set<AlgorithmFrame.TraversalEdge> treeEdges = frame != null ? frame.treeEdges() : Set.of();
         List<String> shortestPath = frame != null ? frame.shortestPath() : List.of();
-        Set<String> spEdgeKeys = buildShortestPathEdgeSet(shortestPath);
+        boolean isBridgeAlgo = frame != null
+                && frame.algorithm() == AlgorithmFrame.AlgorithmType.BRIDGES;
+        boolean isAPAlgo = frame != null
+                && frame.algorithm() == AlgorithmFrame.AlgorithmType.ARTICULATION_POINTS;
+
+        // Build bridge edge keys for BRIDGES algorithm (pairs in shortestPath)
+        Set<String> bridgeEdgeKeys = new java.util.HashSet<>();
+        if (isBridgeAlgo) {
+            for (int i = 0; i + 1 < shortestPath.size(); i += 2) {
+                bridgeEdgeKeys.add(shortestPath.get(i) + "\0" + shortestPath.get(i + 1));
+                bridgeEdgeKeys.add(shortestPath.get(i + 1) + "\0" + shortestPath.get(i));
+            }
+        }
+
+        Set<String> spEdgeKeys = isBridgeAlgo || isAPAlgo
+                ? Set.of() : buildShortestPathEdgeSet(shortestPath);
 
         for (Graph.Edge edge : currentGraph.edges()) {
             double[] from = nodePositions.get(edge.from());
@@ -236,8 +251,13 @@ public class GraphVisualPane extends VBox {
             boolean isShortestPathEdge = spEdgeKeys.contains(edge.from() + "\0" + edge.to())
                     || spEdgeKeys.contains(edge.to() + "\0" + edge.from());
 
+            boolean isBridgeEdge = bridgeEdgeKeys.contains(
+                    edge.from() + "\0" + edge.to());
+
             String edgeClass;
-            if (isShortestPathEdge) {
+            if (isBridgeEdge) {
+                edgeClass = "graph-edge-bridge";
+            } else if (isShortestPathEdge) {
                 edgeClass = "graph-edge-shortest-path";
             } else if (isTreeEdge) {
                 edgeClass = "graph-edge-tree";
@@ -274,7 +294,8 @@ public class GraphVisualPane extends VBox {
 
             // Draw arrowhead for directed graphs (use curve tangent for correct alignment)
             if (currentGraph.isDirected()) {
-                drawArrowhead(midX + nx, midY + ny, to, isShortestPathEdge || isTreeEdge);
+                drawArrowhead(midX + nx, midY + ny, to,
+                        isShortestPathEdge || isTreeEdge || isBridgeEdge);
             }
 
             // Draw weight label for weighted graphs (fixed perpendicular offset)
@@ -283,7 +304,7 @@ public class GraphVisualPane extends VBox {
                 double perpY = len > 0 ? dx / len : 0;
                 double labelOff = 14;
                 drawEdgeWeight(midX + perpX * labelOff, midY + perpY * labelOff,
-                        edge.weight(), isShortestPathEdge);
+                        edge.weight(), isShortestPathEdge || isBridgeEdge);
             }
         }
     }
@@ -341,6 +362,18 @@ public class GraphVisualPane extends VBox {
                     || frame.algorithm() == AlgorithmFrame.AlgorithmType.A_STAR);
         boolean showIndegrees = frame != null
                 && frame.algorithm() == AlgorithmFrame.AlgorithmType.TOPOLOGICAL_SORT;
+        boolean isMST = frame != null
+                && (frame.algorithm() == AlgorithmFrame.AlgorithmType.PRIM
+                    || frame.algorithm() == AlgorithmFrame.AlgorithmType.KRUSKAL);
+        boolean isSCC = frame != null
+                && frame.algorithm() == AlgorithmFrame.AlgorithmType.SCC;
+        boolean isBridges = frame != null
+                && frame.algorithm() == AlgorithmFrame.AlgorithmType.BRIDGES;
+        boolean isAP = frame != null
+                && frame.algorithm() == AlgorithmFrame.AlgorithmType.ARTICULATION_POINTS;
+
+        // Extract articulation points from shortestPath if applicable
+        Set<String> articulationPoints = isAP ? new java.util.HashSet<>(shortestPath) : Set.of();
 
         for (String nodeLabel : currentGraph.nodes()) {
             double[] pos = nodePositions.get(nodeLabel);
@@ -358,9 +391,12 @@ public class GraphVisualPane extends VBox {
 
             // State-based styling
             boolean isOnShortestPath = shortestPath.contains(nodeLabel);
+            boolean isArticulationPoint = articulationPoints.contains(nodeLabel);
             if (nodeLabel.equals(currentNode)) {
                 nodeCircle.getStyleClass().add("graph-node-current");
-            } else if (isOnShortestPath) {
+            } else if (isArticulationPoint && isAP) {
+                nodeCircle.getStyleClass().add("graph-node-articulation");
+            } else if (isOnShortestPath && !isAP && !isBridges) {
                 nodeCircle.getStyleClass().add("graph-node-shortest-path");
             } else if (nodeLabel.equals(targetNode)) {
                 nodeCircle.getStyleClass().add(visited.contains(nodeLabel)
@@ -368,7 +404,14 @@ public class GraphVisualPane extends VBox {
             } else if (frontier.contains(nodeLabel)) {
                 nodeCircle.getStyleClass().add("graph-node-frontier");
             } else if (visited.contains(nodeLabel)) {
-                nodeCircle.getStyleClass().add("graph-node-visited");
+                if (isSCC) {
+                    // Color by SCC component
+                    int compId = distances.containsKey(nodeLabel)
+                            ? distances.get(nodeLabel).intValue() : 0;
+                    nodeCircle.getStyleClass().add("graph-node-scc-" + ((compId - 1) % 6 + 1));
+                } else {
+                    nodeCircle.getStyleClass().add("graph-node-visited");
+                }
             } else {
                 nodeCircle.getStyleClass().add("graph-node-idle");
             }
@@ -407,6 +450,28 @@ public class GraphVisualPane extends VBox {
                     indLabel.getStyleClass().add("graph-indegree-zero");
                 }
                 nodeGroup.getChildren().add(indLabel);
+            }
+
+            // Disc/Low badge for Bridges / Articulation Points
+            if ((isBridges || isAP) && distances.containsKey(nodeLabel)) {
+                double encoded = distances.get(nodeLabel);
+                int d = (int) (encoded / 1000.0);
+                int l = (int) (encoded % 1000.0);
+                Label dlLabel = new Label("d:" + d + " l:" + l);
+                dlLabel.getStyleClass().add("graph-distance-badge");
+                if (isArticulationPoint) {
+                    dlLabel.getStyleClass().add("graph-badge-articulation");
+                }
+                nodeGroup.getChildren().add(dlLabel);
+            }
+
+            // SCC component badge
+            if (isSCC && distances.containsKey(nodeLabel)) {
+                int compId = distances.get(nodeLabel).intValue();
+                Label sccLabel = new Label("SCC#" + compId);
+                sccLabel.getStyleClass().add("graph-distance-badge");
+                sccLabel.getStyleClass().add("graph-badge-scc-" + ((compId - 1) % 6 + 1));
+                nodeGroup.getChildren().add(sccLabel);
             }
 
             nodeGroup.setLayoutX(pos[0] - NODE_RADIUS);

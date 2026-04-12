@@ -40,7 +40,8 @@ public record AlgorithmFrame(
         List<String> shortestPath) {
 
     public enum AlgorithmType {
-        BFS, DFS, DIJKSTRA, BELLMAN_FORD, TOPOLOGICAL_SORT, A_STAR
+        BFS, DFS, DIJKSTRA, BELLMAN_FORD, TOPOLOGICAL_SORT, A_STAR,
+        PRIM, KRUSKAL, SCC, BRIDGES, ARTICULATION_POINTS
     }
 
     /** Directed edge in the traversal tree. */
