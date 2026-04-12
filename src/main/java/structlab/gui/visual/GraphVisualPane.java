@@ -3,16 +3,22 @@ package structlab.gui.visual;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.Polygon;
+import javafx.scene.transform.Scale;
+import javafx.scene.transform.Translate;
 import structlab.core.graph.AlgorithmFrame;
 import structlab.core.graph.DijkstraRunner;
 import structlab.core.graph.Graph;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Premium graph visualization pane for the Algorithm Lab.
@@ -41,6 +47,21 @@ public class GraphVisualPane extends VBox {
     private boolean weightedMode;
     private Map<String, double[]> nodePositions = new LinkedHashMap<>();
 
+    // Interactive studio state
+    private boolean editMode = false;
+    private String selectedNode = null;
+    private String dragNode = null;
+    private double dragOffsetX, dragOffsetY;
+    private Consumer<Graph> onGraphChanged;
+    private int nextNodeId = 1;
+
+    // Pan & zoom state
+    private final Scale zoomTransform = new Scale(1, 1, 0, 0);
+    private final Translate panTransform = new Translate(0, 0);
+    private double panStartX, panStartY;
+    private double panAnchorX, panAnchorY;
+    private boolean isPanning = false;
+
     public GraphVisualPane() {
         getStyleClass().add("graph-visual-pane");
         setSpacing(0);
@@ -63,7 +84,15 @@ public class GraphVisualPane extends VBox {
         canvas = new Pane();
         canvas.getStyleClass().add("graph-canvas");
         canvas.setMinHeight(200);
+        canvas.getTransforms().addAll(panTransform, zoomTransform);
         VBox.setVgrow(canvas, Priority.ALWAYS);
+
+        // Scroll-to-zoom
+        canvas.setOnScroll(this::onCanvasScroll);
+        // Canvas click / pan
+        canvas.setOnMousePressed(this::onCanvasMousePressed);
+        canvas.setOnMouseDragged(this::onCanvasMouseDragged);
+        canvas.setOnMouseReleased(this::onCanvasMouseReleased);
 
         // Legend bar
         legendBar = new HBox(16);
@@ -243,15 +272,18 @@ public class GraphVisualPane extends VBox {
 
             canvas.getChildren().add(curve);
 
-            // Draw arrowhead for directed graphs
+            // Draw arrowhead for directed graphs (use curve tangent for correct alignment)
             if (currentGraph.isDirected()) {
-                drawArrowhead(from, to, isShortestPathEdge || isTreeEdge);
+                drawArrowhead(midX + nx, midY + ny, to, isShortestPathEdge || isTreeEdge);
             }
 
-            // Draw weight label for weighted graphs
+            // Draw weight label for weighted graphs (fixed perpendicular offset)
             if (weightedMode) {
-                drawEdgeWeight(midX + nx * 3.0, midY + ny * 3.0, edge.weight(),
-                        isShortestPathEdge);
+                double perpX = len > 0 ? -dy / len : 0;
+                double perpY = len > 0 ? dx / len : 0;
+                double labelOff = 14;
+                drawEdgeWeight(midX + perpX * labelOff, midY + perpY * labelOff,
+                        edge.weight(), isShortestPathEdge);
             }
         }
     }
@@ -269,9 +301,10 @@ public class GraphVisualPane extends VBox {
         canvas.getChildren().add(wLabel);
     }
 
-    private void drawArrowhead(double[] from, double[] to, boolean highlighted) {
-        double dx = to[0] - from[0];
-        double dy = to[1] - from[1];
+    private void drawArrowhead(double ctrlX, double ctrlY, double[] to, boolean highlighted) {
+        // Tangent at t=1 of cubic Bezier: direction from control point to endpoint
+        double dx = to[0] - ctrlX;
+        double dy = to[1] - ctrlY;
         double len = Math.sqrt(dx * dx + dy * dy);
         if (len < 1) return;
 
@@ -304,7 +337,8 @@ public class GraphVisualPane extends VBox {
         List<String> shortestPath = frame != null ? frame.shortestPath() : List.of();
         boolean showDistances = frame != null
                 && (frame.algorithm() == AlgorithmFrame.AlgorithmType.DIJKSTRA
-                    || frame.algorithm() == AlgorithmFrame.AlgorithmType.BELLMAN_FORD);
+                    || frame.algorithm() == AlgorithmFrame.AlgorithmType.BELLMAN_FORD
+                    || frame.algorithm() == AlgorithmFrame.AlgorithmType.A_STAR);
         boolean showIndegrees = frame != null
                 && frame.algorithm() == AlgorithmFrame.AlgorithmType.TOPOLOGICAL_SORT;
 
@@ -337,6 +371,11 @@ public class GraphVisualPane extends VBox {
                 nodeCircle.getStyleClass().add("graph-node-visited");
             } else {
                 nodeCircle.getStyleClass().add("graph-node-idle");
+            }
+
+            // Interactive selection highlight
+            if (editMode && nodeLabel.equals(selectedNode) && frame == null) {
+                nodeCircle.getStyleClass().add("graph-node-selected");
             }
 
             Label label = new Label(nodeLabel);
@@ -417,5 +456,214 @@ public class GraphVisualPane extends VBox {
         HBox item = new HBox(5, dot, label);
         item.setAlignment(Pos.CENTER_LEFT);
         return item;
+    }
+
+    // ── Interactive studio ───────────────────────────────────
+
+    /** Enables or disables interactive edit mode. */
+    public void setEditMode(boolean edit) {
+        this.editMode = edit;
+        this.selectedNode = null;
+        if (edit && currentGraph != null) {
+            renderIdle();
+        }
+    }
+
+    public boolean isEditMode() {
+        return editMode;
+    }
+
+    /** Sets the callback invoked when the graph is modified interactively. */
+    public void setOnGraphChanged(Consumer<Graph> callback) {
+        this.onGraphChanged = callback;
+    }
+
+    /** Returns the currently selected node, or null. */
+    public String getSelectedNode() {
+        return selectedNode;
+    }
+
+    /** Deselects any selected node. */
+    public void clearSelection() {
+        this.selectedNode = null;
+        if (editMode && currentGraph != null) renderIdle();
+    }
+
+    /** Returns a copy of the current node positions map. */
+    public Map<String, double[]> getNodePositions() {
+        return new LinkedHashMap<>(nodePositions);
+    }
+
+    /** Sets positions from an external source (e.g. restored layout). */
+    public void setNodePositions(Map<String, double[]> positions) {
+        this.nodePositions = new LinkedHashMap<>(positions);
+    }
+
+    /** Resets pan and zoom to defaults. */
+    public void resetView() {
+        zoomTransform.setX(1);
+        zoomTransform.setY(1);
+        panTransform.setX(0);
+        panTransform.setY(0);
+    }
+
+    /** Fits the current graph into the visible viewport. */
+    public void fitToView() {
+        if (nodePositions.isEmpty()) return;
+        double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE;
+        double maxX = Double.MIN_VALUE, maxY = Double.MIN_VALUE;
+        for (double[] pos : nodePositions.values()) {
+            minX = Math.min(minX, pos[0]);
+            minY = Math.min(minY, pos[1]);
+            maxX = Math.max(maxX, pos[0]);
+            maxY = Math.max(maxY, pos[1]);
+        }
+        double graphW = maxX - minX + NODE_SIZE * 2;
+        double graphH = maxY - minY + NODE_SIZE * 2;
+        double viewW = getWidth() > 0 ? getWidth() : 600;
+        double viewH = getHeight() > 0 ? getHeight() - 60 : 400;
+        double scale = Math.min(viewW / graphW, viewH / graphH);
+        scale = Math.max(0.3, Math.min(scale, 2.0));
+        zoomTransform.setX(scale);
+        zoomTransform.setY(scale);
+        panTransform.setX(-minX * scale + NODE_SIZE * scale);
+        panTransform.setY(-minY * scale + NODE_SIZE * scale);
+    }
+
+    // ── Canvas mouse handlers ────────────────────────────────
+
+    private void onCanvasScroll(ScrollEvent e) {
+        double factor = e.getDeltaY() > 0 ? 1.1 : 0.9;
+        double newScale = zoomTransform.getX() * factor;
+        newScale = Math.max(0.3, Math.min(newScale, 3.0));
+        zoomTransform.setX(newScale);
+        zoomTransform.setY(newScale);
+        e.consume();
+    }
+
+    private void onCanvasMousePressed(MouseEvent e) {
+        if (e.getButton() == MouseButton.MIDDLE
+                || (e.getButton() == MouseButton.PRIMARY && e.isShiftDown())) {
+            // Pan start
+            isPanning = true;
+            panStartX = e.getScreenX();
+            panStartY = e.getScreenY();
+            panAnchorX = panTransform.getX();
+            panAnchorY = panTransform.getY();
+            e.consume();
+            return;
+        }
+
+        if (!editMode || e.getButton() != MouseButton.PRIMARY) return;
+
+        // Convert to canvas coords accounting for transforms
+        double cx = (e.getX() - panTransform.getX()) / zoomTransform.getX();
+        double cy = (e.getY() - panTransform.getY()) / zoomTransform.getY();
+
+        // Check if clicking on existing node
+        String hitNode = hitTestNode(cx, cy);
+        if (hitNode != null) {
+            if (selectedNode != null && !selectedNode.equals(hitNode)) {
+                // Connect two nodes
+                if (!currentGraph.hasEdge(selectedNode, hitNode)) {
+                    currentGraph.addEdge(selectedNode, hitNode);
+                    selectedNode = null;
+                    fireGraphChanged();
+                    renderIdle();
+                }
+            } else if (selectedNode != null && selectedNode.equals(hitNode)) {
+                // Deselect
+                selectedNode = null;
+                renderIdle();
+            } else {
+                // Select node (or start drag)
+                selectedNode = hitNode;
+                dragNode = hitNode;
+                dragOffsetX = cx - nodePositions.get(hitNode)[0];
+                dragOffsetY = cy - nodePositions.get(hitNode)[1];
+                renderIdle();
+            }
+            e.consume();
+            return;
+        }
+
+        // Click on empty space — add node
+        selectedNode = null;
+        String label = generateNodeLabel();
+        currentGraph.addNode(label);
+        nodePositions.put(label, new double[]{cx, cy});
+        fireGraphChanged();
+        renderIdle();
+        e.consume();
+    }
+
+    private void onCanvasMouseDragged(MouseEvent e) {
+        if (isPanning) {
+            panTransform.setX(panAnchorX + (e.getScreenX() - panStartX));
+            panTransform.setY(panAnchorY + (e.getScreenY() - panStartY));
+            e.consume();
+            return;
+        }
+        if (!editMode || dragNode == null) return;
+        double cx = (e.getX() - panTransform.getX()) / zoomTransform.getX();
+        double cy = (e.getY() - panTransform.getY()) / zoomTransform.getY();
+        nodePositions.put(dragNode, new double[]{cx - dragOffsetX, cy - dragOffsetY});
+        renderIdle();
+        e.consume();
+    }
+
+    private void onCanvasMouseReleased(MouseEvent e) {
+        if (isPanning) {
+            isPanning = false;
+            e.consume();
+            return;
+        }
+        if (dragNode != null) {
+            dragNode = null;
+            e.consume();
+        }
+    }
+
+    /** Removes the given node interactively. */
+    public void removeNodeInteractive(String node) {
+        if (currentGraph == null || !currentGraph.hasNode(node)) return;
+        currentGraph.removeNode(node);
+        nodePositions.remove(node);
+        if (node.equals(selectedNode)) selectedNode = null;
+        fireGraphChanged();
+        renderIdle();
+    }
+
+    /** Removes an edge interactively. */
+    public void removeEdgeInteractive(String from, String to) {
+        if (currentGraph == null) return;
+        currentGraph.removeEdge(from, to);
+        fireGraphChanged();
+        renderIdle();
+    }
+
+    private String hitTestNode(double x, double y) {
+        for (Map.Entry<String, double[]> entry : nodePositions.entrySet()) {
+            double[] pos = entry.getValue();
+            double dx = x - pos[0];
+            double dy = y - pos[1];
+            if (dx * dx + dy * dy <= NODE_RADIUS * NODE_RADIUS) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    private String generateNodeLabel() {
+        while (currentGraph.hasNode(String.valueOf(nextNodeId))) {
+            nextNodeId++;
+        }
+        return String.valueOf(nextNodeId++);
+    }
+
+    private void fireGraphChanged() {
+        if (onGraphChanged != null) {
+            onGraphChanged.accept(currentGraph);
+        }
     }
 }

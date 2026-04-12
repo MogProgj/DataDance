@@ -24,6 +24,20 @@ public class AlgorithmLabController {
     private final GraphVisualPane graphPane;
     private final PlaybackController playback = new PlaybackController();
 
+    // Compare mode
+    private final GraphVisualPane comparePane = new GraphVisualPane();
+    private final PlaybackController comparePlayback = new PlaybackController();
+    private boolean compareMode = false;
+    private ComboBox<String> compareAlgoCombo;
+    private ToggleButton compareModeToggle;
+    private HBox compareWorkspaceBox;
+    private VBox primaryWorkspace;
+    private VBox compareWorkspacePane;
+
+    // Interactive studio
+    private ToggleButton editModeToggle;
+    private Button fitViewBtn;
+
     // Controls
     private ComboBox<String> presetCombo;
     private ComboBox<String> algorithmCombo;
@@ -98,7 +112,7 @@ public class AlgorithmLabController {
         algorithmCombo.setMaxWidth(Double.MAX_VALUE);
         algorithmCombo.getStyleClass().add("algo-combo");
         algorithmCombo.setItems(FXCollections.observableArrayList(
-                "BFS", "DFS", "Dijkstra", "Bellman-Ford", "Topo Sort"));
+                "BFS", "DFS", "Dijkstra", "Bellman-Ford", "Topo Sort", "A*"));
         algorithmCombo.getSelectionModel().selectFirst();
         sectionBody(algoSection).getChildren().add(algorithmCombo);
 
@@ -138,9 +152,38 @@ public class AlgorithmLabController {
 
         actionSection.getChildren().addAll(runBtn, resetBtn);
 
+        // ── Interactive + Compare toggles ───────────────────
+        VBox modeSection = buildSection("MODE");
+        editModeToggle = new ToggleButton("Edit Mode");
+        editModeToggle.getStyleClass().add("secondary-button");
+        editModeToggle.setMaxWidth(Double.MAX_VALUE);
+        editModeToggle.setOnAction(e -> onToggleEditMode());
+
+        fitViewBtn = new Button("Fit to View");
+        fitViewBtn.getStyleClass().add("secondary-button");
+        fitViewBtn.setMaxWidth(Double.MAX_VALUE);
+        fitViewBtn.setOnAction(e -> graphPane.fitToView());
+
+        compareModeToggle = new ToggleButton("Compare Mode");
+        compareModeToggle.getStyleClass().add("secondary-button");
+        compareModeToggle.setMaxWidth(Double.MAX_VALUE);
+        compareModeToggle.setOnAction(e -> onToggleCompareMode());
+
+        compareAlgoCombo = new ComboBox<>();
+        compareAlgoCombo.setMaxWidth(Double.MAX_VALUE);
+        compareAlgoCombo.getStyleClass().add("algo-combo");
+        compareAlgoCombo.setItems(FXCollections.observableArrayList(
+                "BFS", "DFS", "Dijkstra", "Bellman-Ford", "Topo Sort", "A*"));
+        compareAlgoCombo.setPromptText("Compare algorithm...");
+        compareAlgoCombo.setVisible(false);
+        compareAlgoCombo.setManaged(false);
+
+        sectionBody(modeSection).getChildren().addAll(
+                editModeToggle, fitViewBtn, compareModeToggle, compareAlgoCombo);
+
         controlPanel.getChildren().addAll(presetSection, new Separator(), algoSection,
                 new Separator(), sourceSection, new Separator(), targetSection,
-                new Separator(), actionSection);
+                new Separator(), actionSection, new Separator(), modeSection);
 
         ScrollPane controlScroll = new ScrollPane(controlPanel);
         controlScroll.setFitToWidth(true);
@@ -151,22 +194,47 @@ public class AlgorithmLabController {
         controlScroll.setMaxWidth(276);
 
         // ── Center workspace ────────────────────────────────
-        VBox workspace = new VBox();
-        workspace.getStyleClass().add("workspace");
-        HBox.setHgrow(workspace, Priority.ALWAYS);
-
+        // Primary graph view
         ScrollPane graphScroll = new ScrollPane(graphPane);
         graphScroll.setFitToWidth(true);
         graphScroll.getStyleClass().add("visual-scroll");
         VBox.setVgrow(graphScroll, Priority.ALWAYS);
 
-        // Playback controls bar
         HBox playbackBar = buildPlaybackBar();
+        primaryWorkspace = new VBox(0, graphScroll, playbackBar);
+        primaryWorkspace.getStyleClass().add("algo-workspace-content");
+        VBox.setVgrow(primaryWorkspace, Priority.ALWAYS);
+        HBox.setHgrow(primaryWorkspace, Priority.ALWAYS);
 
-        VBox wsContent = new VBox(0, graphScroll, playbackBar);
-        wsContent.getStyleClass().add("algo-workspace-content");
-        VBox.setVgrow(wsContent, Priority.ALWAYS);
-        workspace.getChildren().add(wsContent);
+        // Compare graph view (initially hidden)
+        ScrollPane compareScroll = new ScrollPane(comparePane);
+        compareScroll.setFitToWidth(true);
+        compareScroll.getStyleClass().add("visual-scroll");
+        VBox.setVgrow(compareScroll, Priority.ALWAYS);
+
+        Label compareLabel = new Label("COMPARE");
+        compareLabel.getStyleClass().addAll("section-header", "compare-header");
+        compareLabel.setPadding(new Insets(4, 8, 4, 8));
+
+        compareWorkspacePane = new VBox(0, compareLabel, compareScroll);
+        compareWorkspacePane.getStyleClass().add("algo-workspace-content");
+        compareWorkspacePane.getStyleClass().add("compare-workspace");
+        VBox.setVgrow(compareWorkspacePane, Priority.ALWAYS);
+        HBox.setHgrow(compareWorkspacePane, Priority.ALWAYS);
+        compareWorkspacePane.setVisible(false);
+        compareWorkspacePane.setManaged(false);
+
+        compareWorkspaceBox = new HBox(0, primaryWorkspace, compareWorkspacePane);
+        HBox.setHgrow(compareWorkspaceBox, Priority.ALWAYS);
+
+        VBox workspace = new VBox();
+        workspace.getStyleClass().add("workspace");
+        HBox.setHgrow(workspace, Priority.ALWAYS);
+        VBox.setVgrow(compareWorkspaceBox, Priority.ALWAYS);
+        workspace.getChildren().add(compareWorkspaceBox);
+
+        // Wire up interactive canvas callback
+        graphPane.setOnGraphChanged(g -> onCanvasGraphChanged(g));
 
         // ── Right info panel ────────────────────────────────
         VBox infoPanel = buildInfoPanel();
@@ -363,45 +431,63 @@ public class AlgorithmLabController {
         boolean needsSource = !"Topo Sort".equals(algo);
         if (needsSource && (source == null || source.isEmpty())) return;
 
+        // Exit edit mode when running
+        if (graphPane.isEditMode()) {
+            editModeToggle.setSelected(false);
+            graphPane.setEditMode(false);
+        }
+
         stopAutoPlay();
 
-        List<AlgorithmFrame> frames;
-        if ("BFS".equals(algo)) {
-            frames = BfsRunner.run(currentGraph, source);
-        } else if ("DFS".equals(algo)) {
-            frames = DfsRunner.run(currentGraph, source);
-        } else if ("Dijkstra".equals(algo)) {
-            String targetVal = targetCombo.getValue();
-            String target = (targetVal == null || targetVal.startsWith("—")) ? null : targetVal;
-            try {
-                frames = DijkstraRunner.run(currentGraph, source, target);
-            } catch (IllegalArgumentException ex) {
-                showAlgorithmError("Cannot run Dijkstra", ex.getMessage());
-                return;
-            }
-        } else if ("Bellman-Ford".equals(algo)) {
-            String targetVal = targetCombo.getValue();
-            String target = (targetVal == null || targetVal.startsWith("—")) ? null : targetVal;
-            try {
-                frames = BellmanFordRunner.run(currentGraph, source, target);
-            } catch (IllegalArgumentException ex) {
-                showAlgorithmError("Cannot run Bellman-Ford", ex.getMessage());
-                return;
-            }
-        } else {
-            // Topo Sort — no source needed
-            try {
-                frames = TopologicalSortRunner.run(currentGraph);
-            } catch (IllegalArgumentException ex) {
-                showAlgorithmError("Cannot run Topo Sort", ex.getMessage());
-                return;
-            }
-        }
+        List<AlgorithmFrame> frames = runAlgorithm(algo, source);
+        if (frames == null) return;
 
         playback.load(frames);
         resetBtn.setDisable(false);
         setPlaybackDisabled(false);
         renderCurrentFrame();
+
+        // Compare mode: run the second algorithm
+        if (compareMode) {
+            String compareAlgo = compareAlgoCombo.getValue();
+            if (compareAlgo != null) {
+                List<AlgorithmFrame> compareFrames = runAlgorithm(compareAlgo, source);
+                if (compareFrames != null) {
+                    comparePlayback.load(compareFrames);
+                    AlgorithmFrame first = comparePlayback.current();
+                    if (first != null) comparePane.renderFrame(first);
+                }
+            }
+        }
+    }
+
+    private List<AlgorithmFrame> runAlgorithm(String algo, String source) {
+        String targetVal = targetCombo.getValue();
+        String target = (targetVal == null || targetVal.startsWith("—")) ? null : targetVal;
+
+        try {
+            if ("BFS".equals(algo)) {
+                return BfsRunner.run(currentGraph, source);
+            } else if ("DFS".equals(algo)) {
+                return DfsRunner.run(currentGraph, source);
+            } else if ("Dijkstra".equals(algo)) {
+                return DijkstraRunner.run(currentGraph, source, target);
+            } else if ("Bellman-Ford".equals(algo)) {
+                return BellmanFordRunner.run(currentGraph, source, target);
+            } else if ("A*".equals(algo)) {
+                if (target == null) {
+                    showAlgorithmError("Cannot run A*", "A* requires a target node. Please select a target.");
+                    return null;
+                }
+                return AStarRunner.run(currentGraph, source, target,
+                        graphPane.getNodePositions());
+            } else {
+                return TopologicalSortRunner.run(currentGraph);
+            }
+        } catch (IllegalArgumentException ex) {
+            showAlgorithmError("Cannot run " + algo, ex.getMessage());
+            return null;
+        }
     }
 
     private static void showAlgorithmError(String header, String content) {
@@ -459,6 +545,51 @@ public class AlgorithmLabController {
         stopAutoPlay();
     }
 
+    private void onToggleEditMode() {
+        boolean edit = editModeToggle.isSelected();
+        graphPane.setEditMode(edit);
+        if (edit) {
+            graphPane.setStatusText("Edit mode — click canvas to add nodes, click two nodes to connect, drag to move");
+        } else {
+            graphPane.clearSelection();
+            if (currentGraph != null) graphPane.renderIdle();
+        }
+    }
+
+    private void onToggleCompareMode() {
+        compareMode = compareModeToggle.isSelected();
+        compareAlgoCombo.setVisible(compareMode);
+        compareAlgoCombo.setManaged(compareMode);
+        compareWorkspacePane.setVisible(compareMode);
+        compareWorkspacePane.setManaged(compareMode);
+
+        if (compareMode && currentGraph != null) {
+            comparePane.setGraph(currentGraph,
+                    currentPreset != null ? currentPreset.weighted() : builderPanel.isWeighted());
+        }
+        if (!compareMode) {
+            comparePlayback.clear();
+            comparePane.renderIdle();
+        }
+    }
+
+    private void onCanvasGraphChanged(Graph graph) {
+        // Called when the interactive canvas modifies the graph
+        this.currentGraph = graph;
+        populateNodeCombos();
+        // Sync builder panel if visible
+        int presetIndex = presetCombo.getSelectionModel().getSelectedIndex();
+        if (presetIndex == 0 && builderPanel.isVisible()) {
+            builderPanel.loadGraph(graph, graph.isDirected());
+        }
+        playback.clear();
+        runBtn.setDisable(graph.nodeCount() == 0);
+        resetBtn.setDisable(true);
+        setPlaybackDisabled(true);
+        clearInfoPanel();
+        updateFrameLabel();
+    }
+
     // ── Auto-play ───────────────────────────────────────────
 
     private void startAutoPlay() {
@@ -506,6 +637,18 @@ public class AlgorithmLabController {
         updateInfoPanel(frame);
         updateFrameLabel();
         updatePlaybackButtons();
+
+        // Sync compare view to same step index
+        if (compareMode && comparePlayback.isLoaded()) {
+            int targetIdx = playback.currentIndex();
+            // Jump compare to same index (clamped to its range)
+            comparePlayback.reset();
+            for (int i = 0; i < targetIdx && comparePlayback.hasNext(); i++) {
+                comparePlayback.next();
+            }
+            AlgorithmFrame cf = comparePlayback.current();
+            if (cf != null) comparePane.renderFrame(cf);
+        }
     }
 
     private void updateInfoPanel(AlgorithmFrame frame) {
@@ -513,8 +656,9 @@ public class AlgorithmLabController {
 
         boolean isDijkstra = frame.algorithm() == AlgorithmFrame.AlgorithmType.DIJKSTRA;
         boolean isBellmanFord = frame.algorithm() == AlgorithmFrame.AlgorithmType.BELLMAN_FORD;
+        boolean isAStar = frame.algorithm() == AlgorithmFrame.AlgorithmType.A_STAR;
         boolean isTopoSort = frame.algorithm() == AlgorithmFrame.AlgorithmType.TOPOLOGICAL_SORT;
-        boolean showsDistances = isDijkstra || isBellmanFord;
+        boolean showsDistances = isDijkstra || isBellmanFord || isAStar;
 
         if (showsDistances || isTopoSort) {
             depthLabel.setText("—");
@@ -533,6 +677,8 @@ public class AlgorithmLabController {
         String frontierType;
         if (isDijkstra) {
             frontierType = "PQ";
+        } else if (isAStar) {
+            frontierType = "Open (f)";
         } else if (isBellmanFord) {
             frontierType = "Relaxed";
         } else if (isTopoSort) {
