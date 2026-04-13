@@ -525,4 +525,35 @@ class StructLabServiceTest {
             assertFalse(renderedTrace.isBlank());
         }
     }
+
+    // ── Complexity Matrix & Comparable ─────────────────────────
+
+    @Nested
+    class ComplexityMatrixTests {
+
+        @Test
+        void buildComplexityMatrixForStack() {
+            ComplexityMatrix matrix = service.buildComplexityMatrix("struct-stack");
+            assertFalse(matrix.implementationNames().isEmpty());
+            assertFalse(matrix.rows().isEmpty());
+        }
+
+        @Test
+        void buildComplexityMatrixForUnknownReturnsEmpty() {
+            ComplexityMatrix matrix = service.buildComplexityMatrix("struct-nonexistent");
+            assertTrue(matrix.implementationNames().isEmpty());
+            assertTrue(matrix.rows().isEmpty());
+        }
+
+        @Test
+        void isComparableForStackIsTrue() {
+            // Stack has at least 2 implementations (array + linked)
+            assertTrue(service.isComparable("struct-stack"));
+        }
+
+        @Test
+        void isComparableForUnknownIsFalse() {
+            assertFalse(service.isComparable("struct-nonexistent"));
+        }
+    }
 }

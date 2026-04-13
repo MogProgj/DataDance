@@ -129,6 +129,6 @@ public final class KruskalRunner {
                 AlgorithmFrame.AlgorithmType.KRUSKAL, stepIndex, currentNode,
                 Set.copyOf(processed), List.copyOf(frontier), List.copyOf(addOrder),
                 Map.copyOf(parentMap), Set.copyOf(treeEdges), statusMessage, 0,
-                Map.copyOf(distances), null, List.of());
+                Map.copyOf(distances), null, List.of(), null);
     }
 }

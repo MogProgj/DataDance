@@ -215,6 +215,6 @@ public final class ArticulationPointsRunner {
                 List.copyOf(discoveryOrder),
                 Map.copyOf(parentMap), Set.copyOf(treeEdges),
                 statusMessage, 0,
-                Map.copyOf(distances), null, List.copyOf(articulationPoints));
+                Map.copyOf(distances), null, List.copyOf(articulationPoints), null);
     }
 }

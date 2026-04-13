@@ -11,6 +11,7 @@ import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 import structlab.core.graph.*;
+import structlab.gui.AppSettings;
 import structlab.gui.visual.GraphVisualPane;
 
 import java.io.File;
@@ -27,6 +28,7 @@ public class AlgorithmLabController {
 
     private final GraphVisualPane graphPane;
     private final PlaybackController playback = new PlaybackController();
+    private final AppSettings settings;
 
     // Compare mode
     private final GraphVisualPane comparePane = new GraphVisualPane();
@@ -77,9 +79,11 @@ public class AlgorithmLabController {
     private GraphPresets.Preset currentPreset;
     private Timeline autoPlayTimeline;
     private boolean isPlaying = false;
+    private AlgorithmTrackerPane trackerPane;
 
-    public AlgorithmLabController() {
+    public AlgorithmLabController(AppSettings settings) {
         this.graphPane = new GraphVisualPane();
+        this.settings = settings;
     }
 
     /** Builds and returns the complete Algorithm Lab workspace node. */
@@ -211,10 +215,15 @@ public class AlgorithmLabController {
         loadBtn.setOnAction(e -> onLoadScenario());
         sectionBody(scenarioSection).getChildren().addAll(saveBtn, loadBtn);
 
+        // Tracker pane (visibility bound to settings)
+        trackerPane = new AlgorithmTrackerPane();
+        trackerPane.visibleProperty().bind(settings.showAlgorithmTrackerProperty());
+        trackerPane.managedProperty().bind(settings.showAlgorithmTrackerProperty());
+
         controlPanel.getChildren().addAll(presetSection, new Separator(), algoSection,
                 new Separator(), sourceSection, new Separator(), targetSection,
                 new Separator(), actionSection, new Separator(), modeSection,
-                new Separator(), scenarioSection);
+                new Separator(), scenarioSection, new Separator(), trackerPane);
 
         ScrollPane controlScroll = new ScrollPane(controlPanel);
         controlScroll.setFitToWidth(true);
@@ -775,6 +784,7 @@ public class AlgorithmLabController {
         if (frame == null) return;
         graphPane.renderFrame(frame);
         updateInfoPanel(frame);
+        trackerPane.update(frame);
         updateFrameLabel();
         updatePlaybackButtons();
 
@@ -953,6 +963,7 @@ public class AlgorithmLabController {
         visitedLabel.setText("");
         distancesLabel.setText("");
         pathLabel.setText("");
+        trackerPane.clear();
     }
 
     private void updateFrameLabel() {

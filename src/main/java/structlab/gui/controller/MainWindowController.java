@@ -906,7 +906,7 @@ public class MainWindowController {
     // ─────────────────────────────────────────────────────────
 
     private Node buildAlgorithmLabPage() {
-        AlgorithmLabController algoLab = new AlgorithmLabController();
+        AlgorithmLabController algoLab = new AlgorithmLabController(settings);
         return algoLab.buildWorkspace();
     }
 
@@ -1035,38 +1035,105 @@ public class MainWindowController {
             card.getChildren().addAll(new Separator(), notesHeader, notesText);
         }
 
-        // Implementations
-        VBox implBox = new VBox(6);
+        // Complexity matrix
         List<ImplementationSummary> impls = service.getImplementations(s.id());
-        for (ImplementationSummary impl : impls) {
-            VBox implEntry = new VBox(2);
-            Label implName = styledLabel(impl.name(), "learn-impl-name");
-            implEntry.getChildren().add(implName);
-
-            if (impl.timeComplexity() != null && !impl.timeComplexity().isEmpty()) {
-                String tc = impl.timeComplexity().entrySet().stream()
-                        .map(e -> e.getKey() + ": " + e.getValue())
-                        .collect(Collectors.joining("  \u00b7  "));
-                Label tcLabel = styledLabel(tc, "learn-complexity-detail");
-                implEntry.getChildren().add(tcLabel);
-            }
-            if (impl.spaceComplexity() != null && !impl.spaceComplexity().isEmpty()) {
-                Label space = styledLabel("Space: " + impl.spaceComplexity(), "learn-complexity-detail");
-                implEntry.getChildren().add(space);
-            }
-            implBox.getChildren().add(implEntry);
+        ComplexityMatrix matrix = ComplexityMatrix.build(impls);
+        if (!matrix.rows().isEmpty()) {
+            card.getChildren().add(new Separator());
+            card.getChildren().add(styledLabel("COMPLEXITY MATRIX", "learn-card-section"));
+            card.getChildren().add(buildComplexityTable(matrix));
         }
 
+        // Implementations list (name + space)
+        if (!impls.isEmpty()) {
+            VBox implBox = new VBox(4);
+            for (ImplementationSummary impl : impls) {
+                Label implName = styledLabel(impl.name(), "learn-impl-name");
+                implBox.getChildren().add(implName);
+                if (impl.spaceComplexity() != null && !impl.spaceComplexity().isEmpty()) {
+                    Label space = styledLabel("Space: " + impl.spaceComplexity(),
+                            "learn-complexity-detail");
+                    implBox.getChildren().add(space);
+                }
+            }
+            card.getChildren().addAll(new Separator(),
+                    styledLabel("IMPLEMENTATIONS", "learn-card-section"), implBox);
+        }
+
+        // Keywords
         String kwText = s.keywords() != null && !s.keywords().isEmpty()
                 ? String.join("  \u00b7  ", s.keywords()) : "";
-
-        card.getChildren().addAll(
-                new Separator(),
-                styledLabel("IMPLEMENTATIONS", "learn-card-section"), implBox);
         if (!kwText.isEmpty()) {
             card.getChildren().addAll(new Separator(), styledLabel(kwText, "learn-card-keywords"));
         }
+
+        // Quick actions
+        HBox actions = new HBox(8);
+        actions.setAlignment(Pos.CENTER_LEFT);
+        actions.setPadding(new Insets(4, 0, 0, 0));
+
+        Button exploreBtn = new Button("Open in Explore");
+        exploreBtn.getStyleClass().add("learn-action-btn");
+        exploreBtn.setOnAction(e -> {
+            explStructList.getSelectionModel().select(
+                    explStructList.getItems().stream()
+                            .filter(st -> st.id().equals(s.id()))
+                            .findFirst().orElse(null));
+            navigateTo(NavigationPage.EXPLORE);
+        });
+        actions.getChildren().add(exploreBtn);
+
+        if (service.isComparable(s.id())) {
+            Button compareBtn = new Button("Compare Implementations");
+            compareBtn.getStyleClass().add("learn-action-btn");
+            compareBtn.setOnAction(e -> {
+                cmpStructList.getSelectionModel().select(
+                        cmpStructList.getItems().stream()
+                                .filter(st -> st.id().equals(s.id()))
+                                .findFirst().orElse(null));
+                navigateTo(NavigationPage.COMPARE);
+            });
+            actions.getChildren().add(compareBtn);
+        }
+
+        card.getChildren().addAll(new Separator(), actions);
         return card;
+    }
+
+    private GridPane buildComplexityTable(ComplexityMatrix matrix) {
+        GridPane grid = new GridPane();
+        grid.getStyleClass().add("complexity-table");
+        grid.setHgap(2);
+        grid.setVgap(2);
+
+        List<String> implNames = matrix.implementationNames();
+
+        // Header row: "Operation" | impl1 | impl2 | ...
+        grid.add(styledLabel("Operation", "complexity-header"), 0, 0);
+        for (int col = 0; col < implNames.size(); col++) {
+            grid.add(styledLabel(implNames.get(col), "complexity-header"), col + 1, 0);
+        }
+
+        // Data rows
+        int row = 1;
+        for (ComplexityMatrix.Row r : matrix.rows()) {
+            grid.add(styledLabel(r.operation(), "complexity-op"), 0, row);
+            for (int col = 0; col < implNames.size(); col++) {
+                String val = r.byImplementation().getOrDefault(implNames.get(col), "\u2014");
+                grid.add(styledLabel(val, "complexity-cell"), col + 1, row);
+            }
+            row++;
+        }
+
+        // Space row
+        grid.add(styledLabel("Space", "complexity-op"), 0, row);
+        for (int col = 0; col < implNames.size(); col++) {
+            String val = matrix.spaceByImplementation()
+                    .getOrDefault(implNames.get(col), "\u2014");
+            grid.add(styledLabel(val, "complexity-cell"), col + 1, row);
+        }
+
+        return grid;
     }
 
     // ─────────────────────────────────────────────────────────
@@ -1282,32 +1349,59 @@ public class MainWindowController {
         VBox hero = new VBox(8, heroTitle, heroSub);
         hero.getStyleClass().add("hero-section");
 
-        // Motion
-        VBox motionCard = settingsCard("MOTION & ANIMATION",
-                "Control page transitions and UI animations.");
+        // Motion & Layout
+        VBox motionCard = settingsCard("MOTION & LAYOUT",
+                "Control page transitions and layout density.");
         CheckBox motionCb = styledCheck("Enable page transitions", settings.isMotionEnabled());
         motionCb.selectedProperty().bindBidirectional(settings.motionEnabledProperty());
-        settingsCardBody(motionCard).getChildren().add(motionCb);
-
-        // Display
-        VBox displayCard = settingsCard("DISPLAY",
-                "Adjust layout density and information presentation.");
         CheckBox compactCb = styledCheck("Compact mode", settings.isCompactMode());
         compactCb.selectedProperty().bindBidirectional(settings.compactModeProperty());
         CheckBox densityCb = styledCheck("High density layout", settings.isHighDensity());
         densityCb.selectedProperty().bindBidirectional(settings.highDensityProperty());
-        settingsCardBody(displayCard).getChildren().addAll(compactCb, densityCb);
+        settingsCardBody(motionCard).getChildren().addAll(motionCb, compactCb, densityCb);
 
-        // Trace
-        VBox traceCard = settingsCard("TRACE OUTPUT",
+        // Trace & Learning
+        VBox traceCard = settingsCard("TRACE & LEARNING",
                 "Control the level of detail in execution traces.");
         CheckBox traceCb = styledCheck("Show raw trace output", settings.isShowRawTraces());
         traceCb.selectedProperty().bindBidirectional(settings.showRawTracesProperty());
         settingsCardBody(traceCard).getChildren().add(traceCb);
 
-        // About
-        VBox aboutCard = settingsCard("ABOUT",
-                "StructLab — Data Structure Simulator");
+        // Algorithm Lab
+        VBox algoCard = settingsCard("ALGORITHM LAB",
+                "Default settings for the graph algorithm workspace.");
+        CheckBox autoFitCb = styledCheck("Auto-fit graph after preset change",
+                settings.isAutoFitGraph());
+        autoFitCb.selectedProperty().bindBidirectional(settings.autoFitGraphProperty());
+        CheckBox trackerCb = styledCheck("Show algorithm tracker panel",
+                settings.isShowAlgorithmTracker());
+        trackerCb.selectedProperty().bindBidirectional(settings.showAlgorithmTrackerProperty());
+        CheckBox expandedCb = styledCheck("Tracker expanded by default",
+                settings.isTrackerExpanded());
+        expandedCb.selectedProperty().bindBidirectional(settings.trackerExpandedProperty());
+
+        HBox speedRow = new HBox(12);
+        speedRow.setAlignment(Pos.CENTER_LEFT);
+        Label speedLbl = styledLabel("Default playback speed:", "info-label");
+        Slider speedSlider = new Slider(0.25, 3.0, settings.getDefaultPlaybackSpeed());
+        speedSlider.setPrefWidth(140);
+        speedSlider.setMajorTickUnit(0.5);
+        Label speedVal = new Label(String.format("%.1fx", settings.getDefaultPlaybackSpeed()));
+        speedVal.getStyleClass().add("info-label");
+        speedSlider.valueProperty().addListener((obs, o, n) -> {
+            settings.setDefaultPlaybackSpeed(n.doubleValue());
+            speedVal.setText(String.format("%.1fx", n.doubleValue()));
+        });
+        settings.defaultPlaybackSpeedProperty().addListener((obs, o, n) ->
+                speedSlider.setValue(n.doubleValue()));
+        speedRow.getChildren().addAll(speedLbl, speedSlider, speedVal);
+
+        settingsCardBody(algoCard).getChildren().addAll(
+                autoFitCb, trackerCb, expandedCb, speedRow);
+
+        // Reset + About
+        VBox aboutCard = settingsCard("RESET & ABOUT",
+                "StructLab \u2014 Data Structure Simulator");
         int totalImpls = service.getAllStructures().stream()
                 .mapToInt(s -> service.getImplementations(s.id()).size()).sum();
         Label version = styledLabel("Version 1.0  \u00b7  Java 17  \u00b7  JavaFX 21",
@@ -1315,9 +1409,17 @@ public class MainWindowController {
         Label structures = styledLabel(
                 service.getAllStructures().size() + " structure families  \u00b7  "
                 + totalImpls + " implementations", "info-label");
-        settingsCardBody(aboutCard).getChildren().addAll(version, structures);
 
-        content.getChildren().addAll(hero, motionCard, displayCard, traceCard, aboutCard);
+        Button restoreBtn = new Button("Restore Defaults");
+        restoreBtn.getStyleClass().add("action-btn");
+        restoreBtn.setOnAction(e -> {
+            settings.restoreDefaults();
+            setStatus("Settings restored to defaults.");
+        });
+
+        settingsCardBody(aboutCard).getChildren().addAll(version, structures, restoreBtn);
+
+        content.getChildren().addAll(hero, motionCard, traceCard, algoCard, aboutCard);
 
         ScrollPane scroll = new ScrollPane(content);
         scroll.setFitToWidth(true);

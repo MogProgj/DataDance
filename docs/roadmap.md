@@ -106,6 +106,22 @@ JavaFxToolkitExtension with bounded startup timeout.
   search bar, activity category badges, compact-mode and high-density
   root-level style effects
 
+### Phase 5B — Teaching Surface Upgrade
+- **Learn 2.0**: ComplexityMatrix model — scannable complexity-comparison
+  table per structure family (union of operations across implementations).
+  Richer Learn cards with complexity matrix GridPane, "Open in Explore" and
+  "Compare Implementations" quick-action buttons.
+- **Settings 2.0**: Four new AppSettings properties (defaultPlaybackSpeed,
+  autoFitGraph, showAlgorithmTracker, trackerExpanded) with Preferences
+  persistence. Reorganised Settings page: "Motion & Layout", "Trace &
+  Learning", "Algorithm Lab", "Reset & About" cards with Restore Defaults
+  button.
+- **Algorithm Lab Telemetry**: AlgorithmTelemetry record (phase, typed
+  metrics, titled sections, events) added as 14th field to AlgorithmFrame.
+  AlgorithmTrackerPane left-panel widget renders telemetry or falls back to
+  generic frame data. Tracker visibility bound to AppSettings.
+- Test coverage: 1000 tests, 0 failures.
+
 ---
 
 ## Current state
@@ -115,11 +131,14 @@ JavaFxToolkitExtension with bounded startup timeout.
 - Full Explore and Compare modes with visual rendering and compare intelligence
 - Algorithm Lab with 11 graph algorithms, compare mode, and scenario save/load
 - Six-page GUI shell (Explore, Compare, Learn, Activity, Settings, Algorithm Lab)
-- Learn page with search/filter, behavior descriptions, and learning notes
-- Settings persisted via Preferences with live compact/high-density effects
+- Learn page with search/filter, behavior descriptions, learning notes,
+  complexity matrix table, and quick-action navigation buttons
+- Settings persisted via Preferences with live compact/high-density effects,
+  Algorithm Lab preferences, and Restore Defaults
 - Activity page with category filter, clear, and export
 - Compare and Activity export (JSON + text) via FileChooser
-- 980+ tests, 0 failures
+- Algorithm Lab tracker pane with structured telemetry display
+- 1000 tests, 0 failures
 - Clean CI with Xvfb and coverage reporting
 - Structured visual state architecture (VisualState sealed hierarchy)
 - Reusable visual primitives (UiComponents, VisualStateHost)

@@ -189,6 +189,22 @@ public class StructLabService {
     }
 
     /**
+     * Builds a complexity matrix for a structure family.
+     * One row per operation, one column per implementation.
+     */
+    public ComplexityMatrix buildComplexityMatrix(String structureId) {
+        return ComplexityMatrix.build(getImplementations(structureId));
+    }
+
+    /**
+     * Returns true if the given structure has two or more implementations
+     * (making side-by-side comparison available).
+     */
+    public boolean isComparable(String structureId) {
+        return getImplementations(structureId).size() >= 2;
+    }
+
+    /**
      * Open a comparison session for a structure family with the given implementation IDs.
      * If implIds is empty, auto-groups implementations by their operation signatures
      * and selects the largest compatible group (>= 2 implementations).

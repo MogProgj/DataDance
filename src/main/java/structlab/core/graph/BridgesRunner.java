@@ -206,6 +206,6 @@ public final class BridgesRunner {
                 List.copyOf(discoveryOrder),
                 Map.copyOf(parentMap), Set.copyOf(treeEdges),
                 statusMessage, 0,
-                Map.copyOf(distances), null, List.copyOf(bridgeList));
+                Map.copyOf(distances), null, List.copyOf(bridgeList), null);
     }
 }

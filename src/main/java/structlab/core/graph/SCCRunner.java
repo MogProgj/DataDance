@@ -225,6 +225,6 @@ public final class SCCRunner {
                 List.copyOf(discoveryOrder),
                 Map.copyOf(componentMap), Set.copyOf(treeEdges),
                 statusMessage, 0,
-                Map.copyOf(distances), null, List.of());
+                Map.copyOf(distances), null, List.of(), null);
     }
 }

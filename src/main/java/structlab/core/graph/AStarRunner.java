@@ -217,7 +217,7 @@ public final class AStarRunner {
                 AlgorithmFrame.AlgorithmType.A_STAR, stepIndex, currentNode,
                 Set.copyOf(closed), List.copyOf(frontier), List.copyOf(settleOrder),
                 Map.copyOf(parentMap), Set.copyOf(treeEdges), statusMessage, 0,
-                Map.copyOf(distances), target, List.copyOf(shortestPath));
+                Map.copyOf(distances), target, List.copyOf(shortestPath), null);
     }
 
     private static List<String> frontierNodes(PriorityQueue<double[]> pq,

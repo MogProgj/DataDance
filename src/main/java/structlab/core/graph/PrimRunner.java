@@ -144,7 +144,7 @@ public final class PrimRunner {
                 AlgorithmFrame.AlgorithmType.PRIM, stepIndex, currentNode,
                 Set.copyOf(inMST), List.copyOf(frontier), List.copyOf(addOrder),
                 Map.copyOf(parentMap), Set.copyOf(treeEdges), statusMessage, 0,
-                Map.copyOf(distances), null, List.of());
+                Map.copyOf(distances), null, List.of(), null);
     }
 
     private static List<String> frontierLabels(PriorityQueue<double[]> pq,

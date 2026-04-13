@@ -124,6 +124,6 @@ public final class TopologicalSortRunner {
                 AlgorithmFrame.AlgorithmType.TOPOLOGICAL_SORT, stepIndex, currentNode,
                 Set.copyOf(processed), List.copyOf(readyQueue), List.copyOf(topoOrder),
                 Map.copyOf(parentMap), Set.copyOf(treeEdges), statusMessage, 0,
-                Map.copyOf(inDegreeAsDouble), null, List.of());
+                Map.copyOf(inDegreeAsDouble), null, List.of(), null);
     }
 }

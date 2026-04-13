@@ -23,6 +23,10 @@ class AppSettingsTest {
         assertFalse(s.isCompactMode());
         assertTrue(s.isShowRawTraces());
         assertFalse(s.isHighDensity());
+        assertEquals(1.0, s.getDefaultPlaybackSpeed());
+        assertTrue(s.isAutoFitGraph());
+        assertTrue(s.isShowAlgorithmTracker());
+        assertTrue(s.isTrackerExpanded());
     }
 
     @Test
@@ -62,6 +66,50 @@ class AppSettingsTest {
         assertNotNull(s.compactModeProperty());
         assertNotNull(s.showRawTracesProperty());
         assertNotNull(s.highDensityProperty());
+        assertNotNull(s.defaultPlaybackSpeedProperty());
+        assertNotNull(s.autoFitGraphProperty());
+        assertNotNull(s.showAlgorithmTrackerProperty());
+        assertNotNull(s.trackerExpandedProperty());
+    }
+
+    @Test
+    void setAndGetNewProperties() {
+        AppSettings s = new AppSettings();
+        s.setDefaultPlaybackSpeed(2.5);
+        assertEquals(2.5, s.getDefaultPlaybackSpeed());
+
+        s.setAutoFitGraph(false);
+        assertFalse(s.isAutoFitGraph());
+
+        s.setShowAlgorithmTracker(false);
+        assertFalse(s.isShowAlgorithmTracker());
+
+        s.setTrackerExpanded(false);
+        assertFalse(s.isTrackerExpanded());
+    }
+
+    @Test
+    void restoreDefaultsResetsAll() {
+        AppSettings s = new AppSettings();
+        s.setMotionEnabled(false);
+        s.setCompactMode(true);
+        s.setShowRawTraces(false);
+        s.setHighDensity(true);
+        s.setDefaultPlaybackSpeed(3.0);
+        s.setAutoFitGraph(false);
+        s.setShowAlgorithmTracker(false);
+        s.setTrackerExpanded(false);
+
+        s.restoreDefaults();
+
+        assertTrue(s.isMotionEnabled());
+        assertFalse(s.isCompactMode());
+        assertTrue(s.isShowRawTraces());
+        assertFalse(s.isHighDensity());
+        assertEquals(1.0, s.getDefaultPlaybackSpeed());
+        assertTrue(s.isAutoFitGraph());
+        assertTrue(s.isShowAlgorithmTracker());
+        assertTrue(s.isTrackerExpanded());
     }
 
     @Test

@@ -48,7 +48,9 @@ Sub-packages:
 - `core.deque` — ArrayDequeCustom, LinkedDeque
 - `core.heap` — BinaryHeap, HeapPriorityQueue
 - `core.hash` — HashTableChaining, HashTableOpenAddressing, HashSetCustom
-- `core.graph` — Graph (directed/undirected, weighted/unweighted adjacency list)
+- `core.graph` — Graph (directed/undirected, weighted/unweighted adjacency list),
+  AlgorithmFrame (14-field execution snapshot including AlgorithmTelemetry),
+  AlgorithmTelemetry (phase, metrics, sections, events), 11 algorithm runners
 
 Each structure:
 - Exposes its own minimal interface
@@ -106,6 +108,15 @@ input.  Command handlers live in `app.command`.
 `StructLabFxApp` loads FXML; `MainWindowController` manages six pages
 (Explore, Compare, Learn, Activity, Settings, Algorithm Lab) through
 `NavigationPage`.
+
+### Controllers (`gui.controller`)
+- **`AlgorithmLabController`** — self-contained Algorithm Lab workspace with
+  preset selection, algorithm selection, playback, compare mode, scenario
+  save/load, and `AlgorithmTrackerPane` (telemetry display, visibility
+  bound to `AppSettings.showAlgorithmTracker`)
+- **`AlgorithmTrackerPane`** — left-panel widget rendering structured
+  `AlgorithmTelemetry` (phase, metrics, sections, events) or fallback
+  generic frame data
 
 ### Visual state system (`gui.visual`)
 See [visual-state-system.md](visual-state-system.md) for full detail.

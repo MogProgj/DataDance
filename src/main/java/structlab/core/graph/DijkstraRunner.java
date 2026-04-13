@@ -188,7 +188,7 @@ public final class DijkstraRunner {
                 AlgorithmFrame.AlgorithmType.DIJKSTRA, stepIndex, currentNode,
                 Set.copyOf(settled), List.copyOf(frontier), List.copyOf(settleOrder),
                 Map.copyOf(parentMap), Set.copyOf(treeEdges), statusMessage, 0,
-                Map.copyOf(distances), target, List.copyOf(shortestPath));
+                Map.copyOf(distances), target, List.copyOf(shortestPath), null);
     }
 
     /** Returns labels of nodes currently in the priority queue (unsettled, finite distance). */

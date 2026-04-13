@@ -37,7 +37,9 @@ public record AlgorithmFrame(
         /** Optional target node label, or null if no target. */
         String targetNode,
         /** Shortest path from source to target when target is settled. Empty otherwise. */
-        List<String> shortestPath) {
+        List<String> shortestPath,
+        /** Typed telemetry for the tracker UI. Null when not populated. */
+        AlgorithmTelemetry telemetry) {
 
     public enum AlgorithmType {
         BFS, DFS, DIJKSTRA, BELLMAN_FORD, TOPOLOGICAL_SORT, A_STAR,
@@ -61,6 +63,6 @@ public record AlgorithmFrame(
             String statusMessage, int depth) {
         return new AlgorithmFrame(algorithm, stepIndex, currentNode, visited, frontier,
                 discoveryOrder, parentMap, treeEdges, statusMessage, depth,
-                Map.of(), null, List.of());
+                Map.of(), null, List.of(), null);
     }
 }

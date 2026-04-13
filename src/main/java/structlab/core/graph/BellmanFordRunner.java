@@ -194,7 +194,7 @@ public final class BellmanFordRunner {
                 AlgorithmFrame.AlgorithmType.BELLMAN_FORD, stepIndex, currentNode,
                 Set.copyOf(settled), List.copyOf(frontier), List.copyOf(settleOrder),
                 Map.copyOf(parentMap), Set.copyOf(treeEdges), statusMessage, 0,
-                Map.copyOf(distances), target, List.copyOf(shortestPath));
+                Map.copyOf(distances), target, List.copyOf(shortestPath), null);
     }
 
     static List<String> reconstructPath(Map<String, String> parentMap,
