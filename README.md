@@ -1,48 +1,47 @@
 
-
-````md
-# StructLab – Data Structure and Algorithm Visualization in Java
+<h1 align="center">STRUCTLAB</h1>
+<p align="center"><b>DATA STRUCTURE AND ALGORITHM VISUALIZATION IN JAVA</b></p>
 
 StructLab is a Java desktop app for exploring data structures, comparing implementations, and stepping through graph algorithms visually. It combines a JavaFX GUI with a terminal mode for interactive learning and testing.
 
 ---
 
-## 🔧 Features
+## 🔧 FEATURES
 
 - 🧱 **Interactive Data Structure Exploration**
-  - Run operations and inspect live state changes.
-  - Explore structures through a visual GUI.
+  - Run operations and inspect live state changes
+  - Explore structures through a visual GUI
 
 - ⚖️ **Implementation Comparison**
-  - Compare multiple implementations side by side.
-  - See how the same operations behave across variants.
+  - Compare multiple implementations side by side
+  - See how the same operations behave across variants
 
 - 🧠 **Graph Algorithm Lab**
-  - Step through graph algorithms visually.
-  - Playback controls, presets, and custom graph building.
+  - Step through graph algorithms visually
+  - Playback controls, presets, and custom graph building
 
 - 📚 **Learn Tab**
-  - Quick reference for structures and algorithms.
-  - Built-in guide on how to use the app.
+  - Quick reference for structures and algorithms
+  - Built-in guide on how to use the app
 
 - ⚙️ **Desktop App + Terminal Mode**
-  - JavaFX GUI for the main experience.
-  - Terminal mode available for command-based interaction.
+  - JavaFX GUI for the main experience
+  - Terminal mode available for command-based interaction
 
 ---
 
-## 🚀 Getting Started
+## 🚀 GETTING STARTED
 
-### 1. Clone the Repository
+### 1. CLONE THE REPOSITORY
 
 ```bash
-git clone https://github.com/your_username/StructLab.git
-cd StructLab
-````
+git clone https://github.com/MogProgj/DataDance.git
+cd DataDance
+```
 
-### 2. Run the App
+### 2. RUN THE APP
 
-#### Option A: Run the Release JAR
+#### OPTION A: RUN THE RELEASE JAR
 
 Download the latest `structlab.jar` from the **Releases** page, then run:
 
@@ -58,9 +57,9 @@ Optional terminal mode:
 java -jar structlab.jar --terminal
 ```
 
-#### Option B: Run from Source
+#### OPTION B: RUN FROM SOURCE
 
-Make sure Java 17+ is installed.
+Make sure **Java 17+** is installed.
 
 Run the GUI:
 
@@ -78,7 +77,7 @@ On Windows, use `.\mvnw.cmd` instead of `./mvnw`.
 
 ---
 
-## 📈 Sample Usage
+## 📈 SAMPLE USAGE
 
 Use the app through these main sections:
 
@@ -89,7 +88,7 @@ Use the app through these main sections:
 
 ---
 
-## 🧠 Educational Use
+## 🧠 EDUCATIONAL USE
 
 This project was built for educational use, especially for understanding:
 
@@ -97,15 +96,4 @@ This project was built for educational use, especially for understanding:
 * how different implementations compare
 * how graph algorithms work step by step
 * how visual state changes connect to core logic
-
-````
-
-### Tiny recommendation
-Replace this line:
-
-```md
-git clone https://github.com/your_username/StructLab.git
-````
-
-with your actual repo URL before pushing.
 
