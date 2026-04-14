@@ -7,6 +7,7 @@ import structlab.app.runtime.adapters.ListRuntimeAdapter;
 import structlab.app.runtime.adapters.DequeRuntimeAdapter;
 import structlab.app.runtime.adapters.HeapRuntimeAdapter;
 import structlab.app.runtime.adapters.HashRuntimeAdapter;
+import structlab.app.runtime.adapters.TreeRuntimeAdapter;
 import structlab.registry.ImplementationMetadata;
 import structlab.registry.StructureMetadata;
 
@@ -26,6 +27,8 @@ import structlab.core.heap.HeapPriorityQueue;
 import structlab.core.hash.HashTableChaining;
 import structlab.core.hash.HashSetCustom;
 import structlab.core.hash.HashTableOpenAddressing;
+import structlab.core.tree.BinarySearchTree;
+import structlab.core.tree.AVLTree;
 
 import structlab.trace.TraceLog;
 import structlab.trace.TracedArrayStack;
@@ -44,6 +47,8 @@ import structlab.trace.TracedHeapPriorityQueue;
 import structlab.trace.TracedHashTableChaining;
 import structlab.trace.TracedHashSetCustom;
 import structlab.trace.TracedHashTableOpenAddressing;
+import structlab.trace.TracedBinarySearchTree;
+import structlab.trace.TracedAVLTree;
 
 public class RuntimeFactory {
 
@@ -84,6 +89,10 @@ public class RuntimeFactory {
             return new HashRuntimeAdapter(im.name(), new TracedHashTableOpenAddressing<Integer, Integer>(new HashTableOpenAddressing<Integer, Integer>(HashTableOpenAddressing.DEFAULT_INITIAL_CAPACITY, HashTableOpenAddressing.DEFAULT_LOAD_FACTOR, HashTableOpenAddressing.DEFAULT_HASH_TYPE, HashTableOpenAddressing.OpenAddressingType.QUADRATIC), new TraceLog()));
         } else if (im.id().equals("impl-hash-oa-double")) {
             return new HashRuntimeAdapter(im.name(), new TracedHashTableOpenAddressing<Integer, Integer>(new HashTableOpenAddressing<Integer, Integer>(HashTableOpenAddressing.DEFAULT_INITIAL_CAPACITY, HashTableOpenAddressing.DEFAULT_LOAD_FACTOR, HashTableOpenAddressing.DEFAULT_HASH_TYPE, HashTableOpenAddressing.OpenAddressingType.DOUBLE_HASHING), new TraceLog()));
+        } else if (im.id().equals("impl-bst")) {
+            return new TreeRuntimeAdapter(im.name(), new TracedBinarySearchTree<Integer>(new BinarySearchTree<Integer>(), new TraceLog()));
+        } else if (im.id().equals("impl-avl")) {
+            return new TreeRuntimeAdapter(im.name(), new TracedAVLTree<Integer>(new AVLTree<Integer>(), new TraceLog()));
         }
 
         throw new UnsupportedOperationException("Runtime instantiation for " + im.id() + " is not completely wired yet.");

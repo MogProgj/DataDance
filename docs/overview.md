@@ -49,7 +49,7 @@ Application preferences.
 
 | Area | Status |
 |------|--------|
-| Core structures | 7 families, 17 implementations |
+| Core structures | 8 families, 19 implementations |
 | Visual state panes | 14 family-specific panes + GraphVisualPane |
 | Compare workspace | Full side-by-side visual comparison |
 | Algorithm Lab | 11 algorithms with per-step telemetry and tracker pane |

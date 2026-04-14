@@ -1,6 +1,6 @@
 # Structure Families
 
-StructLab currently supports 7 structure families with 17 concrete
+StructLab currently supports 8 structure families with 19 concrete
 implementations.  Every implementation has full visual pane support
 in both Explore and Compare modes.
 
@@ -124,3 +124,21 @@ Demonstrates hashing, collision resolution, load factor, and rehashing.
 **Compare support:** Full.  Five-way hash comparison shows chaining
 vs three probing strategies vs set semantics — the richest comparison
 family in the project.
+
+---
+
+## Ordered Tree
+
+**Category:** Tree
+
+Demonstrates ordered insertion, BST property, self-balancing rotations,
+and tree traversals.
+
+| Implementation | ID | Visual pane | Educational focus |
+|---|---|---|---|
+| BinarySearchTree | impl-bst | OrderedTreeVisualPane | BST property, unbalanced worst-case |
+| AVLTree | impl-avl | OrderedTreeVisualPane | Rotations (LL/RR/LR/RL), guaranteed O(log N) |
+
+**Compare support:** Full.  BST vs AVL reveals how the same insertions
+can produce wildly different tree shapes — BST may degenerate to a
+linked list while AVL stays balanced via rotations.

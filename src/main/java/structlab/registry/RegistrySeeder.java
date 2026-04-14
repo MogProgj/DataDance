@@ -214,5 +214,30 @@ public class RegistrySeeder {
             Map.of("put", "O(1) avg", "get", "O(1) avg", "remove", "O(1) avg"), "O(N)",
             TracedHashTableOpenAddressing.class
         ));
+
+        // 7. Ordered Tree (BST / AVL)
+        StructureMetadata treeMeta = new StructureMetadata(
+            "struct-tree",
+            "Ordered Tree",
+            "Tree",
+            Set.of("tree", "binary", "search", "bst", "avl", "balanced", "ordered"),
+            "A node-based hierarchical structure where each node has at most two children, with left < parent < right.",
+            "O(h) search/insert/delete where h is tree height. BST worst-case h=N; AVL guarantees h=O(log N).",
+            "Ordered trees are fundamental for searching, sorting, and maintaining dynamic sorted sets. Comparing BST vs AVL reveals the power of self-balancing."
+        );
+        registry.registerStructure(treeMeta);
+
+        registry.registerImplementation(new ImplementationMetadata(
+            "impl-bst", "Binary Search Tree", "struct-tree",
+            "An unbalanced binary search tree. Simple to implement but can degrade to O(N) on skewed input.",
+            Map.of("insert", "O(h)", "remove", "O(h)", "contains", "O(h)", "min", "O(h)", "max", "O(h)"), "O(N)",
+            TracedBinarySearchTree.class
+        ));
+        registry.registerImplementation(new ImplementationMetadata(
+            "impl-avl", "AVL Tree", "struct-tree",
+            "A self-balancing BST using rotations to maintain |balance factor| ≤ 1 at every node.",
+            Map.of("insert", "O(log N)", "remove", "O(log N)", "contains", "O(log N)", "min", "O(log N)", "max", "O(log N)"), "O(N)",
+            TracedAVLTree.class
+        ));
     }
 }

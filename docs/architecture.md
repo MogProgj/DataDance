@@ -48,6 +48,7 @@ Sub-packages:
 - `core.deque` — ArrayDequeCustom, LinkedDeque
 - `core.heap` — BinaryHeap, HeapPriorityQueue
 - `core.hash` — HashTableChaining, HashTableOpenAddressing, HashSetCustom
+- `core.tree` — BinarySearchTree, AVLTree
 - `core.graph` — Graph (directed/undirected, weighted/unweighted adjacency list),
   AlgorithmFrame (14-field execution snapshot including AlgorithmTelemetry),
   AlgorithmTelemetry (phase, metrics, sections, events), 11 algorithm runners

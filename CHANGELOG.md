@@ -2,6 +2,25 @@
 
 ## Unreleased
 
+### Added — Phase 6A: Ordered Tree Structures
+- **Core structures**: `BinarySearchTree` and `AVLTree` in `structlab.core.tree`
+  — insert, contains, remove, min, max, height, inorder/preorder/postorder
+  traversals, BST-property invariant, Traceable interface
+- **AVL rotations**: All four rotation types (Left, Right, Left-Right,
+  Right-Left) with `lastRotation()` reporting
+- **Trace wrappers**: `TracedBinarySearchTree`, `TracedAVLTree` — full
+  before/after snapshots, invariant checks, rotation-aware explanations
+- **Visual state**: `OrderedTreeStateModel` (pre-order parenthesised tree
+  format), `OrderedTreeVisualPane`, `TreeCanvas.renderOrderedTree()` with
+  inorder-offset layout algorithm
+- **Runtime adapter**: `TreeRuntimeAdapter` — 8 operations with alias support
+  (add/delete/search/find)
+- **Registry**: struct-tree + impl-bst + impl-avl seeded; "tree" canonical
+  operation family (8 ops) in `CanonicalOperationRegistry`
+- **Compare support**: BST vs AVL side-by-side comparison
+- Tests: `BinarySearchTreeTest`, `AVLTreeTest`, `TracedBinarySearchTreeTest`,
+  `TracedAVLTreeTest`, `OrderedTreeStateModelTest`, `TreeRuntimeAdapterTest`
+
 ### Added — Phase 5A: Product Surface Upgrade
 - **Compare Intelligence**: `ComparisonAnalysis` model with divergence detection
   (STATUS_MISMATCH, VALUE_MISMATCH, STATE_DIVERGENCE), per-entry nanosecond

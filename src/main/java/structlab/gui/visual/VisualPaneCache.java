@@ -34,6 +34,7 @@ public final class VisualPaneCache {
     private LinkedDequeVisualPane linkedDequePane;
     private FixedArrayVisualPane fixedArrayPane;
     private DynamicArrayVisualPane dynamicArrayPane;
+    private OrderedTreeVisualPane orderedTreePane;
 
     /**
      * Updates (or lazily creates) the visual pane for the given state
@@ -113,6 +114,11 @@ public final class VisualPaneCache {
             dynamicArrayPane.update(m);
             return dynamicArrayPane;
         }
+        if (state instanceof OrderedTreeStateModel m) {
+            if (orderedTreePane == null) orderedTreePane = new OrderedTreeVisualPane();
+            orderedTreePane.update(m);
+            return orderedTreePane;
+        }
         throw new IllegalArgumentException("Unhandled VisualState type: " + state.getClass().getName());
     }
 
@@ -145,5 +151,6 @@ public final class VisualPaneCache {
         linkedDequePane = null;
         fixedArrayPane = null;
         dynamicArrayPane = null;
+        orderedTreePane = null;
     }
 }

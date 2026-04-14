@@ -70,7 +70,7 @@ a swamp.
 >   implementations, execute operations across all implementations,
 >   view side-by-side state/trace/history, reset all, close
 > - Supported comparison families: Stack (2), Queue (3), Deque (2),
->   Heap (2), Array (2), Linked List (2), Hash Table (5)
+>   Heap (2), Array (2), Linked List (2), Hash Table (5), Ordered Tree (2)
 > - Algorithm Lab: 11 graph algorithms (BFS, DFS, Dijkstra, Bellman-Ford,
 >   Topo Sort, A*, Prim, Kruskal, SCC, Bridges, Articulation Points)
 >   with typed metadata catalog, per-step telemetry, tracker pane,
@@ -108,6 +108,8 @@ a swamp.
 | Hash | Hash table OA (linear) | `HashTableOpenAddressing` | yes | yes | yes |
 | Hash | Hash table OA (quadratic) | `HashTableOpenAddressing` | yes | yes | yes |
 | Hash | Hash table OA (double) | `HashTableOpenAddressing` | yes | yes | yes |
+| Tree | Binary search tree | `BinarySearchTree` | yes | yes | yes |
+| Tree | AVL tree | `AVLTree` | yes | yes | yes |
 | Graph | Directed/undirected graph | `Graph` | yes | yes | yes |
 
 ---
@@ -137,6 +139,8 @@ The trace layer lives under `src/main/java/structlab/trace/` and provides:
 | `TracedHeapPriorityQueue` | Traced wrapper for `HeapPriorityQueue` |
 | `TracedHashTableChaining` | Traced wrapper for `HashTableChaining` |
 | `TracedHashSetCustom` | Traced wrapper for `HashSetCustom` |
+| `TracedBinarySearchTree` | Traced wrapper for `BinarySearchTree` |
+| `TracedAVLTree` | Traced wrapper for `AVLTree` |
 
 Each `TraceStep` captures: structure name, implementation name, operation name,
 input arguments, before-state snapshot, after-state snapshot, invariant result,

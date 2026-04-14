@@ -47,6 +47,8 @@ public final class StateModelParser {
             case "LinkedDeque"             -> parseLinkedDeque(snapshot);
             case "FixedArray"              -> parseFixedArray(snapshot);
             case "DynamicArray"            -> parseDynamicArray(snapshot);
+            case "BinarySearchTree"        -> parseOrderedTree(snapshot);
+            case "AVLTree"                 -> parseOrderedTree(snapshot);
             default                        -> null;
         };
     }
@@ -367,5 +369,29 @@ public final class StateModelParser {
                 Collections.unmodifiableList(elements),
                 Collections.unmodifiableList(raw),
                 size, capacity);
+    }
+
+    // ── Ordered tree family ─────────────────────────────────────
+
+    /**
+     * Parses a BinarySearchTree or AVLTree snapshot into an OrderedTreeStateModel.
+     * Snapshot: BinarySearchTree{size=N, height=H, root=V, tree=(value left right)}
+     * or:       AVLTree{size=N, height=H, root=V, tree=(value left right)}
+     */
+    public static OrderedTreeStateModel parseOrderedTree(String snapshot) {
+        String implName = SnapshotParser.type(snapshot);
+        int size = SnapshotParser.intField(snapshot, "size");
+        int height = SnapshotParser.intField(snapshot, "height");
+        String rootValue = SnapshotParser.stringField(snapshot, "root");
+
+        // Extract the tree= field (everything from "tree=" to the final '}')
+        int treeStart = snapshot.indexOf("tree=");
+        String treeStr = "";
+        if (treeStart >= 0) {
+            treeStr = snapshot.substring(treeStart + 5, snapshot.length() - 1);
+        }
+
+        List<OrderedTreeStateModel.TreeNodeInfo> nodes = OrderedTreeStateModel.parseTreeString(treeStr);
+        return new OrderedTreeStateModel(nodes, size, height, rootValue, implName);
     }
 }

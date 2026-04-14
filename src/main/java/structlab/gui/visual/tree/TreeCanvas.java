@@ -1,6 +1,7 @@
 package structlab.gui.visual.tree;
 
 import javafx.scene.layout.Pane;
+import structlab.gui.visual.OrderedTreeStateModel.TreeNodeInfo;
 
 import java.util.List;
 
@@ -102,5 +103,86 @@ public class TreeCanvas extends Pane {
             node.setLayoutY(nodeY[i] - NODE_SIZE / 2);
             getChildren().add(node);
         }
+    }
+
+    /**
+     * Renders an ordered binary tree (BST / AVL) using the parsed node list.
+     * Unlike heap rendering, this handles arbitrary (non-complete) tree shapes
+     * by computing positions with a recursive inorder-offset algorithm.
+     *
+     * @param nodes the tree nodes in pre-order with left/right child indices
+     */
+    public void renderOrderedTree(List<TreeNodeInfo> nodes) {
+        getChildren().clear();
+        if (nodes == null || nodes.isEmpty()) return;
+
+        int n = nodes.size();
+        double[] posX = new double[n];
+        double[] posY = new double[n];
+
+        // Compute tree depth for sizing
+        int depth = computeDepth(nodes, 0);
+        int levels = depth + 1;
+
+        // Inorder traversal assigns horizontal positions
+        int[] counter = {0};
+        assignPositions(nodes, 0, posX, posY, counter, 0);
+
+        double totalWidth = (counter[0]) * (NODE_SIZE + H_PADDING) + H_PADDING;
+        double totalHeight = levels * LEVEL_HEIGHT + V_PADDING;
+        setPrefSize(Math.max(totalWidth, 100), totalHeight);
+        setMinWidth(Math.max(totalWidth, 100));
+
+        // Draw edges first
+        for (int i = 0; i < n; i++) {
+            TreeNodeInfo ni = nodes.get(i);
+            if (ni.leftIndex() >= 0) {
+                boolean isRoot = (i == 0);
+                getChildren().add(new TreeEdge(
+                        posX[i], posY[i] + NODE_SIZE / 2 - 4,
+                        posX[ni.leftIndex()], posY[ni.leftIndex()] - NODE_SIZE / 2 + 4,
+                        isRoot));
+            }
+            if (ni.rightIndex() >= 0) {
+                boolean isRoot = (i == 0);
+                getChildren().add(new TreeEdge(
+                        posX[i], posY[i] + NODE_SIZE / 2 - 4,
+                        posX[ni.rightIndex()], posY[ni.rightIndex()] - NODE_SIZE / 2 + 4,
+                        isRoot));
+            }
+        }
+
+        // Draw nodes on top
+        for (int i = 0; i < n; i++) {
+            boolean isRoot = (i == 0);
+            TreeNode node = new TreeNode(nodes.get(i).value(), isRoot);
+            node.setLayoutX(posX[i] - NODE_SIZE / 2);
+            node.setLayoutY(posY[i] - NODE_SIZE / 2);
+            getChildren().add(node);
+        }
+    }
+
+    private int computeDepth(List<TreeNodeInfo> nodes, int index) {
+        if (index < 0) return -1;
+        TreeNodeInfo ni = nodes.get(index);
+        return 1 + Math.max(
+                computeDepth(nodes, ni.leftIndex()),
+                computeDepth(nodes, ni.rightIndex()));
+    }
+
+    private void assignPositions(List<TreeNodeInfo> nodes, int index,
+                                 double[] posX, double[] posY, int[] counter, int level) {
+        if (index < 0) return;
+        TreeNodeInfo ni = nodes.get(index);
+
+        // Inorder: left, self, right — gives sorted horizontal ordering
+        assignPositions(nodes, ni.leftIndex(), posX, posY, counter, level + 1);
+
+        double spacing = NODE_SIZE + H_PADDING;
+        posX[index] = H_PADDING + counter[0] * spacing + spacing / 2;
+        posY[index] = V_PADDING + level * LEVEL_HEIGHT + NODE_SIZE / 2;
+        counter[0]++;
+
+        assignPositions(nodes, ni.rightIndex(), posX, posY, counter, level + 1);
     }
 }

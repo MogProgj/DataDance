@@ -144,12 +144,30 @@ JavaFxToolkitExtension with bounded startup timeout.
   (13 tests verifying all 11 runners emit non-null telemetry with correct
   Init/Complete phases).
 
+### Phase 6A — Ordered Tree Structures
+- **Core structures**: BinarySearchTree, AVLTree in `structlab.core.tree`
+  — insert, contains, remove, min, max, height, inorder/preorder/postorder
+  traversals, Traceable interface, BST-property invariant.
+- **AVL rotations**: All four rotation types (Left, Right, Left-Right,
+  Right-Left) with `lastRotation()` reporting.
+- **Trace wrappers**: TracedBinarySearchTree, TracedAVLTree — full
+  before/after snapshots, invariant checks, rotation-aware explanations.
+- **Visual state**: OrderedTreeStateModel (pre-order parenthesised tree
+  format), OrderedTreeVisualPane, TreeCanvas.renderOrderedTree() with
+  inorder-offset layout algorithm.
+- **Runtime adapter**: TreeRuntimeAdapter — 8 operations with alias
+  support (add/delete/search/find).
+- **Registry**: struct-tree + impl-bst + impl-avl seeded; tree canonical
+  operation family (8 ops) in CanonicalOperationRegistry.
+- **Compare support**: Full — BST vs AVL side-by-side comparison reveals
+  shape differences and rotation behaviour.
+
 ---
 
 ## Current state
 
-- 7 structure families, 17 implementations
-- 14 visual panes covering all families + GraphVisualPane
+- 8 structure families, 19 implementations
+- 15 visual panes covering all families + GraphVisualPane
 - Full Explore and Compare modes with visual rendering and compare intelligence
 - Algorithm Lab with 11 graph algorithms, compare mode, and scenario save/load
 - Six-page GUI shell (Explore, Compare, Learn, Activity, Settings, Algorithm Lab)
@@ -187,7 +205,7 @@ hierarchy and VisualPaneCache already provide the hooks:
 - Configurable speed / step-through mode
 
 ### Ongoing
-- Additional structure families (BST, AVL, Trie, Graph)
+- Additional structure families (Trie, Red-Black Tree)
 - Performance experiment mode
 - Animated visual transitions
 - Complexity-table expansion in Learn cards

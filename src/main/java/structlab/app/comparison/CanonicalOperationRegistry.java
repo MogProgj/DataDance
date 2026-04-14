@@ -89,6 +89,18 @@ public final class CanonicalOperationRegistry {
                 new CanonicalOperation("get", Set.of("getat", "access"), "Get element by index", 1),
                 new CanonicalOperation("set", Set.of("setat", "update"), "Set element at index", 2)
         ));
+
+        // ── Ordered tree family ─────────────────────────────
+        FAMILY_MAP.put("tree", List.of(
+                new CanonicalOperation("insert", Set.of("add"), "Insert a value into the tree", 1),
+                new CanonicalOperation("remove", Set.of("delete"), "Remove a value from the tree", 1),
+                new CanonicalOperation("contains", Set.of("search", "find"), "Check if value exists", 1),
+                new CanonicalOperation("min", Set.of(), "Find the minimum value", 0),
+                new CanonicalOperation("max", Set.of(), "Find the maximum value", 0),
+                new CanonicalOperation("inorder", Set.of(), "In-order traversal (sorted)", 0),
+                new CanonicalOperation("preorder", Set.of(), "Pre-order traversal", 0),
+                new CanonicalOperation("postorder", Set.of(), "Post-order traversal", 0)
+        ));
     }
 
     private CanonicalOperationRegistry() {}

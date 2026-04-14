@@ -27,7 +27,8 @@ public sealed interface VisualState permits
         ArrayDequeStateModel,
         LinkedDequeStateModel,
         FixedArrayStateModel,
-        DynamicArrayStateModel {
+        DynamicArrayStateModel,
+        OrderedTreeStateModel {
 
     /**
      * Returns true if this state represents an empty structure.
