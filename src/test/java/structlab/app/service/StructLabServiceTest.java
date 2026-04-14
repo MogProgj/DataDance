@@ -60,6 +60,21 @@ class StructLabServiceTest {
         }
 
         @Test
+        void structureSummaryIncludesBehaviorAndLearningNotes() {
+            StructureSummary s = service.getStructure("struct-stack").orElseThrow();
+            assertNotNull(s.behavior());
+            assertNotNull(s.learningNotes());
+        }
+
+        @Test
+        void allStructuresHaveBehaviorAndLearningNotes() {
+            for (StructureSummary s : service.getAllStructures()) {
+                assertNotNull(s.behavior(), "behavior null for " + s.id());
+                assertNotNull(s.learningNotes(), "learningNotes null for " + s.id());
+            }
+        }
+
+        @Test
         void getImplementationsReturnsPopulatedList() {
             List<ImplementationSummary> impls = service.getImplementations("struct-stack");
             assertFalse(impls.isEmpty());
@@ -401,6 +416,144 @@ class StructLabServiceTest {
             assertTrue(last.isPresent());
             String rendered = service.getLastTraceRendered();
             assertNotNull(rendered);
+        }
+    }
+
+    // ── Hash Table session ─────────────────────────────────────
+
+    @Nested
+    class HashTableSessionTests {
+
+        @BeforeEach
+        void open() {
+            service.openSession("struct-hash", "impl-hash-table-chaining");
+        }
+
+        @Test
+        void hashTableSessionOpens() {
+            assertTrue(service.hasActiveSession());
+            SessionSnapshot snap = service.getSessionSnapshot().orElseThrow();
+            assertEquals("struct-hash", snap.structureId());
+            assertEquals("impl-hash-table-chaining", snap.implementationId());
+        }
+
+        @Test
+        void hashTableOperationsAvailable() {
+            List<OperationInfo> ops = service.getAvailableOperations();
+            assertFalse(ops.isEmpty());
+            assertTrue(ops.stream().anyMatch(o -> o.name().equals("put")));
+            assertTrue(ops.stream().anyMatch(o -> o.name().equals("get")));
+        }
+
+        @Test
+        void hashTablePutExecutes() {
+            ExecutionResult result = service.executeOperation("put", List.of("1", "100"));
+            assertTrue(result.success());
+            assertEquals("put", result.operationName());
+        }
+
+        @Test
+        void hashTableRenderedStateContainsHashInfo() {
+            service.executeOperation("put", List.of("1", "100"));
+            String rendered = service.getRenderedState();
+            assertNotNull(rendered);
+            assertFalse(rendered.isBlank());
+        }
+
+        @Test
+        void hashTableTraceAvailable() {
+            service.executeOperation("put", List.of("1", "100"));
+            List<?> steps = service.getLastTraceSteps();
+            assertFalse(steps.isEmpty());
+            String renderedTrace = service.getLastTraceRendered();
+            assertNotNull(renderedTrace);
+            assertFalse(renderedTrace.isBlank());
+        }
+
+        @Test
+        void hashTableHistoryTracksOperations() {
+            service.executeOperation("put", List.of("1", "100"));
+            service.executeOperation("get", List.of("1"));
+            assertEquals(2, service.getHistory().size());
+        }
+
+        @Test
+        void hashTableResetWorks() {
+            service.executeOperation("put", List.of("1", "100"));
+            service.resetSession();
+            assertTrue(service.getHistory().isEmpty());
+            assertEquals(0, service.getSessionSnapshot().orElseThrow().operationCount());
+        }
+    }
+
+    // ── Hash Set session ───────────────────────────────────────
+
+    @Nested
+    class HashSetSessionTests {
+
+        @BeforeEach
+        void open() {
+            service.openSession("struct-hash", "impl-hash-set");
+        }
+
+        @Test
+        void hashSetSessionOpens() {
+            assertTrue(service.hasActiveSession());
+            SessionSnapshot snap = service.getSessionSnapshot().orElseThrow();
+            assertEquals("impl-hash-set", snap.implementationId());
+        }
+
+        @Test
+        void hashSetOperationsAvailable() {
+            List<OperationInfo> ops = service.getAvailableOperations();
+            assertTrue(ops.stream().anyMatch(o -> o.name().equals("add")));
+            assertTrue(ops.stream().anyMatch(o -> o.name().equals("contains")));
+            assertTrue(ops.stream().anyMatch(o -> o.name().equals("remove")));
+        }
+
+        @Test
+        void hashSetAddExecutes() {
+            ExecutionResult result = service.executeOperation("add", List.of("42"));
+            assertTrue(result.success());
+        }
+
+        @Test
+        void hashSetTraceAvailable() {
+            service.executeOperation("add", List.of("42"));
+            String renderedTrace = service.getLastTraceRendered();
+            assertNotNull(renderedTrace);
+            assertFalse(renderedTrace.isBlank());
+        }
+    }
+
+    // ── Complexity Matrix & Comparable ─────────────────────────
+
+    @Nested
+    class ComplexityMatrixTests {
+
+        @Test
+        void buildComplexityMatrixForStack() {
+            ComplexityMatrix matrix = service.buildComplexityMatrix("struct-stack");
+            assertFalse(matrix.implementationNames().isEmpty());
+            assertFalse(matrix.rows().isEmpty());
+        }
+
+        @Test
+        void buildComplexityMatrixForUnknownReturnsEmpty() {
+            ComplexityMatrix matrix = service.buildComplexityMatrix("struct-nonexistent");
+            assertTrue(matrix.implementationNames().isEmpty());
+            assertTrue(matrix.rows().isEmpty());
+        }
+
+        @Test
+        void isComparableForStackIsTrue() {
+            // Stack has at least 2 implementations (array + linked)
+            assertTrue(service.isComparable("struct-stack"));
+        }
+
+        @Test
+        void isComparableForUnknownIsFalse() {
+            assertFalse(service.isComparable("struct-nonexistent"));
         }
     }
 }

@@ -1,162 +1,3132 @@
-/* StructLab JavaFX – clean, modern, neutral aesthetic */
+/* ═══════════════════════════════════════════════════════════════
+   StructLab — Premium Dark Workspace Design System v2
+   ═══════════════════════════════════════════════════════════════
+   Multi-page architecture with Massively-inspired hierarchy,
+   fade transitions, card-based pages, and editorial spacing.
 
-/* ── Root ────────────────────────────── */
+   Design Tokens
+   ─────────────────────────────────────────────────────────────
+   Canvas:       #0d1117      deepest void
+   Default:      #161b22      panels, header
+   Subtle:       #1c2128      elevated surfaces
+   Muted:        #21262d      cards
+   Emphasis:     #282e36      hover, inputs
+   Border:       #30363d      standard
+   Border-Muted: #21262d      very subtle
+
+   Accent:       #7c3aed      violet primary
+   Accent-Light: #a78bfa      violet hover
+   Accent-Muted: rgba(124,58,237,0.15)
+   Success:      #3fb950
+   Danger:       #f85149
+   Warning:      #d29922
+
+   Text-Primary: #e6edf3
+   Text-Muted:   #8b949e
+   Text-Subtle:  #6e7681
+   ─────────────────────────────────────────────────────────── */
+
+
+/* ══ Root ══════════════════════════════════════════════════ */
 .root {
-    -fx-font-family: "Segoe UI", "System", sans-serif;
+    -fx-font-family: "Segoe UI", "Inter", "SF Pro Display", "System", sans-serif;
     -fx-font-size: 13px;
-    -fx-background-color: #f4f5f7;
+    -fx-background-color: #0d1117;
+    -fx-text-fill: #e6edf3;
 }
 
-/* ── Toolbar ─────────────────────────── */
-.toolbar {
-    -fx-background-color: #2b2d42;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 4, 0, 0, 2);
+
+/* ══ App Header ═══════════════════════════════════════════ */
+.app-header {
+    -fx-background-color: #161b22;
+    -fx-border-color: transparent transparent #30363d transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-min-height: 44;
+    -fx-max-height: 44;
 }
 
-.app-title {
-    -fx-text-fill: #edf2f4;
+.brand-area {
+    -fx-background-color: #0d1117;
+    -fx-border-color: transparent #21262d transparent transparent;
+    -fx-border-width: 0 1 0 0;
+}
+
+.brand-logo {
+    -fx-text-fill: #a78bfa;
     -fx-font-size: 18px;
     -fx-font-weight: bold;
 }
 
-.status-label {
-    -fx-text-fill: #8d99ae;
-    -fx-font-size: 12px;
+.header-sep {
+    -fx-padding: 8 0;
 }
 
-/* ── Side panels ─────────────────────── */
-.side-panel {
-    -fx-background-color: #ffffff;
-    -fx-border-color: #dee2e6;
+.header-sep .line {
+    -fx-border-color: #30363d;
     -fx-border-width: 0 1 0 0;
 }
 
-.section-header {
-    -fx-font-size: 13px;
+.page-title {
+    -fx-text-fill: #e6edf3;
+    -fx-font-size: 15px;
     -fx-font-weight: bold;
-    -fx-text-fill: #2b2d42;
 }
 
-.info-label {
-    -fx-text-fill: #495057;
+.page-subtitle {
+    -fx-text-fill: #6e7681;
     -fx-font-size: 12px;
 }
 
-/* ── Center panel ────────────────────── */
-.center-panel {
+
+/* ══ Navigation Rail ══════════════════════════════════════ */
+.nav-rail {
+    -fx-background-color: #0d1117;
+    -fx-border-color: transparent #21262d transparent transparent;
+    -fx-border-width: 0 1 0 0;
+}
+
+.nav-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 4;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-alignment: center;
+    -fx-content-display: center;
+}
+
+.nav-btn:hover {
+    -fx-background-color: #21262d;
+    -fx-text-fill: #e6edf3;
+}
+
+.nav-btn-active {
+    -fx-text-fill: #a78bfa;
+    -fx-background-color: rgba(124, 58, 237, 0.12);
+}
+
+.nav-btn-active:hover {
+    -fx-text-fill: #c4b5fd;
+    -fx-background-color: rgba(124, 58, 237, 0.18);
+}
+
+
+/* ══ Page Host ════════════════════════════════════════════ */
+.page-host {
+    -fx-background-color: #0d1117;
+}
+
+
+/* ══ Context Panel ════════════════════════════════════════ */
+.context-panel {
+    -fx-background-color: #161b22;
+    -fx-border-color: transparent #30363d transparent transparent;
+    -fx-border-width: 0 1 0 0;
+}
+
+
+/* ══ Inspector Panel ══════════════════════════════════════ */
+.inspector-panel {
+    -fx-background-color: #161b22;
+    -fx-border-color: transparent transparent transparent #30363d;
+    -fx-border-width: 0 0 0 1;
+}
+
+.inspector-card {
+    -fx-background-color: #21262d;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10 12;
+}
+
+
+/* ══ Workspace ════════════════════════════════════════════ */
+.workspace {
+    -fx-background-color: #0d1117;
+}
+
+.workspace-content {
+    -fx-background-color: #0d1117;
+}
+
+
+/* ══ Cards ════════════════════════════════════════════════ */
+.card {
+    -fx-background-color: #21262d;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.card-header {
+    -fx-background-color: #282e36;
+    -fx-padding: 8 14;
+    -fx-background-radius: 8 8 0 0;
+    -fx-border-color: transparent transparent #30363d transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-radius: 8 8 0 0;
+}
+
+.card-title {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.card-body {
+    -fx-padding: 12 14;
+    -fx-background-color: #21262d;
+    -fx-background-radius: 0 0 8 8;
+}
+
+
+/* ══ Settings Cards ═══════════════════════════════════════ */
+.settings-card {
+    -fx-background-color: #21262d;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.settings-card-header {
+    -fx-padding: 14 18;
+    -fx-background-color: #282e36;
+    -fx-background-radius: 8 8 0 0;
+    -fx-border-color: transparent transparent #30363d transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-radius: 8 8 0 0;
+}
+
+.settings-card-title {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.settings-card-desc {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 12px;
+}
+
+.settings-card-body {
+    -fx-padding: 16 18;
+    -fx-background-color: #21262d;
+    -fx-background-radius: 0 0 8 8;
+}
+
+.settings-check {
+    -fx-text-fill: #c9d1d9;
+    -fx-font-size: 13px;
+}
+
+.settings-check .box {
+    -fx-background-color: #0d1117;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-pref-width: 18;
+    -fx-pref-height: 18;
+}
+
+.settings-check:selected .box {
+    -fx-background-color: #7c3aed;
+    -fx-border-color: #7c3aed;
+}
+
+.settings-check .mark {
     -fx-background-color: #ffffff;
 }
 
-/* ── Structure detail box ────────────── */
-.detail-box {
-    -fx-background-color: #f8f9fa;
-    -fx-border-color: #dee2e6;
-    -fx-border-radius: 4;
-    -fx-background-radius: 4;
+.settings-check:hover .box {
+    -fx-border-color: #8b949e;
 }
 
-.detail-name {
-    -fx-font-size: 14px;
+
+/* ══ Learn Cards ══════════════════════════════════════════ */
+.learn-card {
+    -fx-background-color: #21262d;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0, 0, 2);
+}
+
+.learn-card:hover {
+    -fx-border-color: #484f58;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 8, 0, 0, 3);
+}
+
+.learn-card-title {
+    -fx-text-fill: #e6edf3;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
-    -fx-text-fill: #2b2d42;
+}
+
+.learn-card-desc {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 12px;
+}
+
+.learn-card-section {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 2 0;
+}
+
+.learn-impl-name {
+    -fx-text-fill: #c9d1d9;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.learn-impl-desc {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 11px;
+    -fx-padding: 0 0 2 8;
+}
+
+.learn-compare-badge {
+    -fx-text-fill: #58a6ff;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-border-color: #58a6ff;
+    -fx-border-radius: 4;
+    -fx-padding: 1 6;
+}
+
+.learn-complexity-detail {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 11px;
+    -fx-padding: 0 0 0 8;
+}
+
+.learn-card-keywords {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 11px;
+    -fx-font-style: italic;
+}
+
+.learn-card-behavior {
+    -fx-text-fill: #a78bfa;
+    -fx-font-size: 12px;
+    -fx-padding: 2 0;
+}
+
+.learn-card-notes {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+    -fx-padding: 2 0;
+}
+
+.learn-search-field {
+    -fx-pref-height: 32;
+    -fx-font-size: 13px;
+    -fx-background-color: #161b22;
+    -fx-text-fill: #c9d1d9;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-prompt-text-fill: #484f58;
+}
+
+.learn-category-filter {
+    -fx-pref-height: 32;
+    -fx-font-size: 12px;
+}
+
+
+/* ══ Section Headers ══════════════════════════════════════ */
+.section-header {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #6e7681;
+    -fx-padding: 2 0 6 0;
+}
+
+.info-label {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 12px;
+}
+
+
+/* ══ Detail Labels ════════════════════════════════════════ */
+.detail-name {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e6edf3;
 }
 
 .detail-description {
-    -fx-text-fill: #495057;
+    -fx-text-fill: #8b949e;
     -fx-font-size: 12px;
 }
 
 .detail-keywords {
-    -fx-text-fill: #6c757d;
+    -fx-text-fill: #6e7681;
     -fx-font-size: 11px;
     -fx-font-style: italic;
 }
 
-/* ── Empty state labels ──────────────── */
-.empty-state {
-    -fx-text-fill: #adb5bd;
-    -fx-font-size: 12px;
-    -fx-font-style: italic;
-    -fx-alignment: center;
-}
 
-/* ── Monospace text areas ────────────── */
+/* ══ Monospace Text Areas ═════════════════════════════════ */
 .mono-area {
-    -fx-font-family: "Consolas", "Courier New", monospace;
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", "Courier New", monospace;
     -fx-font-size: 12px;
-    -fx-control-inner-background: #1e1e2e;
-    -fx-text-fill: #cdd6f4;
-    -fx-highlight-fill: #45475a;
-    -fx-highlight-text-fill: #cdd6f4;
+    -fx-control-inner-background: #0d1117;
+    -fx-text-fill: #c9d1d9;
+    -fx-highlight-fill: rgba(124, 58, 237, 0.25);
+    -fx-highlight-text-fill: #e6edf3;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-prompt-text-fill: #484f58;
 }
 
 .mono-area .content {
-    -fx-background-color: #1e1e2e;
+    -fx-background-color: #0d1117;
+    -fx-background-radius: 4;
 }
 
-/* ── Buttons ─────────────────────────── */
+
+/* ══ Buttons ══════════════════════════════════════════════ */
 .primary-button {
-    -fx-background-color: #2b2d42;
-    -fx-text-fill: #edf2f4;
-    -fx-padding: 6 16;
+    -fx-background-color: #7c3aed;
+    -fx-text-fill: #ffffff;
+    -fx-padding: 7 18;
     -fx-cursor: hand;
+    -fx-background-radius: 6;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(124, 58, 237, 0.3), 6, 0, 0, 2);
 }
 
 .primary-button:hover {
-    -fx-background-color: #3a3d5c;
+    -fx-background-color: #8b5cf6;
+    -fx-effect: dropshadow(gaussian, rgba(124, 58, 237, 0.45), 10, 0, 0, 3);
+}
+
+.primary-button:pressed {
+    -fx-background-color: #6d28d9;
 }
 
 .primary-button:disabled {
-    -fx-background-color: #adb5bd;
-    -fx-text-fill: #e9ecef;
+    -fx-background-color: #21262d;
+    -fx-text-fill: #484f58;
     -fx-cursor: default;
+    -fx-effect: none;
 }
 
 .secondary-button {
-    -fx-background-color: #dee2e6;
-    -fx-text-fill: #2b2d42;
-    -fx-padding: 6 12;
+    -fx-background-color: #161b22;
+    -fx-text-fill: #8b949e;
+    -fx-padding: 6 14;
     -fx-cursor: hand;
+    -fx-background-radius: 6;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+    -fx-font-size: 12px;
 }
 
 .secondary-button:hover {
-    -fx-background-color: #ced4da;
+    -fx-background-color: #21262d;
+    -fx-text-fill: #e6edf3;
+    -fx-border-color: #8b949e;
+}
+
+.secondary-button:pressed {
+    -fx-background-color: #161b22;
 }
 
 .secondary-button:disabled {
-    -fx-background-color: #e9ecef;
-    -fx-text-fill: #adb5bd;
+    -fx-background-color: #0d1117;
+    -fx-text-fill: #484f58;
+    -fx-border-color: #21262d;
     -fx-cursor: default;
 }
 
-/* ── ListView ────────────────────────── */
+.accent-button {
+    -fx-background-color: rgba(124, 58, 237, 0.12);
+    -fx-text-fill: #a78bfa;
+    -fx-padding: 7 14;
+    -fx-cursor: hand;
+    -fx-background-radius: 6;
+    -fx-border-color: rgba(124, 58, 237, 0.30);
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.accent-button:hover {
+    -fx-background-color: rgba(124, 58, 237, 0.22);
+    -fx-text-fill: #c4b5fd;
+    -fx-border-color: rgba(124, 58, 237, 0.50);
+}
+
+.accent-button:pressed {
+    -fx-background-color: rgba(124, 58, 237, 0.08);
+}
+
+.accent-button:disabled {
+    -fx-background-color: #161b22;
+    -fx-text-fill: #484f58;
+    -fx-border-color: #21262d;
+    -fx-cursor: default;
+}
+
+
+/* ══ ListView ═════════════════════════════════════════════ */
 .list-view {
-    -fx-background-color: #ffffff;
-    -fx-border-color: #dee2e6;
+    -fx-background-color: #161b22;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #c9d1d9;
+    -fx-padding: 6 10;
+}
+
+.list-view .list-cell:filled:hover {
+    -fx-background-color: rgba(124, 58, 237, 0.06);
 }
 
 .list-cell:filled:selected {
-    -fx-background-color: #d8e2f3;
-    -fx-text-fill: #2b2d42;
+    -fx-background-color: rgba(124, 58, 237, 0.18);
+    -fx-text-fill: #e6edf3;
 }
 
-/* ── Status bar ──────────────────────── */
+.list-view .list-cell:empty {
+    -fx-background-color: transparent;
+}
+
+.list-view > .virtual-flow > .clipped-container > .sheet > .list-cell {
+    -fx-background-color: transparent;
+}
+
+
+/* ══ ScrollBar ════════════════════════════════════════════ */
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #30363d;
+    -fx-background-radius: 4;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #484f58;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-shape: "";
+    -fx-padding: 0;
+}
+
+
+/* ══ ScrollPane (page-level) ══════════════════════════════ */
+.page-scroll {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.page-scroll > .viewport {
+    -fx-background-color: #0d1117;
+}
+
+.page-scroll .scroll-bar:horizontal {
+    -fx-pref-height: 0;
+    -fx-min-height: 0;
+}
+
+
+/* ══ TextField ════════════════════════════════════════════ */
+.text-field {
+    -fx-background-color: #0d1117;
+    -fx-text-fill: #e6edf3;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 7 10;
+    -fx-prompt-text-fill: #484f58;
+}
+
+.text-field:focused {
+    -fx-border-color: #7c3aed;
+    -fx-effect: dropshadow(gaussian, rgba(124, 58, 237, 0.2), 6, 0, 0, 0);
+}
+
+
+/* ══ Separator ════════════════════════════════════════════ */
+.separator .line {
+    -fx-border-color: #21262d;
+    -fx-border-width: 1 0 0 0;
+}
+
+
+/* ══ Status Bar ═══════════════════════════════════════════ */
 .status-bar {
-    -fx-background-color: #e9ecef;
-    -fx-border-color: #dee2e6;
+    -fx-background-color: #0d1117;
+    -fx-border-color: #21262d;
     -fx-border-width: 1 0 0 0;
 }
 
 .status-text {
-    -fx-text-fill: #6c757d;
+    -fx-text-fill: #6e7681;
     -fx-font-size: 11px;
 }
 
-/* ── History cells ───────────────────── */
+
+/* ══ Mode Badge ═══════════════════════════════════════════ */
+.mode-badge {
+    -fx-background-color: rgba(124, 58, 237, 0.15);
+    -fx-text-fill: #a78bfa;
+    -fx-padding: 3 12;
+    -fx-background-radius: 12;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.mode-session {
+    -fx-background-color: rgba(63, 185, 80, 0.15);
+    -fx-text-fill: #3fb950;
+}
+
+.mode-compare {
+    -fx-background-color: rgba(210, 153, 34, 0.15);
+    -fx-text-fill: #d29922;
+}
+
+
+/* ══ Hero Sections ════════════════════════════════════════ */
+.hero-section {
+    -fx-padding: 0 0 8 0;
+}
+
+.hero-title {
+    -fx-text-fill: #e6edf3;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.hero-subtitle {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 14px;
+}
+
+
+/* ══ Page Content (full-width pages) ══════════════════════ */
+.page-content {
+    -fx-background-color: #0d1117;
+}
+
+
+/* ══ Category Headers ═════════════════════════════════════ */
+.category-header {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 8 0 8 0;
+    -fx-border-color: transparent transparent #21262d transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+
+/* ══ Card Grid (FlowPane) ════════════════════════════════ */
+.card-grid {
+    -fx-padding: 4 0;
+}
+
+
+/* ══ Activity Feed ════════════════════════════════════════ */
+.activity-feed {
+    -fx-background-color: #161b22;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.activity-entry {
+    -fx-border-color: transparent transparent #21262d transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.activity-entry:hover {
+    -fx-background-color: rgba(124, 58, 237, 0.04);
+}
+
+.activity-icon {
+    -fx-text-fill: #7c3aed;
+    -fx-font-size: 12px;
+}
+
+.activity-action {
+    -fx-text-fill: #c9d1d9;
+    -fx-font-size: 13px;
+}
+
+.activity-detail {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 11px;
+}
+
+.activity-time {
+    -fx-text-fill: #484f58;
+    -fx-font-size: 11px;
+}
+
+.activity-category-badge {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 10px;
+    -fx-font-style: italic;
+}
+
+
+/* ══ Tooltip ══════════════════════════════════════════════ */
+.tooltip {
+    -fx-background-color: #282e36;
+    -fx-text-fill: #c9d1d9;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 6 10;
+    -fx-font-size: 11px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 8, 0, 0, 3);
+}
+
+
+/* ══ Alert Dialogs ════════════════════════════════════════ */
+.alert .dialog-pane {
+    -fx-background-color: #21262d;
+    -fx-border-color: #30363d;
+}
+
+.alert .dialog-pane .content {
+    -fx-text-fill: #c9d1d9;
+}
+
+.alert .dialog-pane .header-panel {
+    -fx-background-color: #282e36;
+}
+
+
+/* ══ Empty State ══════════════════════════════════════════ */
+.empty-state-text {
+    -fx-text-fill: #484f58;
+    -fx-font-size: 13px;
+    -fx-font-style: italic;
+}
+
+
+/* ══ Semantic Colors ══════════════════════════════════════ */
 .history-success {
-    -fx-text-fill: #2d6a4f;
+    -fx-text-fill: #3fb950;
 }
 
 .history-fail {
-    -fx-text-fill: #c1121f;
+    -fx-text-fill: #f85149;
+}
+
+
+/* ══ Accent Badge ═════════════════════════════════════════ */
+.accent-badge {
+    -fx-background-color: rgba(124, 58, 237, 0.15);
+    -fx-text-fill: #a78bfa;
+    -fx-padding: 2 8;
+    -fx-background-radius: 10;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   Phase 2A — Visual State Components
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Shared ─────────────────────────────────────────────── */
+.visual-state-pane {
+    -fx-background-color: #161b22;
+    -fx-background-radius: 8;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-padding: 14;
+}
+
+.visual-state-title {
+    -fx-text-fill: #e6edf3;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.visual-state-meta {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 12px;
+}
+
+.visual-empty-state {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 13px;
+    -fx-font-style: italic;
+    -fx-padding: 20 0;
+}
+
+.visual-section-label {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 6 0 2 0;
+}
+
+.visual-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+.visual-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* ── Stack ──────────────────────────────────────────────── */
+.stack-container {
+    -fx-padding: 8 0;
+}
+
+.stack-cell {
+    -fx-background-color: #21262d;
+    -fx-border-color: #30363d;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-alignment: center;
+}
+
+.stack-cell-top {
+    -fx-background-color: rgba(124, 58, 237, 0.18);
+    -fx-border-color: #7c3aed;
+}
+
+.stack-cell-value {
+    -fx-text-fill: #e6edf3;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+}
+
+.stack-marker {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 11px;
+}
+
+.stack-marker-top {
+    -fx-text-fill: #a78bfa;
+    -fx-font-weight: bold;
+}
+
+.stack-marker-bottom {
+    -fx-text-fill: #6e7681;
+}
+
+.stack-plate {
+    -fx-background-color: #30363d;
+    -fx-background-radius: 2;
+    -fx-border-color: transparent;
+}
+
+/* ── Queue ──────────────────────────────────────────────── */
+.queue-container {
+    -fx-padding: 8 0;
+}
+
+.queue-cell {
+    -fx-background-color: #21262d;
+    -fx-border-color: #30363d;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-alignment: center;
+    -fx-padding: 4 10;
+}
+
+.queue-cell-front {
+    -fx-background-color: rgba(63, 185, 80, 0.15);
+    -fx-border-color: #3fb950;
+}
+
+.queue-cell-rear {
+    -fx-background-color: rgba(210, 153, 34, 0.15);
+    -fx-border-color: #d29922;
+}
+
+.queue-cell-value {
+    -fx-text-fill: #e6edf3;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+}
+
+.queue-arrow {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 14px;
+    -fx-alignment: center;
+    -fx-padding: 16 0 0 0;
+}
+
+.queue-direction-label {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 11px;
+    -fx-font-style: italic;
+    -fx-padding: 16 0 0 0;
+}
+
+.queue-marker {
+    -fx-text-fill: transparent;
+    -fx-font-size: 10px;
+    -fx-alignment: center;
+}
+
+.queue-marker-front {
+    -fx-text-fill: #3fb950;
+    -fx-font-weight: bold;
+}
+
+.queue-marker-rear {
+    -fx-text-fill: #d29922;
+    -fx-font-weight: bold;
+}
+
+/* ── Circular Queue ─────────────────────────────────────── */
+.cq-slot-container {
+    -fx-padding: 4 0;
+}
+
+.cq-slot {
+    -fx-border-color: #30363d;
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-alignment: center;
+    -fx-padding: 4 6;
+}
+
+.cq-slot-occupied {
+    -fx-background-color: #21262d;
+}
+
+.cq-slot-empty {
+    -fx-background-color: #161b22;
+}
+
+.cq-slot-front {
+    -fx-border-color: #3fb950;
+}
+
+.cq-slot-rear {
+    -fx-border-color: #d29922;
+}
+
+.cq-slot-value {
+    -fx-text-fill: #e6edf3;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+}
+
+.cq-slot-empty-value {
+    -fx-text-fill: #30363d;
+    -fx-font-size: 13px;
+}
+
+.cq-slot-index {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 9px;
+    -fx-alignment: center;
+}
+
+.cq-slot-marker {
+    -fx-text-fill: transparent;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+.cq-marker-front {
+    -fx-text-fill: #3fb950;
+}
+
+.cq-marker-rear {
+    -fx-text-fill: #d29922;
+}
+
+.cq-logical-container {
+    -fx-padding: 4 0;
+}
+
+.cq-logical-cell {
+    -fx-background-color: #21262d;
+    -fx-border-color: #30363d;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-alignment: center;
+    -fx-padding: 4 8;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   Phase 2B — Comparison Visual Workspace
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Comparison Summary Header ──────────────────────────── */
+.comparison-summary {
+    -fx-background-color: #1c2128;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 4, 0, 0, 1);
+}
+
+.comparison-summary-name {
+    -fx-text-fill: #e6edf3;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.comparison-summary-metric {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 12px;
+}
+
+/* ── Comparison Card Grid ───────────────────────────────── */
+.comparison-card-grid {
+    -fx-padding: 4 0;
+}
+
+/* ── Comparison Card ────────────────────────────────────── */
+.comparison-card {
+    -fx-background-color: #1c2128;
+    -fx-border-color: #30363d;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.18), 4, 0, 0, 2);
+}
+
+.comparison-card:hover {
+    -fx-border-color: #484f58;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.30), 8, 0, 0, 3);
+}
+
+.comparison-card-header {
+    -fx-background-color: #21262d;
+    -fx-padding: 12 16;
+    -fx-background-radius: 10 10 0 0;
+    -fx-border-color: transparent transparent #30363d transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-radius: 10 10 0 0;
+}
+
+.comparison-card-name {
+    -fx-text-fill: #e6edf3;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* ── Status Badges ──────────────────────────────────────── */
+.comparison-status-badge {
+    -fx-padding: 3 12;
+    -fx-background-radius: 12;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+.comparison-status-idle {
+    -fx-background-color: rgba(110, 118, 129, 0.15);
+    -fx-text-fill: #6e7681;
+}
+
+.comparison-status-ready {
+    -fx-background-color: rgba(124, 58, 237, 0.15);
+    -fx-text-fill: #a78bfa;
+}
+
+.comparison-status-ok {
+    -fx-background-color: rgba(63, 185, 80, 0.18);
+    -fx-text-fill: #3fb950;
+}
+
+.comparison-status-fail {
+    -fx-background-color: rgba(248, 81, 73, 0.18);
+    -fx-text-fill: #f85149;
+}
+
+.comparison-status-divergent {
+    -fx-background-color: rgba(210, 153, 34, 0.18);
+    -fx-text-fill: #d29922;
+}
+
+.comparison-card-divergent {
+    -fx-border-color: #d29922;
+    -fx-border-width: 2;
+}
+
+.comparison-card-fastest {
+    -fx-border-color: #3fb950;
+    -fx-border-width: 2;
+}
+
+.comparison-card-timing {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 11px;
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+}
+
+/* ── Card Metrics Row ───────────────────────────────────── */
+.comparison-card-metrics {
+    -fx-padding: 8 16 4 16;
+}
+
+.comparison-card-returned {
+    -fx-text-fill: #a78bfa;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+}
+
+.comparison-card-ops {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 11px;
+}
+
+/* ── Card State Area ────────────────────────────────────── */
+.comparison-card-state {
+    -fx-padding: 4 16 8 16;
+}
+
+.comparison-card-state-text {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 11px;
+    -fx-control-inner-background: #0d1117;
+    -fx-text-fill: #c9d1d9;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-prompt-text-fill: #484f58;
+}
+
+.comparison-card-state-text .content {
+    -fx-background-color: #0d1117;
+    -fx-background-radius: 4;
+}
+
+/* ── Card Trace Section ─────────────────────────────────── */
+.comparison-card-trace {
+    -fx-padding: 4 16 12 16;
+}
+
+.comparison-trace-toggle {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 11px;
+    -fx-cursor: hand;
+    -fx-padding: 4 0;
+}
+
+.comparison-trace-toggle:hover {
+    -fx-text-fill: #a78bfa;
+}
+
+.comparison-card-trace-text {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 11px;
+    -fx-control-inner-background: #0d1117;
+    -fx-text-fill: #8b949e;
+    -fx-border-color: #21262d;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.comparison-card-trace-text .content {
+    -fx-background-color: #0d1117;
+    -fx-background-radius: 4;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   Phase 2B — Hover & Interaction Polish
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Nav Buttons — enhanced hover ───────────────────────── */
+.nav-btn:hover {
+    -fx-background-color: #282e36;
+    -fx-text-fill: #e6edf3;
+    -fx-effect: dropshadow(gaussian, rgba(124, 58, 237, 0.10), 6, 0, 0, 0);
+}
+
+.nav-btn:pressed {
+    -fx-background-color: #1c2128;
+    -fx-text-fill: #c9d1d9;
+}
+
+.nav-btn-active:hover {
+    -fx-text-fill: #c4b5fd;
+    -fx-background-color: rgba(124, 58, 237, 0.22);
+    -fx-effect: dropshadow(gaussian, rgba(124, 58, 237, 0.15), 8, 0, 0, 0);
+}
+
+/* ── Primary Button — glow lift ─────────────────────────── */
+.primary-button:hover {
+    -fx-background-color: #8b5cf6;
+    -fx-effect: dropshadow(gaussian, rgba(139, 92, 246, 0.50), 12, 0, 0, 3);
+}
+
+.primary-button:pressed {
+    -fx-background-color: #6d28d9;
+    -fx-effect: dropshadow(gaussian, rgba(109, 40, 217, 0.40), 6, 0, 0, 1);
+}
+
+/* ── Secondary Button — subtle lift ─────────────────────── */
+.secondary-button:hover {
+    -fx-background-color: #21262d;
+    -fx-text-fill: #e6edf3;
+    -fx-border-color: #8b949e;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.20), 4, 0, 0, 1);
+}
+
+.secondary-button:pressed {
+    -fx-background-color: #161b22;
+    -fx-border-color: #6e7681;
+    -fx-effect: none;
+}
+
+/* ── Accent Button — violet glow ────────────────────────── */
+.accent-button:hover {
+    -fx-background-color: rgba(124, 58, 237, 0.22);
+    -fx-text-fill: #c4b5fd;
+    -fx-border-color: rgba(124, 58, 237, 0.55);
+    -fx-effect: dropshadow(gaussian, rgba(124, 58, 237, 0.25), 8, 0, 0, 2);
+}
+
+.accent-button:pressed {
+    -fx-background-color: rgba(124, 58, 237, 0.08);
+    -fx-effect: none;
+}
+
+/* ── Learn Cards — polish ───────────────────────────────── */
+.learn-card:hover {
+    -fx-border-color: #484f58;
+    -fx-effect: dropshadow(gaussian, rgba(124, 58, 237, 0.12), 10, 0, 0, 3);
+}
+
+/* ── Inspector Card — subtle highlight ──────────────────── */
+.inspector-card:hover {
+    -fx-background-color: #282e36;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Phase 2C1 — Heap Visual Pane
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Heap min badge (header accent) ─────────────────────── */
+.heap-min-badge {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 12px;
+    -fx-text-fill: #a78bfa;
+    -fx-background-color: rgba(124, 58, 237, 0.15);
+    -fx-padding: 2 8 2 8;
+    -fx-background-radius: 6;
+    -fx-border-color: rgba(124, 58, 237, 0.35);
+    -fx-border-radius: 6;
+}
+
+/* ── Tree level section ─────────────────────────────────── */
+.heap-tree-section {
+    -fx-padding: 6 0 4 0;
+}
+
+.heap-level-label {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 10px;
+    -fx-text-fill: #6b7280;
+    -fx-padding: 0 6 0 0;
+}
+
+/* ── Tree cells ─────────────────────────────────────────── */
+.heap-tree-cell {
+    -fx-background-color: #1e2530;
+    -fx-border-color: #3b4252;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 4 10 4 10;
+}
+
+.heap-tree-cell-root {
+    -fx-border-color: #7c3aed;
+    -fx-background-color: rgba(124, 58, 237, 0.12);
+    -fx-effect: dropshadow(gaussian, rgba(124, 58, 237, 0.2), 6, 0, 0, 1);
+}
+
+.heap-tree-cell-value {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 13px;
+    -fx-text-fill: #e2e8f0;
+    -fx-font-weight: bold;
+}
+
+.heap-tree-cell-root .heap-tree-cell-value {
+    -fx-text-fill: #c4b5fd;
+}
+
+/* ── Array strip section ────────────────────────────────── */
+.heap-array-section {
+    -fx-padding: 4 0 2 0;
+    -fx-border-color: #2d333b;
+    -fx-border-width: 1 0 0 0;
+}
+
+.heap-array-label {
+    -fx-font-size: 10px;
+    -fx-text-fill: #6b7280;
+    -fx-padding: 0 6 0 0;
+    -fx-alignment: CENTER;
+}
+
+.heap-array-index {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 9px;
+    -fx-text-fill: #4b5563;
+    -fx-alignment: CENTER;
+}
+
+.heap-array-cell {
+    -fx-background-color: #161b22;
+    -fx-border-color: #2d333b;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 2 6 2 6;
+}
+
+.heap-array-cell-root {
+    -fx-border-color: rgba(124, 58, 237, 0.5);
+    -fx-background-color: rgba(124, 58, 237, 0.08);
+}
+
+.heap-array-cell-value {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 11px;
+    -fx-text-fill: #d1d5db;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Priority Queue Visual Pane — ADT / behavior-first lens
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Implementation badge ───────────────────────────────── */
+.pq-impl-badge {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 10px;
+    -fx-text-fill: #6ee7b7;
+    -fx-background-color: rgba(16, 185, 129, 0.12);
+    -fx-padding: 2 8 2 8;
+    -fx-background-radius: 6;
+    -fx-border-color: rgba(16, 185, 129, 0.30);
+    -fx-border-radius: 6;
+}
+
+/* ── Next Out hero section ──────────────────────────────── */
+.pq-next-out-section {
+    -fx-background-color: rgba(16, 185, 129, 0.08);
+    -fx-border-color: rgba(16, 185, 129, 0.30);
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10 16 10 16;
+}
+
+.pq-next-out-label {
+    -fx-font-size: 10px;
+    -fx-text-fill: #6ee7b7;
+    -fx-font-weight: bold;
+    -fx-text-transform: uppercase;
+}
+
+.pq-next-out-value {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 22px;
+    -fx-text-fill: #34d399;
+    -fx-font-weight: bold;
+}
+
+/* ── Priority strip ─────────────────────────────────────── */
+.pq-strip-label {
+    -fx-font-size: 10px;
+    -fx-text-fill: #6b7280;
+    -fx-padding: 0 0 2 0;
+}
+
+.pq-priority-strip {
+    -fx-padding: 4 0 4 0;
+}
+
+.pq-chip {
+    -fx-background-color: #1e2530;
+    -fx-border-color: #3b4252;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 3 8 3 8;
+}
+
+.pq-chip-front {
+    -fx-border-color: #10b981;
+    -fx-background-color: rgba(16, 185, 129, 0.12);
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.20), 6, 0, 0, 1);
+}
+
+.pq-chip-value {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 12px;
+    -fx-text-fill: #e2e8f0;
+    -fx-font-weight: bold;
+}
+
+.pq-chip-front .pq-chip-value {
+    -fx-text-fill: #6ee7b7;
+}
+
+.pq-chip-arrow {
+    -fx-font-size: 14px;
+    -fx-text-fill: #4b5563;
+    -fx-padding: 0 1 0 1;
+}
+
+/* ── Heap detail (collapsible) ──────────────────────────── */
+.pq-heap-detail-section {
+    -fx-padding: 4 0 0 0;
+    -fx-border-color: #2d333b;
+    -fx-border-width: 1 0 0 0;
+}
+
+.pq-heap-detail-toggle {
+    -fx-font-size: 11px;
+    -fx-text-fill: #6b7280;
+    -fx-cursor: hand;
+    -fx-padding: 3 0 2 0;
+}
+
+.pq-heap-detail-toggle:hover {
+    -fx-text-fill: #9ca3af;
+}
+
+.pq-heap-detail-content {
+    -fx-padding: 4 0 2 0;
+}
+
+.pq-detail-label {
+    -fx-font-size: 10px;
+    -fx-text-fill: #6b7280;
+    -fx-padding: 0 6 0 0;
+    -fx-alignment: CENTER-LEFT;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Phase 2C2 — Hash Family Visual Panes
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Implementation badge (chaining / open addressing) ──── */
+.hash-impl-badge {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 10px;
+    -fx-text-fill: #f59e0b;
+    -fx-background-color: rgba(245, 158, 11, 0.12);
+    -fx-padding: 2 8 2 8;
+    -fx-background-radius: 6;
+    -fx-border-color: rgba(245, 158, 11, 0.30);
+    -fx-border-radius: 6;
+}
+
+/* ── Hash Set badge (distinct from map-like) ────────────── */
+.hash-set-impl-badge {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 10px;
+    -fx-text-fill: #38bdf8;
+    -fx-background-color: rgba(56, 189, 248, 0.12);
+    -fx-padding: 2 8 2 8;
+    -fx-background-radius: 6;
+    -fx-border-color: rgba(56, 189, 248, 0.30);
+    -fx-border-radius: 6;
+}
+
+/* ── Metrics strip ──────────────────────────────────────── */
+.hash-metrics-strip {
+    -fx-padding: 4 0 4 0;
+}
+
+.hash-metric {
+    -fx-background-color: rgba(245, 158, 11, 0.08);
+    -fx-padding: 2 6 2 6;
+    -fx-background-radius: 4;
+    -fx-border-color: rgba(245, 158, 11, 0.18);
+    -fx-border-radius: 4;
+}
+
+.hash-metric-label {
+    -fx-font-size: 10px;
+    -fx-text-fill: #9ca3af;
+}
+
+.hash-metric-value {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 11px;
+    -fx-text-fill: #fbbf24;
+    -fx-font-weight: bold;
+}
+
+/* ── Bucket grid (chaining + hash set) ──────────────────── */
+.hash-bucket-grid {
+    -fx-padding: 4 0 2 0;
+}
+
+.hash-bucket-row {
+    -fx-padding: 2 0 2 0;
+}
+
+.hash-bucket-row-empty {
+    -fx-opacity: 0.45;
+}
+
+.hash-bucket-index {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 10px;
+    -fx-text-fill: #6b7280;
+    -fx-padding: 0 6 0 0;
+}
+
+.hash-bucket-empty {
+    -fx-font-size: 12px;
+    -fx-text-fill: #374151;
+    -fx-padding: 0 4 0 4;
+}
+
+/* ── Chain entry chips (map-like) ───────────────────────── */
+.hash-entry-chip {
+    -fx-background-color: #1e2530;
+    -fx-border-color: #3b4252;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 2 8 2 8;
+}
+
+.hash-entry-chip:hover {
+    -fx-border-color: #f59e0b;
+    -fx-background-color: rgba(245, 158, 11, 0.08);
+}
+
+.hash-entry-chip-collision {
+    -fx-border-color: #d97706;
+    -fx-background-color: rgba(217, 119, 6, 0.10);
+}
+
+.hash-entry-chip-text {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 11px;
+    -fx-text-fill: #e2e8f0;
+}
+
+.hash-chain-arrow {
+    -fx-font-size: 12px;
+    -fx-text-fill: #d97706;
+    -fx-padding: 0 1 0 1;
+}
+
+/* ── Set member chips ───────────────────────────────────── */
+.hash-set-member-chip {
+    -fx-background-color: #1e2530;
+    -fx-border-color: rgba(56, 189, 248, 0.35);
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-padding: 2 8 2 8;
+}
+
+.hash-set-member-chip:hover {
+    -fx-border-color: #38bdf8;
+    -fx-background-color: rgba(56, 189, 248, 0.10);
+}
+
+.hash-set-member-text {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 12px;
+    -fx-text-fill: #7dd3fc;
+    -fx-font-weight: bold;
+}
+
+.hash-set-member-sep {
+    -fx-font-size: 12px;
+    -fx-text-fill: #4b5563;
+    -fx-padding: 0 1 0 1;
+}
+
+/* ── Slot grid (open addressing) ────────────────────────── */
+.hash-slot-grid {
+    -fx-padding: 4 0 2 0;
+}
+
+.hash-slot-cell {
+    -fx-background-color: #161b22;
+    -fx-border-color: #2d333b;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 2 4 2 4;
+}
+
+.hash-slot-cell:hover {
+    -fx-border-color: #f59e0b;
+}
+
+.hash-slot-index {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 9px;
+    -fx-text-fill: #4b5563;
+    -fx-alignment: CENTER;
+}
+
+/* ── Slot states ────────────────────────────────────────── */
+.hash-slot-empty {
+    -fx-opacity: 0.40;
+}
+
+.hash-slot-empty-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #374151;
+    -fx-alignment: CENTER;
+}
+
+.hash-slot-occupied {
+    -fx-border-color: #f59e0b;
+    -fx-background-color: rgba(245, 158, 11, 0.10);
+}
+
+.hash-slot-occupied-text {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 10px;
+    -fx-text-fill: #fbbf24;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
+}
+
+.hash-slot-deleted {
+    -fx-border-color: #ef4444;
+    -fx-background-color: rgba(239, 68, 68, 0.08);
+}
+
+.hash-slot-deleted-text {
+    -fx-font-size: 12px;
+    -fx-text-fill: #f87171;
+    -fx-alignment: CENTER;
+}
+
+/* ================================================================
+   Phase 2C3 — Linked List Visual Panes
+   Color accent: emerald/green (#10b981, #34d399)
+   ================================================================ */
+
+.list-impl-badge {
+    -fx-background-color: rgba(16, 185, 129, 0.15);
+    -fx-text-fill: #34d399;
+    -fx-padding: 2 8 2 8;
+    -fx-background-radius: 8;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.list-doubly-impl-badge {
+    -fx-background-color: rgba(99, 102, 241, 0.15);
+    -fx-text-fill: #818cf8;
+    -fx-padding: 2 8 2 8;
+    -fx-background-radius: 8;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.list-chain-container {
+    -fx-padding: 4 0 4 0;
+}
+
+/* ── Node markers (head / tail) ──────────────────── */
+
+.list-node-marker {
+    -fx-font-size: 9px;
+    -fx-text-fill: transparent;
+    -fx-alignment: CENTER;
+    -fx-min-height: 16;
+}
+
+.list-marker-head {
+    -fx-text-fill: #34d399;
+    -fx-font-weight: bold;
+}
+
+.list-marker-tail {
+    -fx-text-fill: #94a3b8;
+    -fx-font-weight: bold;
+}
+
+/* ── Singly-linked node chip ─────────────────────── */
+
+.list-node-chip {
+    -fx-background-color: #1e293b;
+    -fx-border-color: #334155;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-alignment: CENTER;
+    -fx-cursor: hand;
+}
+
+.list-node-chip:hover {
+    -fx-border-color: #34d399;
+    -fx-background-color: rgba(16, 185, 129, 0.08);
+}
+
+.list-node-singly {
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.list-node-head {
+    -fx-border-color: #10b981;
+}
+
+.list-node-tail {
+    -fx-border-color: #64748b;
+}
+
+/* ── Doubly-linked node chip — wider, different shape ── */
+
+.list-node-doubly {
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-border-width: 1.5;
+    -fx-border-color: #6366f1;
+}
+
+.list-node-doubly:hover {
+    -fx-border-color: #818cf8;
+    -fx-background-color: rgba(99, 102, 241, 0.08);
+}
+
+.list-node-doubly.list-node-head {
+    -fx-border-color: #818cf8;
+}
+
+.list-node-doubly.list-node-tail {
+    -fx-border-color: #818cf8;
+}
+
+.list-node-value {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 12px;
+    -fx-text-fill: #e2e8f0;
+    -fx-font-weight: bold;
+}
+
+/* ── Link indicators inside doubly-linked nodes ──── */
+
+.list-link-indicator {
+    -fx-font-size: 9px;
+    -fx-text-fill: #6366f1;
+}
+
+.list-link-null {
+    -fx-text-fill: #475569;
+}
+
+/* ── Arrows ──────────────────────────────────────── */
+
+.list-forward-arrow {
+    -fx-text-fill: #10b981;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.list-bidi-arrow {
+    -fx-text-fill: #818cf8;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.list-null-terminator {
+    -fx-text-fill: #475569;
+    -fx-font-size: 14px;
+}
+
+/* ================================================================
+   Phase 2C3 — Deque Visual Panes
+   Array deque accent: teal (#14b8a6, #2dd4bf)
+   Linked deque accent: rose (#f43f5e, #fb7185)
+   ================================================================ */
+
+.deque-impl-badge {
+    -fx-background-color: rgba(20, 184, 166, 0.15);
+    -fx-text-fill: #2dd4bf;
+    -fx-padding: 2 8 2 8;
+    -fx-background-radius: 8;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.deque-linked-impl-badge {
+    -fx-background-color: rgba(244, 63, 94, 0.15);
+    -fx-text-fill: #fb7185;
+    -fx-padding: 2 8 2 8;
+    -fx-background-radius: 8;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+/* ── Metrics strip (shared with hash via addMetric) ── */
+
+.deque-metrics-strip {
+    -fx-padding: 4 0 4 0;
+}
+
+.deque-section-label {
+    -fx-text-fill: #64748b;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 4 0 0 0;
+}
+
+/* ── Direction labels ────────────────────────────── */
+
+.deque-direction-label {
+    -fx-text-fill: #64748b;
+    -fx-font-size: 10px;
+    -fx-font-style: italic;
+}
+
+/* ── Logical lane (front-to-back ordered cells) ──── */
+
+.deque-logical-lane {
+    -fx-padding: 4 0 4 0;
+}
+
+.deque-cell-marker {
+    -fx-font-size: 9px;
+    -fx-text-fill: transparent;
+    -fx-alignment: CENTER;
+    -fx-min-height: 14;
+}
+
+.deque-marker-front {
+    -fx-text-fill: #2dd4bf;
+    -fx-font-weight: bold;
+}
+
+.deque-marker-back {
+    -fx-text-fill: #fb7185;
+    -fx-font-weight: bold;
+}
+
+.deque-logical-cell {
+    -fx-background-color: #1e293b;
+    -fx-border-color: #334155;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-alignment: CENTER;
+}
+
+.deque-logical-cell:hover {
+    -fx-border-color: #2dd4bf;
+    -fx-background-color: rgba(20, 184, 166, 0.08);
+}
+
+.deque-cell-front {
+    -fx-border-color: #14b8a6;
+}
+
+.deque-cell-back {
+    -fx-border-color: #f43f5e;
+}
+
+.deque-cell-value {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 12px;
+    -fx-text-fill: #e2e8f0;
+    -fx-font-weight: bold;
+}
+
+.deque-logical-sep {
+    -fx-text-fill: #475569;
+    -fx-font-size: 12px;
+}
+
+/* ── Backing array slot grid ─────────────────────── */
+
+.deque-slot-grid {
+    -fx-padding: 4;
+}
+
+.deque-slot-index {
+    -fx-font-size: 8px;
+    -fx-text-fill: #475569;
+    -fx-alignment: CENTER;
+}
+
+.deque-slot-cell {
+    -fx-background-color: #0f172a;
+    -fx-border-color: #1e293b;
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-alignment: CENTER;
+    -fx-cursor: hand;
+}
+
+.deque-slot-cell:hover {
+    -fx-border-color: #2dd4bf;
+}
+
+.deque-slot-occupied {
+    -fx-border-color: #14b8a6;
+    -fx-background-color: rgba(20, 184, 166, 0.10);
+}
+
+.deque-slot-empty {
+    -fx-border-color: #1e293b;
+    -fx-background-color: rgba(15, 23, 42, 0.6);
+}
+
+.deque-slot-empty-text {
+    -fx-text-fill: #334155;
+    -fx-font-size: 14px;
+}
+
+.deque-slot-value {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 11px;
+    -fx-text-fill: #2dd4bf;
+    -fx-font-weight: bold;
+}
+
+.deque-slot-front {
+    -fx-border-color: #2dd4bf;
+    -fx-border-width: 2;
+}
+
+/* ── Linked deque chain ──────────────────────────── */
+
+.deque-chain-container {
+    -fx-padding: 4 0 4 0;
+}
+
+.deque-node-chip {
+    -fx-background-color: #1e293b;
+    -fx-border-color: #334155;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-alignment: CENTER;
+    -fx-cursor: hand;
+}
+
+.deque-node-chip:hover {
+    -fx-border-color: #fb7185;
+    -fx-background-color: rgba(244, 63, 94, 0.08);
+}
+
+.deque-node-front {
+    -fx-border-color: #f43f5e;
+}
+
+.deque-node-rear {
+    -fx-border-color: #f43f5e;
+}
+
+.deque-node-value {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 12px;
+    -fx-text-fill: #e2e8f0;
+    -fx-font-weight: bold;
+}
+
+.deque-node-marker {
+    -fx-font-size: 9px;
+    -fx-text-fill: transparent;
+    -fx-alignment: CENTER;
+    -fx-min-height: 16;
+}
+
+.deque-link-indicator {
+    -fx-font-size: 9px;
+    -fx-text-fill: #f43f5e;
+}
+
+.deque-link-null {
+    -fx-text-fill: #475569;
+}
+
+.deque-bidi-arrow {
+    -fx-text-fill: #fb7185;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.deque-null-terminator {
+    -fx-text-fill: #475569;
+    -fx-font-size: 14px;
+}
+
+/* ================================================================
+   Phase 2C4 — Array Visual Panes
+   FixedArray accent: slate/steel (#94a3b8, #64748b)
+   DynamicArray accent: sky/cyan (#38bdf8, #22d3ee)
+   ================================================================ */
+
+/* ── Shared array cell layout ───────────────────────────── */
+.array-cell-container {
+    -fx-padding: 4 0 4 0;
+}
+
+.array-cell-index {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 9px;
+    -fx-text-fill: #6b7280;
+    -fx-alignment: CENTER;
+}
+
+.array-cell {
+    -fx-background-color: #161b22;
+    -fx-border-color: #2d333b;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-min-width: 44;
+    -fx-min-height: 36;
+    -fx-alignment: CENTER;
+}
+
+.array-cell:hover {
+    -fx-effect: dropshadow(gaussian, rgba(148, 163, 184, 0.15), 6, 0, 0, 0);
+}
+
+.array-cell-value {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
+}
+
+.array-cell-separator {
+    -fx-min-width: 2;
+    -fx-pref-width: 2;
+}
+
+/* ── Fixed array specific ───────────────────────────────── */
+.array-impl-badge-fixed {
+    -fx-background-color: rgba(100, 116, 139, 0.15);
+    -fx-text-fill: #94a3b8;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 2 8 2 8;
+    -fx-background-radius: 4;
+    -fx-border-color: #64748b;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+}
+
+.array-cell-fixed {
+    -fx-border-color: #475569;
+}
+
+.array-cell-fixed:hover {
+    -fx-border-color: #94a3b8;
+}
+
+.array-cell-fixed.array-cell-occupied {
+    -fx-border-color: #64748b;
+    -fx-background-color: rgba(100, 116, 139, 0.12);
+}
+
+.array-cell-fixed.array-cell-occupied .array-cell-value {
+    -fx-text-fill: #cbd5e1;
+}
+
+.array-cell-fixed.array-cell-empty {
+    -fx-border-color: #334155;
+    -fx-background-color: rgba(51, 65, 85, 0.08);
+    -fx-opacity: 0.50;
+}
+
+.array-cell-empty-marker {
+    -fx-font-size: 16px;
+    -fx-text-fill: #475569;
+    -fx-alignment: CENTER;
+}
+
+.array-boundary-fixed {
+    -fx-text-fill: #64748b;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+/* ── Dynamic array specific ─────────────────────────────── */
+.array-impl-badge-dynamic {
+    -fx-background-color: rgba(56, 189, 248, 0.12);
+    -fx-text-fill: #38bdf8;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 2 8 2 8;
+    -fx-background-radius: 4;
+    -fx-border-color: #0ea5e9;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+}
+
+.array-reserved-meta {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 11px;
+    -fx-text-fill: #22d3ee;
+    -fx-padding: 0 0 0 4;
+}
+
+.array-cell-dynamic {
+    -fx-border-color: #1e3a5f;
+}
+
+.array-cell-dynamic:hover {
+    -fx-border-color: #38bdf8;
+}
+
+.array-cell-dynamic.array-cell-occupied {
+    -fx-border-color: #0ea5e9;
+    -fx-background-color: rgba(14, 165, 233, 0.10);
+}
+
+.array-cell-dynamic.array-cell-occupied .array-cell-value {
+    -fx-text-fill: #7dd3fc;
+}
+
+.array-cell-dynamic.array-cell-reserved {
+    -fx-border-color: #1e3a5f;
+    -fx-background-color: rgba(30, 58, 95, 0.15);
+    -fx-border-style: segments(4, 4);
+    -fx-opacity: 0.55;
+}
+
+.array-cell-reserved-marker {
+    -fx-font-size: 14px;
+    -fx-text-fill: #1e3a5f;
+    -fx-alignment: CENTER;
+}
+
+.array-size-boundary {
+    -fx-text-fill: #22d3ee;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.array-boundary-dynamic {
+    -fx-text-fill: #0ea5e9;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-opacity: 0.60;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   Phase 3A — Tree/Graph Foundation Primitives
+   ══════════════════════════════════════════════════════════ */
+
+.tree-canvas {
+    -fx-padding: 6 0 4 0;
+}
+
+.tree-node {
+    -fx-background-color: #1e2530;
+    -fx-border-color: #3b4252;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 4, 0, 0, 1);
+}
+
+.tree-node-emphasis {
+    -fx-border-color: #7c3aed;
+    -fx-background-color: rgba(124, 58, 237, 0.14);
+    -fx-effect: dropshadow(gaussian, rgba(124, 58, 237, 0.30), 8, 0, 0, 1);
+}
+
+.tree-node-value {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 13px;
+    -fx-text-fill: #e2e8f0;
+    -fx-font-weight: bold;
+}
+
+.tree-node-value-emphasis {
+    -fx-text-fill: #c4b5fd;
+}
+
+/* ══════════════════════════════════════════════════════════
+   Phase 3A — Stack Implementation Distinction
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Implementation badges ──────────────────────────────── */
+.stack-impl-badge {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 10px;
+    -fx-padding: 2 8 2 8;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+}
+
+.stack-impl-badge-array {
+    -fx-text-fill: #22d3ee;
+    -fx-background-color: rgba(34, 211, 238, 0.12);
+    -fx-border-color: rgba(34, 211, 238, 0.30);
+}
+
+.stack-impl-badge-linked {
+    -fx-text-fill: #f472b6;
+    -fx-background-color: rgba(244, 114, 182, 0.12);
+    -fx-border-color: rgba(244, 114, 182, 0.30);
+}
+
+/* ── Array Stack specific ───────────────────────────────── */
+.stack-array-index {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 10px;
+    -fx-text-fill: #4b5563;
+}
+
+.stack-cell-array {
+    -fx-border-style: solid;
+}
+
+/* ── Linked Stack specific ──────────────────────────────── */
+.stack-linked-ref {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 11px;
+    -fx-text-fill: #f472b6;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+    -fx-padding: 0 0 2 0;
+}
+
+.stack-cell-linked {
+    -fx-background-color: #1a1f2e;
+    -fx-border-color: #3b4252;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.stack-cell-linked.stack-cell-top {
+    -fx-border-color: #a78bfa;
+    -fx-background-color: rgba(167, 139, 250, 0.12);
+}
+
+.stack-linked-next-label {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 9px;
+    -fx-text-fill: #4b5563;
+    -fx-padding: 0 0 0 4;
+}
+
+.stack-linked-arrow {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 11px;
+    -fx-text-fill: #6b7280;
+    -fx-alignment: center;
+    -fx-padding: -2 0 -2 0;
+    -fx-line-spacing: -4;
+}
+
+.stack-linked-null {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 11px;
+    -fx-text-fill: #4b5563;
+    -fx-alignment: center;
+    -fx-padding: -2 0 0 0;
+    -fx-line-spacing: -4;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   Phase 3A — Two-Stack Queue Visual
+   ══════════════════════════════════════════════════════════ */
+
+.tsq-impl-badge {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 10px;
+    -fx-text-fill: #fbbf24;
+    -fx-background-color: rgba(251, 191, 36, 0.12);
+    -fx-padding: 2 8 2 8;
+    -fx-background-radius: 6;
+    -fx-border-color: rgba(251, 191, 36, 0.30);
+    -fx-border-radius: 6;
+}
+
+/* ── Stack sections ─────────────────────────────────────── */
+.tsq-stack-section {
+    -fx-background-color: rgba(30, 37, 48, 0.6);
+    -fx-border-color: #2d333b;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 8;
+}
+
+.tsq-stack-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: #e2e8f0;
+    -fx-font-weight: bold;
+}
+
+.tsq-stack-direction {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 9px;
+    -fx-text-fill: #6b7280;
+    -fx-font-style: italic;
+}
+
+.tsq-stack-count {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 10px;
+    -fx-text-fill: #6b7280;
+}
+
+.tsq-stack-container {
+    -fx-padding: 4 0 0 0;
+    -fx-min-height: 40;
+}
+
+.tsq-stack-empty {
+    -fx-font-size: 11px;
+    -fx-text-fill: #4b5563;
+    -fx-font-style: italic;
+    -fx-alignment: center;
+    -fx-padding: 8 0;
+}
+
+/* ── Stack cells ────────────────────────────────────────── */
+.tsq-cell {
+    -fx-background-color: #21262d;
+    -fx-border-color: #30363d;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-alignment: center;
+}
+
+.tsq-cell-inbox {
+    -fx-border-color: rgba(251, 191, 36, 0.40);
+}
+
+.tsq-cell-outbox {
+    -fx-border-color: rgba(52, 211, 153, 0.40);
+}
+
+.tsq-cell-top {
+    -fx-background-color: rgba(124, 58, 237, 0.15);
+    -fx-border-color: #7c3aed;
+}
+
+.tsq-cell-value {
+    -fx-text-fill: #e6edf3;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+}
+
+.tsq-marker {
+    -fx-text-fill: transparent;
+    -fx-font-size: 9px;
+}
+
+.tsq-marker-top {
+    -fx-text-fill: #a78bfa;
+    -fx-font-weight: bold;
+}
+
+.tsq-marker-bottom {
+    -fx-text-fill: #6e7681;
+}
+
+.tsq-plate {
+    -fx-background-color: #30363d;
+    -fx-background-radius: 2;
+}
+
+/* ── Transfer arrow ─────────────────────────────────────── */
+.tsq-transfer-arrow {
+    -fx-font-size: 18px;
+    -fx-text-fill: #6b7280;
+    -fx-font-weight: bold;
+}
+
+.tsq-transfer-note {
+    -fx-font-size: 9px;
+    -fx-text-fill: #4b5563;
+    -fx-font-style: italic;
+}
+
+/* ── Effective queue section ────────────────────────────── */
+.tsq-queue-section {
+    -fx-border-color: #2d333b;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 8 0 0 0;
+}
+
+.tsq-queue-label {
+    -fx-font-size: 10px;
+    -fx-text-fill: #6b7280;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 4 0;
+}
+
+.tsq-queue-container {
+    -fx-padding: 4 0;
+}
+
+.tsq-queue-chip {
+    -fx-background-color: #1e2530;
+    -fx-border-color: #3b4252;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 3 8 3 8;
+}
+
+.tsq-queue-chip-front {
+    -fx-border-color: #3fb950;
+    -fx-background-color: rgba(63, 185, 80, 0.12);
+}
+
+.tsq-queue-chip-rear {
+    -fx-border-color: #d29922;
+    -fx-background-color: rgba(210, 153, 34, 0.12);
+}
+
+.tsq-queue-chip-value {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 12px;
+    -fx-text-fill: #e2e8f0;
+    -fx-font-weight: bold;
+}
+
+.tsq-queue-arrow {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 13px;
+    -fx-alignment: center;
+}
+
+.tsq-queue-direction {
+    -fx-font-size: 10px;
+    -fx-text-fill: #6e7681;
+    -fx-font-style: italic;
+}
+
+
+/* ══════════════════════════════════════════════════════════
+   Phase 3A — Priority Queue Heap Backing Enhancement
+   ══════════════════════════════════════════════════════════ */
+
+.pq-heap-tree {
+    -fx-padding: 4 0 2 0;
+}
+
+.pq-heap-array {
+    -fx-padding: 2 0;
+}
+
+.pq-heap-note {
+    -fx-font-size: 10px;
+    -fx-text-fill: #4b5563;
+    -fx-font-style: italic;
+    -fx-padding: 0 0 2 0;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   GRAPH VISUAL PANE + ALGORITHM LAB
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Graph visual pane ─────────────────────────────────── */
+
+.graph-visual-pane {
+    -fx-background-color: #0d1117;
+}
+
+.graph-top-bar {
+    -fx-background-color: #161b22;
+    -fx-border-color: transparent transparent #21262d transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.graph-status-label {
+    -fx-text-fill: #e6edf3;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.graph-step-label {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 11px;
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+}
+
+.graph-canvas {
+    -fx-background-color: #0d1117;
+    -fx-padding: 16;
+}
+
+/* ── Graph nodes ───────────────────────────────────────── */
+
+.graph-node {
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+    -fx-border-width: 2;
+    -fx-alignment: CENTER;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 4, 0, 0, 1);
+}
+
+.graph-node-idle {
+    -fx-background-color: #1e2530;
+    -fx-border-color: #3b4252;
+}
+
+.graph-node-current {
+    -fx-background-color: #2d1b69;
+    -fx-border-color: #7c3aed;
+    -fx-border-width: 2.5;
+    -fx-effect: dropshadow(gaussian, rgba(124,58,237,0.5), 12, 0, 0, 0);
+}
+
+.graph-node-frontier {
+    -fx-background-color: #1a2332;
+    -fx-border-color: #58a6ff;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, rgba(88,166,255,0.25), 6, 0, 0, 0);
+}
+
+.graph-node-visited {
+    -fx-background-color: #0d2818;
+    -fx-border-color: #3fb950;
+    -fx-border-width: 2;
+}
+
+.graph-node-label {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e6edf3;
+}
+
+.graph-node-label-current {
+    -fx-text-fill: #c4b5fd;
+}
+
+/* ── Graph edges ───────────────────────────────────────── */
+
+.graph-edge {
+    -fx-stroke-width: 1.5;
+    -fx-stroke-line-cap: round;
+}
+
+.graph-edge-default {
+    -fx-stroke: #3b4252;
+}
+
+.graph-edge-tree {
+    -fx-stroke: #7c3aed;
+    -fx-stroke-width: 2.5;
+    -fx-opacity: 0.8;
+}
+
+.graph-arrow-default {
+    -fx-fill: #3b4252;
+}
+
+.graph-arrow-tree {
+    -fx-fill: #7c3aed;
+    -fx-opacity: 0.8;
+}
+
+/* ── Dijkstra / shortest-path visuals ──────────────────── */
+
+.graph-node-shortest-path {
+    -fx-background-color: #1a1500;
+    -fx-border-color: #f0b429;
+    -fx-border-width: 2.5;
+}
+
+.graph-node-target {
+    -fx-background-color: #1a0d0d;
+    -fx-border-color: #f85149;
+    -fx-border-width: 2;
+    -fx-border-style: segments(6, 4);
+}
+
+.graph-node-target-settled {
+    -fx-background-color: #1a0d0d;
+    -fx-border-color: #f85149;
+    -fx-border-width: 2.5;
+}
+
+.graph-edge-shortest-path {
+    -fx-stroke: #f0b429;
+    -fx-stroke-width: 3;
+    -fx-opacity: 0.95;
+}
+
+.graph-edge-weight {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 10px;
+    -fx-text-fill: #c9d1d9;
+    -fx-background-color: rgba(13, 17, 23, 0.92);
+    -fx-padding: 2 6;
+    -fx-background-radius: 4;
+    -fx-border-color: rgba(48, 54, 61, 0.6);
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+}
+
+.graph-edge-weight-highlighted {
+    -fx-text-fill: #f0b429;
+    -fx-font-weight: bold;
+}
+
+.graph-distance-badge {
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-font-size: 9px;
+    -fx-text-fill: #8b949e;
+    -fx-alignment: center;
+}
+
+.graph-distance-settled {
+    -fx-text-fill: #58a6ff;
+    -fx-font-weight: bold;
+}
+
+.graph-legend-shortest-path {
+    -fx-background-color: #f0b429;
+    -fx-background-radius: 2;
+    -fx-border-radius: 2;
+    -fx-pref-width: 20;
+    -fx-pref-height: 3;
+    -fx-min-width: 20;
+    -fx-min-height: 3;
+    -fx-max-height: 3;
+}
+
+.graph-legend-target {
+    -fx-background-color: #f85149;
+}
+
+/* ── Graph legend bar ──────────────────────────────────── */
+
+.graph-legend-bar {
+    -fx-background-color: #161b22;
+    -fx-border-color: #21262d transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+
+.graph-legend-dot {
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+}
+
+.graph-legend-current {
+    -fx-background-color: #7c3aed;
+}
+
+.graph-legend-frontier {
+    -fx-background-color: #58a6ff;
+}
+
+.graph-legend-visited {
+    -fx-background-color: #3fb950;
+}
+
+.graph-legend-idle {
+    -fx-background-color: #3b4252;
+}
+
+.graph-legend-tree-edge {
+    -fx-background-color: #7c3aed;
+    -fx-background-radius: 2;
+    -fx-border-radius: 2;
+    -fx-pref-width: 20;
+    -fx-pref-height: 3;
+    -fx-min-width: 20;
+    -fx-min-height: 3;
+    -fx-max-height: 3;
+}
+
+.graph-legend-text {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 10px;
+}
+
+/* ── Algorithm Lab control panel ───────────────────────── */
+
+.algo-control-panel {
+    -fx-background-color: #161b22;
+    -fx-border-color: transparent #21262d transparent transparent;
+    -fx-border-width: 0 1 0 0;
+}
+
+.algo-section {
+    -fx-padding: 0;
+}
+
+.algo-section-body {
+    -fx-padding: 4 0 0 0;
+}
+
+.algo-combo {
+    -fx-background-color: #21262d;
+    -fx-text-fill: #e6edf3;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 6 10;
+    -fx-font-size: 12px;
+}
+
+.algo-combo .list-cell {
+    -fx-text-fill: #e6edf3;
+    -fx-background-color: #21262d;
+    -fx-font-size: 12px;
+}
+
+.algo-combo .list-view {
+    -fx-background-color: #21262d;
+}
+
+.algo-combo .list-view .list-cell:hover {
+    -fx-background-color: #282e36;
+}
+
+.algo-preset-desc {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 11px;
+    -fx-padding: 4 0 0 0;
+}
+
+/* ── Algorithm Lab playback bar ────────────────────────── */
+
+.algo-playback-bar {
+    -fx-background-color: #161b22;
+    -fx-border-color: #21262d transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-min-height: 48;
+}
+
+.algo-playback-btn {
+    -fx-background-color: #21262d;
+    -fx-text-fill: #e6edf3;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 6 10;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-min-width: 36;
+    -fx-min-height: 32;
+}
+
+.algo-playback-btn:hover {
+    -fx-background-color: #282e36;
+    -fx-border-color: #484f58;
+}
+
+.algo-playback-btn:disabled {
+    -fx-opacity: 0.35;
+}
+
+.algo-frame-label {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 11px;
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+}
+
+.algo-speed-slider {
+    -fx-padding: 0 4;
+}
+
+.algo-speed-slider .track {
+    -fx-background-color: #30363d;
+    -fx-pref-height: 4;
+    -fx-background-radius: 2;
+}
+
+.algo-speed-slider .thumb {
+    -fx-background-color: #7c3aed;
+    -fx-background-radius: 50%;
+    -fx-pref-width: 14;
+    -fx-pref-height: 14;
+}
+
+.algo-speed-label {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 11px;
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+    -fx-min-width: 32;
+}
+
+/* ── Algorithm Lab info panel ──────────────────────────── */
+
+.algo-info-panel {
+    -fx-background-color: #161b22;
+    -fx-border-color: transparent transparent transparent #21262d;
+    -fx-border-width: 0 0 0 1;
+}
+
+.algo-status-msg {
+    -fx-text-fill: #e6edf3;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 6 0;
+}
+
+.algo-info-label {
+    -fx-text-fill: #6e7681;
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-padding: 6 0 2 0;
+}
+
+.algo-info-value {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 11px;
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+}
+
+.algo-workspace-content {
+    -fx-background-color: #0d1117;
+}
+
+/* ── Graph builder panel ───────────────────────────────── */
+
+.graph-builder-panel {
+    -fx-background-color: #161b22;
+    -fx-border-color: #30363d;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 10;
+}
+
+.graph-builder-field {
+    -fx-background-color: #21262d;
+    -fx-text-fill: #e6edf3;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 6 10;
+    -fx-font-size: 12px;
+    -fx-prompt-text-fill: #6e7681;
+}
+
+.graph-builder-btn {
+    -fx-background-color: #238636;
+    -fx-text-fill: #ffffff;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 6 12;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.graph-builder-btn:hover {
+    -fx-background-color: #2ea043;
+}
+
+.graph-builder-list {
+    -fx-background-color: #21262d;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-font-size: 11px;
+}
+
+.graph-builder-list .list-cell {
+    -fx-text-fill: #e6edf3;
+    -fx-background-color: #21262d;
+    -fx-font-size: 11px;
+    -fx-font-family: "JetBrains Mono", "Cascadia Code", "Consolas", monospace;
+}
+
+.graph-builder-list .graph-builder-list-selected {
+    -fx-background-color: #282e36;
+}
+
+.graph-builder-arrow {
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 14px;
+}
+
+.graph-builder-check {
+    -fx-text-fill: #e6edf3;
+    -fx-font-size: 12px;
+}
+
+.graph-builder-check .box {
+    -fx-background-color: #21262d;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+}
+
+/* ── Indegree badge (Topo Sort) ────────────────────────── */
+
+.graph-indegree-zero {
+    -fx-text-fill: #3fb950;
+    -fx-font-weight: bold;
+}
+
+/* ── Interactive studio ────────────────────────────────── */
+
+.graph-node-selected {
+    -fx-border-color: #d2a8ff;
+    -fx-border-width: 3;
+    -fx-effect: dropshadow(gaussian, rgba(210, 168, 255, 0.5), 8, 0, 0, 0);
+}
+
+/* ── Compare mode ──────────────────────────────────────── */
+
+.compare-workspace {
+    -fx-border-color: transparent transparent transparent #30363d;
+    -fx-border-width: 0 0 0 1;
+}
+
+.compare-header {
+    -fx-background-color: #161b22;
+    -fx-text-fill: #8b949e;
+    -fx-padding: 6 12;
+    -fx-border-color: transparent transparent #21262d transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* ── A* distance badge (uses existing graph-distance-badge) ── */
+
+.graph-distance-astar {
+    -fx-text-fill: #d2a8ff;
+    -fx-font-weight: bold;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Phase 4B — MST, SCC, Bridges, Articulation Points
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Bridge edge highlight ── */
+.graph-edge-bridge {
+    -fx-stroke: #f85149;
+    -fx-stroke-width: 3.5;
+    -fx-stroke-dash-array: 8 4;
+}
+
+/* ── Articulation point node ── */
+.graph-node-articulation {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 50%,
+        rgba(248, 81, 73, 0.35), rgba(248, 81, 73, 0.12));
+    -fx-border-color: #f85149;
+    -fx-border-width: 3;
+    -fx-effect: dropshadow(gaussian, rgba(248, 81, 73, 0.45), 10, 0.4, 0, 0);
+}
+
+/* ── Articulation point badge ── */
+.graph-badge-articulation {
+    -fx-text-fill: #f85149;
+    -fx-font-weight: bold;
+}
+
+/* ── SCC component node colors (6 distinct hues) ── */
+.graph-node-scc-1 {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 50%,
+        rgba(88, 166, 255, 0.3), rgba(88, 166, 255, 0.1));
+    -fx-border-color: #58a6ff;
+    -fx-border-width: 2.5;
+}
+.graph-node-scc-2 {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 50%,
+        rgba(63, 185, 80, 0.3), rgba(63, 185, 80, 0.1));
+    -fx-border-color: #3fb950;
+    -fx-border-width: 2.5;
+}
+.graph-node-scc-3 {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 50%,
+        rgba(210, 153, 34, 0.3), rgba(210, 153, 34, 0.1));
+    -fx-border-color: #d29922;
+    -fx-border-width: 2.5;
+}
+.graph-node-scc-4 {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 50%,
+        rgba(210, 168, 255, 0.3), rgba(210, 168, 255, 0.1));
+    -fx-border-color: #d2a8ff;
+    -fx-border-width: 2.5;
+}
+.graph-node-scc-5 {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 50%,
+        rgba(248, 81, 73, 0.3), rgba(248, 81, 73, 0.1));
+    -fx-border-color: #f85149;
+    -fx-border-width: 2.5;
+}
+.graph-node-scc-6 {
+    -fx-background-color: radial-gradient(center 50% 50%, radius 50%,
+        rgba(121, 192, 255, 0.3), rgba(121, 192, 255, 0.1));
+    -fx-border-color: #79c0ff;
+    -fx-border-width: 2.5;
+}
+
+/* ── SCC badge colors matching node colors ── */
+.graph-badge-scc-1 { -fx-text-fill: #58a6ff; -fx-font-weight: bold; }
+.graph-badge-scc-2 { -fx-text-fill: #3fb950; -fx-font-weight: bold; }
+.graph-badge-scc-3 { -fx-text-fill: #d29922; -fx-font-weight: bold; }
+.graph-badge-scc-4 { -fx-text-fill: #d2a8ff; -fx-font-weight: bold; }
+.graph-badge-scc-5 { -fx-text-fill: #f85149; -fx-font-weight: bold; }
+.graph-badge-scc-6 { -fx-text-fill: #79c0ff; -fx-font-weight: bold; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   Phase 5A — Settings Effects & Export
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Compact mode — reduce padding and font sizes */
+.compact-mode .page-content {
+    -fx-padding: 18 24 18 24;
+}
+.compact-mode .hero-section {
+    -fx-padding: 8 0;
+}
+.compact-mode .learn-card {
+    -fx-padding: 10;
+}
+.compact-mode .comparison-card {
+    -fx-padding: 6;
+}
+
+/* High density — tighter spacing */
+.high-density .page-content {
+    -fx-spacing: 10;
+}
+.high-density .card-grid {
+    -fx-hgap: 8;
+    -fx-vgap: 8;
+}
+.high-density .learn-card {
+    -fx-pref-width: 300;
+    -fx-min-width: 260;
+}
+.high-density .comparison-card-grid {
+    -fx-hgap: 6;
+    -fx-vgap: 6;
+}
+
+
+/* ══ Onboarding Overlay ══════════════════════════════════ */
+.onboarding-overlay {
+    -fx-background-color: rgba(13, 17, 23, 0.85);
+}
+.onboarding-card {
+    -fx-background-color: #1c2128;
+    -fx-background-radius: 12;
+    -fx-border-color: #30363d;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 24, 0, 0, 8);
+}
+.onboarding-title {
+    -fx-font-size: 22;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e6edf3;
+}
+.onboarding-tagline {
+    -fx-font-size: 14;
+    -fx-text-fill: #8b949e;
+}
+.onboarding-page-name {
+    -fx-font-size: 13;
+    -fx-font-weight: bold;
+    -fx-text-fill: #a78bfa;
+}
+.onboarding-page-desc {
+    -fx-font-size: 13;
+    -fx-text-fill: #8b949e;
+}
+.onboarding-tip {
+    -fx-font-size: 13;
+    -fx-text-fill: #d29922;
+    -fx-padding: 10 14;
+    -fx-background-color: rgba(210, 153, 34, 0.08);
+    -fx-background-radius: 6;
+    -fx-border-color: rgba(210, 153, 34, 0.2);
+    -fx-border-radius: 6;
+}
+
+
+/* ══ Learn Tab Bar ═══════════════════════════════════════ */
+.learn-tab-bar {
+    -fx-spacing: 0;
+}
+.learn-tab-btn {
+    -fx-background-color: #21262d;
+    -fx-text-fill: #8b949e;
+    -fx-font-size: 13;
+    -fx-padding: 8 20;
+    -fx-background-radius: 0;
+    -fx-border-color: #30363d;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
+}
+.learn-tab-btn:first-child {
+    -fx-background-radius: 6 0 0 6;
+    -fx-border-radius: 6 0 0 6;
+}
+.learn-tab-btn:last-child {
+    -fx-background-radius: 0 6 6 0;
+    -fx-border-radius: 0 6 6 0;
+}
+.learn-tab-btn:selected {
+    -fx-background-color: #7c3aed;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #7c3aed;
+}
+.learn-tab-btn:hover {
+    -fx-background-color: #282e36;
+}
+.learn-tab-btn:selected:hover {
+    -fx-background-color: #a78bfa;
+    -fx-border-color: #a78bfa;
 }

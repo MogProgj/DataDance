@@ -199,6 +199,15 @@ public class DiscoveryCommands {
         appendCmd(sb, "reset, wipe", "Clear history timeline (Memory usage reset)");
         appendCmd(sb, "close, back", "Dismount current session and return to discovery mode");
 
+        sb.append("\n").append(TerminalTheme.BOLD).append("Comparison Mode:").append(TerminalTheme.RESET).append("\n");
+        appendCmd(sb, "compare, cmp", "List comparable structures or open comparison (e.g., 'compare stack')");
+        appendCmd(sb, "compare-ops, cmp-ops", "List common operations across all compared implementations");
+        appendCmd(sb, "compare-state, cmp-state", "Show all implementation states side-by-side");
+        appendCmd(sb, "compare-trace, cmp-trace", "Show traces from last operation for all implementations");
+        appendCmd(sb, "compare-history", "Show comparison operation history");
+        appendCmd(sb, "compare-session", "Show comparison session info");
+        appendCmd(sb, "compare-reset", "Reset all implementations in comparison mode");
+
         sb.append("\n").append(TerminalTheme.BOLD).append("Shell Controls:").append(TerminalTheme.RESET).append("\n");
         appendCmd(sb, "open, use, play, start", "Mount an implementation and begin simulating (e.g., 'open stack impl-array-stack')");
         appendCmd(sb, "run, do", "Run a structure operation explicitly (e.g., 'run push 10')");

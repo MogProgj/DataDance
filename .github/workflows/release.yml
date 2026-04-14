@@ -1,0 +1,107 @@
+# ──────────────────────────────────────────────────────────────
+# Release Pipeline — StructLab / DataDance
+# ──────────────────────────────────────────────────────────────
+# Triggered when a version tag is pushed:
+#   git tag v0.2.0
+#   git push origin v0.2.0
+#
+# What this does:
+#   1. Validates the tag format (vX.Y.Z)
+#   2. Builds the project with the tag-derived version
+#   3. Runs the full test suite (never ship untested code)
+#   4. Produces the packaged JAR
+#   5. Creates a GitHub Release with the JAR attached
+#
+# The pom.xml stays at SNAPSHOT during development.
+# The release build overrides the version at build time via
+# `mvn versions:set`, so no manual pom.xml edits are needed
+# before tagging.
+# ──────────────────────────────────────────────────────────────
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'   # v0.2.0, v1.0.0-rc1, etc.
+
+permissions:
+  contents: write   # needed to create GitHub Releases
+
+jobs:
+  release:
+    name: Build & publish release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout tag
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG="${GITHUB_REF_NAME}"           # e.g. v0.2.0
+          VERSION="${TAG#v}"                 # strip leading 'v' → 0.2.0
+          echo "tag=$TAG"         >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "🏷️  Tag: $TAG  →  Maven version: $VERSION"
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
+      - name: Set Maven version from tag
+        run: |
+          chmod +x ./mvnw
+          ./mvnw -B -ntp versions:set -DnewVersion=${{ steps.version.outputs.version }}
+          ./mvnw -B -ntp versions:commit
+
+      - name: Build, test, and package
+        run: ./mvnw -B -ntp clean verify package
+
+      - name: Rename artifact for release
+        run: |
+          JAR=$(ls target/structlab-*.jar | head -1)
+          RELEASE_NAME="structlab-${{ steps.version.outputs.version }}.jar"
+          cp "$JAR" "target/$RELEASE_NAME"
+          echo "artifact=target/$RELEASE_NAME" >> "$GITHUB_ENV"
+
+      - name: Bundle run scripts
+        run: |
+          cp scripts/run-gui.sh scripts/run-gui.bat \
+             scripts/run-terminal.sh scripts/run-terminal.bat target/
+          chmod +x target/run-gui.sh target/run-terminal.sh
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: structlab-${{ steps.version.outputs.version }}
+          path: |
+            ${{ env.artifact }}
+            target/run-gui.sh
+            target/run-gui.bat
+            target/run-terminal.sh
+            target/run-terminal.bat
+          retention-days: 90
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: StructLab ${{ steps.version.outputs.version }}
+          draft: false
+          prerelease: ${{ contains(steps.version.outputs.version, '-') }}
+          generate_release_notes: true
+          files: |
+            ${{ env.artifact }}
+            target/run-gui.sh
+            target/run-gui.bat
+            target/run-terminal.sh
+            target/run-terminal.bat

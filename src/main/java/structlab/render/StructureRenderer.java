@@ -2,6 +2,7 @@ package structlab.render;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Produces ASCII/text renderings of data structure state from snapshot strings.
@@ -570,6 +571,103 @@ public final class StructureRenderer {
   }
 
   /**
+   * Renders a HashTableChaining snapshot.
+   * Shows size, capacity, load factor, and per-bucket chain contents.
+   *
+   * Example output:
+   *   HashTableChaining  size: 3  capacity: 8  load: 0.38
+   *   [0] empty
+   *   [1] (1 -> 10) -> (9 -> 90)
+   *   [2] empty
+   *   ...
+   */
+  public static String renderHashTable(String snapshot) {
+    int size = SnapshotParser.intField(snapshot, "size");
+    int capacity = SnapshotParser.intField(snapshot, "capacity");
+    double load = capacity > 0 ? (double) size / capacity : 0.0;
+
+    StringBuilder sb = new StringBuilder();
+    sb.append("  HashTableChaining  size: ").append(size)
+      .append("  capacity: ").append(capacity)
+      .append(String.format(Locale.US, "  load: %.2f", load)).append("\n");
+
+    List<String> bucketEntries = SnapshotParser.bucketEntries(snapshot);
+    for (String entry : bucketEntries) {
+      sb.append("    ").append(entry).append("\n");
+    }
+
+    if (bucketEntries.isEmpty()) {
+      sb.append("    (no buckets)\n");
+    }
+
+    return sb.toString();
+  }
+
+  /**
+   * Renders a HashSetCustom snapshot.
+   * Shows set size and the underlying hash table bucket view.
+   */
+  public static String renderHashSet(String snapshot) {
+    int size = SnapshotParser.intField(snapshot, "size");
+    String tableSnap = SnapshotParser.embeddedSnapshot(snapshot, "table");
+
+    StringBuilder sb = new StringBuilder();
+    sb.append("  HashSetCustom  size: ").append(size)
+      .append("  (backed by HashTableChaining)\n");
+
+    if (!tableSnap.isEmpty()) {
+      int tableCapacity = SnapshotParser.intField(tableSnap, "capacity");
+      double load = tableCapacity > 0 ? (double) size / tableCapacity : 0.0;
+      sb.append("  Table capacity: ").append(tableCapacity)
+        .append(String.format(Locale.US, "  load: %.2f", load)).append("\n");
+
+      List<String> bucketEntries = SnapshotParser.bucketEntries(tableSnap);
+      for (String entry : bucketEntries) {
+        // For sets, show just the keys (strip " -> PRESENT" sentinel values)
+        sb.append("    ").append(entry.replaceAll(" -> java\\.lang\\.Object@[0-9a-f]+", "")).append("\n");
+      }
+    }
+
+    return sb.toString();
+  }
+
+  /**
+   * Renders a HashTableOpenAddressing snapshot.
+   * Shows size, capacity, probing strategy, and per-slot contents.
+   *
+   * Example output:
+   *   HashTableOpenAddressing  size: 3  capacity: 8  probing: LINEAR  load: 0.38
+   *   [0] empty
+   *   [1] (1 -> 10)
+   *   [2] (9 -> 90)
+   *   [3] DELETED
+   *   ...
+   */
+  public static String renderHashTableOa(String snapshot) {
+    int size = SnapshotParser.intField(snapshot, "size");
+    int capacity = SnapshotParser.intField(snapshot, "capacity");
+    String oaType = SnapshotParser.stringField(snapshot, "oaType");
+    double load = capacity > 0 ? (double) size / capacity : 0.0;
+
+    StringBuilder sb = new StringBuilder();
+    sb.append("  HashTableOpenAddressing  size: ").append(size)
+      .append("  capacity: ").append(capacity)
+      .append("  probing: ").append(oaType)
+      .append(String.format(Locale.US, "  load: %.2f", load)).append("\n");
+
+    List<String> slotEntries = SnapshotParser.slotEntries(snapshot);
+    for (String entry : slotEntries) {
+      sb.append("    ").append(entry).append("\n");
+    }
+
+    if (slotEntries.isEmpty()) {
+      sb.append("    (no slots)\n");
+    }
+
+    return sb.toString();
+  }
+
+  /**
    * Dispatches to the appropriate renderer based on the snapshot type prefix.
    */
   public static String render(String snapshot) {
@@ -587,6 +685,9 @@ public final class StructureRenderer {
       case "ArrayDequeCustom" -> renderArrayDeque(snapshot);
       case "BinaryHeap" -> renderBinaryHeap(snapshot);
       case "HeapPriorityQueue" -> renderHeapPriorityQueue(snapshot);
+      case "HashTableChaining" -> renderHashTable(snapshot);
+      case "HashSetCustom" -> renderHashSet(snapshot);
+      case "HashTableOpenAddressing" -> renderHashTableOa(snapshot);
       default -> "  " + snapshot + "\n";
     };
   }

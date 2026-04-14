@@ -1,6 +1,8 @@
 package structlab.core.hash;
 
-public class HashSetCustom<T> {
+import structlab.trace.Traceable;
+
+public class HashSetCustom<T> implements Traceable {
   private static final Object PRESENT = new Object();
 
   private final HashTableChaining<T, Object> table;
@@ -35,10 +37,22 @@ public class HashSetCustom<T> {
     return removed != null;
   }
 
+  public void clear() {
+    table.clear();
+  }
+
+  @Override
+  public String structureName() { return "Hash Set"; }
+
+  @Override
+  public String implementationName() { return "HashSetCustom"; }
+
+  @Override
   public boolean checkInvariant() {
     return table != null && table.checkInvariant();
   }
 
+  @Override
   public String snapshot() {
     return "HashSetCustom{" +
       "size=" + size() +

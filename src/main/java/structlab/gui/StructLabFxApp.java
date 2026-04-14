@@ -21,11 +21,11 @@ public class StructLabFxApp extends Application {
         MainWindowController controller = loader.getController();
         controller.initService(service);
 
-        Scene scene = new Scene(root, 1200, 750);
+        Scene scene = new Scene(root, 1400, 850);
         primaryStage.setTitle("StructLab — Data Structure Simulator");
         primaryStage.setScene(scene);
-        primaryStage.setMinWidth(900);
-        primaryStage.setMinHeight(550);
+        primaryStage.setMinWidth(1000);
+        primaryStage.setMinHeight(650);
         primaryStage.show();
     }
 

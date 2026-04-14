@@ -3,6 +3,7 @@ package structlab.app.command;
 import java.util.HashMap;
 import java.util.Map;
 
+import structlab.app.comparison.ComparisonSession;
 import structlab.app.ui.TerminalFormatter;
 import structlab.app.session.ActiveStructureSession;
 import structlab.app.runtime.OperationExecutionResult;
@@ -25,6 +26,20 @@ public class CommandRouter {
                 return handler.execute(context, parsed);
             } catch (Exception e) {
                 return CommandResult.error("Unexpected error executing " + parsed.name() + ": " + e.getMessage());
+            }
+        }
+
+        // Implicit operation forwarder for comparison sessions
+        if (context.sessionManager().getComparisonSession().isPresent()) {
+            ComparisonSession cs = context.sessionManager().getComparisonSession().get();
+            var ops = cs.getCommonOperations();
+            boolean isKnownOp = ops.stream().anyMatch(o ->
+                    o.name().equalsIgnoreCase(parsed.name()) ||
+                    o.aliases().contains(parsed.name().toLowerCase()));
+
+            if (isKnownOp) {
+                return structlab.app.command.handlers.ComparisonCommands.executeComparisonOperation(
+                        cs, parsed.name(), parsed.arguments());
             }
         }
 

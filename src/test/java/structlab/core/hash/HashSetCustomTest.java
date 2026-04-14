@@ -61,13 +61,9 @@ class HashSetCustomTest {
   }
 
   @Test
-  void supportsNullValue() {
+  void rejectsNullValue() {
     HashSetCustom<String> set = new HashSetCustom<>();
 
-    assertTrue(set.add(null));
-    assertTrue(set.contains(null));
-    assertTrue(set.remove(null));
-    assertFalse(set.contains(null));
-    assertTrue(set.checkInvariant());
+    assertThrows(IllegalArgumentException.class, () -> set.add(null));
   }
 }

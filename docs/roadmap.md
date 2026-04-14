@@ -1,351 +1,235 @@
-# StructLab Roadmap
+# Roadmap
 
-StructLab is being developed as an implementation-first data structure laboratory
-that will grow into an interactive simulator. The project begins with core data
-structure implementations and gradually adds tracing, visualization, metadata,
-interactivity, comparison features, and algorithm demonstrations.
+Current state of the project and planned future work.
 
 ---
 
-## Phase 0 — Foundation and Repo Setup
+## Completed phases
 
-### Goal
-Create a clean base that can grow into a simulator later.
+### Phase 0 — Foundation
+Repository scaffold, package structure, principles, naming conventions.
 
-### What Happens Here
-- Initialize repo
-- Add README, roadmap, architecture notes, `.gitignore`
-- Create package structure
-- Define naming conventions
-- Define project principles
-- Define versioning direction
+### Phase 1 — Core Data Structure Engine
+FixedArray, DynamicArray, ArrayStack, LinkedStack, CircularArrayQueue,
+LinkedQueue, TwoStackQueue — all with invariant checking and snapshot
+export.
 
-### Outputs
-- Clean repository scaffold
-- Docs that explain the vision
-- Empty but organized folders for `core`, `trace`, `render`, `registry`, `simulator`
+### Phase 2 — Trace and Explanation Layer
+Traced wrappers for all structures.  TraceStep records with before/after
+state, invariant results, complexity notes, human explanations.
 
-### Why This Phase Matters
-This prevents the project from becoming disorganized. A well-structured scaffold
-means every future change has a clear place to live.
+### Phase 3 — Console Rendering
+ASCII/text renderers for all structure families via SnapshotParser and
+StructureRenderer.
 
----
+### Phase 4 — Registry and Metadata System
+StructureMetadata, ImplementationMetadata, searchable registry, RegistrySeeder.
 
-## Phase 1 — Core Data Structure Engine
+### Phase 5 — Terminal Interactive Simulator
+Full REPL shell with command parsing, routing, discovery mode, session
+mode, operation execution, trace display, and terminal formatting.
 
-### Goal
-Implement the first real structures from scratch.
+### Phase 6 — Broader Structure Families
+Added: SinglyLinkedList, DoublyLinkedList, ArrayDequeCustom, LinkedDeque,
+BinaryHeap, HeapPriorityQueue, HashTableChaining, HashTableOpenAddressing
+(linear/quadratic/double), HashSetCustom.  All with traced wrappers,
+renderers, and registry entries.
 
-### Structures to Build First
-- Fixed array
-- Dynamic array
-- Stack on dynamic array
-- Stack on linked list
-- Queue on circular array
-- Queue on linked list
-- Queue on two stacks
+### Phase 7 — JavaFX GUI Shell
+StructLabFxApp, MainWindowController, five-page navigation, FXML layout,
+dark theme CSS, service layer facade.
 
-### What Each Structure Must Support
-- Basic operations
-- Internal state exposure
-- Invariant checking
-- Simple string/state snapshot export
+### Phase 2A — Stack/Queue Visual Panes
+StackVisualPane, QueueVisualPane, CircularQueueVisualPane.
 
-### Outputs
-- Working implementations
-- No GUI yet
-- No simulator shell yet
-- Solid core code
+### Phase 2B — Compare Workspace
+ComparisonSession, ComparisonCardPane, ComparisonSummaryPane,
+CanonicalOperationRegistry, full side-by-side comparison with visual
+state panes per card.
 
-### Why This Phase Matters
-Without this, the simulator has nothing real to simulate. Every later phase
-depends on the correctness and observability of the core engine.
+### Phase 2C — Visual Pane Families
+- 2C1: Heap visuals (HeapVisualPane, PriorityQueueVisualPane)
+- 2C2: Hash visuals (HashChainingVisualPane, HashOpenAddressingVisualPane, HashSetVisualPane)
+- 2C3: Linked list and deque visuals (SinglyLinkedListVisualPane,
+  DoublyLinkedListVisualPane, ArrayDequeVisualPane, LinkedDequeVisualPane)
+- 2C4: Array visuals (FixedArrayVisualPane, DynamicArrayVisualPane)
 
----
+### CI hardening
+Xvfb for headless JavaFX, @Timeout(10) on all visual tests,
+JavaFxToolkitExtension with bounded startup timeout.
 
-## Phase 2 — Trace and Explanation Layer
+### Phase 2D — Structured UI State Models + Documentation Overhaul
+- VisualState sealed interface for all 13 state models
+- Unified StateModelParser.parse() entry point
+- VisualPaneCache to eliminate duplicated dispatch logic
+- Refactored VisualStateFactory and ComparisonCardPane
+- Full documentation reorganization
+- Future algorithm lab planning docs
 
-### Goal
-Make operations observable and understandable.
+### Phase 3B — Graph Core + Algorithm Lab MVP
+- Graph.java — directed/undirected, weighted/unweighted adjacency-list model
+- AlgorithmFrame.java — per-step snapshot record (13 fields, 11 AlgorithmType values)
+- 11 algorithm runners: BFS, DFS, Dijkstra, Bellman-Ford, Topo Sort, A*,
+  Prim, Kruskal, SCC (Kosaraju), Bridges, Articulation Points
+- PlaybackController.java — step/play/pause/reset/jumpTo playback over frames
+- GraphPresets.java — built-in sample graphs (directed, undirected, weighted, DAG)
+- GraphVisualPane.java — force-directed Canvas renderer with node/edge colouring,
+  interactive edit mode, bridge/SCC/AP overlays
+- AlgorithmLabController.java — sixth GUI page with full algorithm simulation,
+  compare mode, and scenario save/load
+- GraphAlgorithmCatalog — typed metadata + centralized dispatch for all 11 algorithms
+- NavigationPage updated to six pages
 
-### What Happens Here
-Every operation produces a trace step. Each trace step captures:
-- Operation name
-- Input
-- Before state
-- After state
-- Explanation
-- Invariant result
-- Optional complexity note
+### Consolidation — Visual-First Architecture
+- UiComponents.java — shared static UI factory methods extracted from
+  MainWindowController (styledLabel, card, settingsCard, buttonRow, etc.)
+- VisualStateHost.java — reusable StackPane that encapsulates the
+  visual-or-text-fallback rendering pattern
+- MainWindowController refactored: ~80 lines of private helpers removed,
+  Explore rendering delegated to VisualStateHost
+- ComparisonCardPane refactored: 3 fields replaced by single VisualStateHost,
+  2 private methods eliminated
 
-### Outputs
-- Reusable trace model
-- Human-readable operation logs
-- Consistent state snapshots across structures
+### Phase 5A — Product Surface Upgrade
+- **Compare Intelligence**: Per-implementation execution timing (nanosecond
+  precision), ComparisonAnalysis model with divergence detection
+  (STATUS_MISMATCH, VALUE_MISMATCH, STATE_DIVERGENCE), fastest/slowest
+  annotation, and three-state verdict (MATCHING / DIVERGENT / PARTIAL_FAIL)
+- **Learn Page**: Search and category filtering, richer cards showing
+  behavior descriptions and learning notes from registry metadata
+- **Settings Persistence**: AppSettings backed by java.util.prefs.Preferences —
+  compact mode and high-density layout applied as live root style classes
+- **Activity Enrichment**: Category-based filtering, clear log, export button
+- **Export Flows**: ExportHelper for Compare history and Activity feed in
+  both JSON and plain-text/markdown formats via FileChooser dialogs
+- CSS additions: divergent/fastest card borders, timing labels, learn
+  search bar, activity category badges, compact-mode and high-density
+  root-level style effects
 
-### Why This Phase Matters
-This is where the project starts teaching instead of merely functioning. The trace
-layer is what separates a data structure library from a data structure laboratory.
+### Phase 5B — Teaching Surface Upgrade
+- **Learn 2.0**: ComplexityMatrix model — scannable complexity-comparison
+  table per structure family (union of operations across implementations).
+  Richer Learn cards with complexity matrix GridPane, "Open in Explore" and
+  "Compare Implementations" quick-action buttons.
+- **Settings 2.0**: Four new AppSettings properties (defaultPlaybackSpeed,
+  autoFitGraph, showAlgorithmTracker, trackerExpanded) with Preferences
+  persistence. Reorganised Settings page: "Motion & Layout", "Trace &
+  Learning", "Algorithm Lab", "Reset & About" cards with Restore Defaults
+  button.
+- **Algorithm Lab Telemetry**: AlgorithmTelemetry record (phase, typed
+  metrics, titled sections, events) added as 14th field to AlgorithmFrame.
+  AlgorithmTrackerPane left-panel widget renders telemetry or falls back to
+  generic frame data. Tracker visibility bound to AppSettings.
+- Test coverage: 1000 tests, 0 failures.
 
----
+### Phase 5C — Algorithm Mechanics Upgrade
+- **Real Per-Step Telemetry**: All 11 graph algorithm runners now emit
+  meaningful AlgorithmTelemetry on every frame via TelemetryBuilder —
+  phase labels (Initialization, Extract-Min, Relax, Complete, etc.),
+  typed metrics (distances, weights, component counts), titled sections
+  (frontier contents, MST edges), and descriptive events.
+- **Tracker Pane Upgrade**: AlgorithmTrackerPane supports configurable
+  default expansion state via constructor parameter, wired to AppSettings.
+- **Settings Wiring**: Playback speed slider initialised from
+  AppSettings.defaultPlaybackSpeed; auto-fit-graph triggers after preset
+  selection, builder changes, and scenario loads; tracker expansion
+  respects settings.
+- **Learn Page Deepening**: Implementation descriptions shown on Learn
+  cards, "Comparable" badge for structures with 2+ implementations,
+  complexity matrix header changed to "Time Complexity".
+- **Controller Cleanup**: Extracted `resetPlaybackControls()` helper,
+  eliminating duplicated 7-line playback reset blocks across 4 methods
+  in AlgorithmLabController.
+- **Test Coverage**: TelemetryBuilderTest (10 tests), RunnerTelemetryTest
+  (13 tests verifying all 11 runners emit non-null telemetry with correct
+  Init/Complete phases).
 
-## Phase 3 — Console Rendering Layer
+### Phase 6A — Ordered Tree Structures
+- **Core structures**: BinarySearchTree, AVLTree in `structlab.core.tree`
+  — insert, contains, remove, min, max, height, inorder/preorder/postorder
+  traversals, Traceable interface, BST-property invariant.
+- **AVL rotations**: All four rotation types (Left, Right, Left-Right,
+  Right-Left) with `lastRotation()` reporting.
+- **Trace wrappers**: TracedBinarySearchTree, TracedAVLTree — full
+  before/after snapshots, invariant checks, rotation-aware explanations.
+- **Visual state**: OrderedTreeStateModel (pre-order parenthesised tree
+  format), OrderedTreeVisualPane, TreeCanvas.renderOrderedTree() with
+  inorder-offset layout algorithm.
+- **Runtime adapter**: TreeRuntimeAdapter — 8 operations with alias
+  support (add/delete/search/find).
+- **Registry**: struct-tree + impl-bst + impl-avl seeded; tree canonical
+  operation family (8 ops) in CanonicalOperationRegistry.
+- **Compare support**: Full — BST vs AVL side-by-side comparison reveals
+  shape differences and rotation behaviour.
 
-### Goal
-Visually present state changes in a lightweight way.
-
-### What Happens Here
-- Build ASCII/text renderers for arrays, stacks, queues, and linked structures
-- Render current state and transition after each operation
-- Show markers like `top`, `front`, `rear`, `head`, `tail`, `size`, `capacity`
-
-### Outputs
-- Terminal-based visualizations
-- Readable simulation output
-- Clean before/after views
-
-### Why This Phase Matters
-This gives the project visual explanatory power without GUI complexity. Anyone
-can run it in a terminal and immediately see what is happening inside each structure.
-
----
-
-## Phase 4 — Data Structure Registry and Metadata System
-
-### Goal
-Build the searchable knowledge layer behind the future simulator.
-
-### What Happens Here
-For each data structure, define metadata including:
-- Name
-- Category
-- Keywords
-- Description
-- Behavior
-- Operations
-- Invariants
-- Implementations
-- Combinations
-- Related structures
-- Learning notes
-
-### Outputs
-- Registry of structures
-- Searchable tags and keywords
-- Normalized metadata model
-
-### Why This Phase Matters
-This powers the future search and detail panels. Without a structured registry,
-the simulator is just a collection of disconnected demos.
-
----
-
-## Phase 5 — Terminal Interactive Simulator
-
-### Goal
-Turn the engine into an interactive exploration tool.
-
-### What Happens Here
-Users can:
-- Search or choose a structure
-- Inspect its description
-- View supported operations
-- Select an implementation
-- Execute operations
-- View trace and rendered state
-
-### Example Flow
-1. Search `"FIFO"`
-2. Choose queue
-3. Pick circular array, linked list, or two stacks
-4. Run `enqueue` / `dequeue`
-5. Watch the state update with trace and ASCII rendering
-
-### Outputs
-- First real simulator
-- Terminal-first product version
-- Practical interactive learning environment
-
-### Why This Phase Matters
-This is the first full expression of the project vision. Every previous phase
-was building toward this point.
-
----
-
-## Phase 6 — Broader Data Structure Family
-
-### Goal
-Expand beyond the initial set.
-
-### Structures to Add
-- Singly linked list
-- Doubly linked list
-- Circular linked list
-- Deque on circular array
-- Deque on doubly linked list
-- Binary heap
-- Priority queue on heap
-- Priority queue on sorted array
-- Priority queue on unsorted array
-- Hash table with separate chaining
-- Hash table with open addressing
-- Set on hash table
-- Disjoint set / union-find
-- Binary search tree
-- AVL tree
-- Red-black tree
-- Trie
-- Graph via adjacency list
-- Graph via adjacency matrix
-
-### Outputs
-- Richer registry
-- Larger simulator catalog
-- Deeper implementation comparisons
-
-### Why This Phase Matters
-The project grows into a much fuller conceptual map. The initial structures cover
-the fundamentals; this phase covers the broader landscape.
+### Phase 6B — Release-Ready Productization
+- **GUI-first launcher**: StructLabLauncher entry point defaults to GUI;
+  `--terminal` / `-t` for REPL, `--help` / `-h` for usage. Non-Application
+  class avoids JavaFX shaded-JAR module-path check.
+- **Release artifacts**: Run scripts (run-gui.bat/sh, run-terminal.bat/sh)
+  bundled in GitHub Release alongside the uber-JAR.
+- **First-run onboarding**: Welcome overlay on first launch with page
+  descriptions and a suggested first action. Persisted via AppSettings
+  `onboardingDismissed` property; reopenable from Settings.
+- **Empty-state polish**: Improved placeholder text across Explore,
+  Compare, Learn, Activity, and Settings pages — actionable guidance
+  instead of generic placeholders.
+- **Learn tab upgrade**: Three-tab structure (Structures / Algorithms /
+  How to Use) with segmented toggle bar. Algorithms tab shows all 11
+  graph algorithms grouped by category with metadata cards. How to Use
+  tab provides a guided tour of every page.
+- **About/help surfaces**: Expanded Settings About card with algorithm
+  count and "Reopen Getting Started" button.
+- **Tests**: StructLabLauncherTest (9 tests), AppSettingsTest updated
+  for onboarding property.
 
 ---
 
-## Phase 7 — Comparison Mode
+## Current state
 
-### Goal
-Compare multiple implementations of the same ADT side by side.
-
-### What Happens Here
-Users can run the same operation sequence on different implementations and compare:
-- Internal state
-- Trace steps
-- Invariants
-- Cost intuition
-- Structural differences
-
-### Examples
-- Queue via linked list vs. circular array vs. two stacks
-- Stack via array vs. linked list
-- Priority queue via heap vs. sorted array vs. unsorted array
-
-### Outputs
-- Side-by-side comparison engine
-- Stronger learning value
-- Deeper intuition for tradeoffs
-
-### Why This Phase Matters
-This is where design understanding becomes much stronger. Seeing two or three
-implementations of the same ADT evolve in parallel under identical operations
-makes the tradeoffs concrete and memorable.
+- 8 structure families, 19 implementations
+- 15 visual panes covering all families + GraphVisualPane
+- Full Explore and Compare modes with visual rendering and compare intelligence
+- Algorithm Lab with 11 graph algorithms, compare mode, and scenario save/load
+- Six-page GUI shell (Explore, Compare, Learn, Activity, Settings, Algorithm Lab)
+- GUI-first launcher: double-click the JAR to open the GUI; `--terminal` for REPL
+- First-run onboarding overlay with page tour and suggested first steps
+- Learn page with three tabs: Structures (search/filter/cards), Algorithms
+  (11 graph algorithms grouped by category), and How to Use (guided page tour)
+- Improved empty-state text across all pages with actionable guidance
+- Settings with expanded About card, algorithm count, and "Reopen Getting Started"
+- Settings persisted via Preferences with live compact/high-density effects,
+  Algorithm Lab preferences, and Restore Defaults
+- Activity page with category filter, clear, and export
+- Compare and Activity export (JSON + text) via FileChooser
+- Algorithm Lab tracker pane with structured per-step telemetry display
+  (phase, metrics, sections, events) for all 11 runners
+- Run scripts (bat/sh) for GUI and terminal modes, bundled in releases
+- 1000+ tests, 0 failures
+- Clean CI with Xvfb and coverage reporting
+- Structured visual state architecture (VisualState sealed hierarchy)
+- Reusable visual primitives (UiComponents, VisualStateHost)
 
 ---
 
-## Phase 8 — Graphical Simulator Layer
+## Next phases
 
-### Goal
-Add an optional GUI after the architecture is stable.
+### Phase 3A — Animation and Transition System
+Add animated transitions between visual states.  The VisualState sealed
+hierarchy and VisualPaneCache already provide the hooks:
+- Diff old vs new VisualState
+- Animate element additions, removals, swaps
+- Configurable speed / step-through mode
 
-### Suggested Technology
-- JavaFX
+### Phase 3A — Animation and Transition System
+Add animated transitions between visual states.  The VisualState sealed
+hierarchy and VisualPaneCache already provide the hooks:
+- Diff old vs new VisualState
+- Animate element additions, removals, swaps
+- Configurable speed / step-through mode
 
-### What Happens Here
-- Search bar
-- Structure browser
-- Detail panel
-- Implementation selector
-- Operations panel
-- Trace panel
-- Visual state panel
-- Console mode remains available
-
-### Outputs
-- Visual simulator app
-- Cleaner UX
-- More engaging demonstrations
-
-### Why This Phase Matters
-This adds polish without building the project backward. Because the console
-simulator already exists, the GUI is a presentation layer over a working engine,
-not a load-bearing wall.
-
----
-
-## Phase 9 — Algorithm Demonstrations on Top of Structures
-
-### Goal
-Show data structures in actual algorithmic workflows.
-
-### Examples
-- DFS using stack
-- BFS using queue
-- Expression evaluation with stack
-- Undo/redo with stacks
-- Task scheduling with priority queue
-- Autocomplete with trie
-- Connectivity with union-find
-
-### Outputs
-- Algorithm modules
-- Structure-to-algorithm bridge
-- Practical demonstrations
-
-### Why This Phase Matters
-This connects abstract structures to real uses. It answers the question every
-student eventually asks: when would I actually need this?
-
----
-
-## Phase 10 — Polish, Testing, and Educational Refinement
-
-### Goal
-Make the project stable, durable, and presentation-worthy.
-
-### What Happens Here
-- Improve tests
-- Add invariant stress tests
-- Improve docs
-- Add example scenarios
-- Add curated learning paths
-- Refine naming and structure
-- Possibly add exportable trace snapshots
-
-### Outputs
-- Portfolio-quality repository
-- Stable simulator
-- Useful study tool
-- Expandable educational system
-
-### Why This Phase Matters
-This turns the project into a serious long-term body of work. A well-tested,
-well-documented simulator with curated learning paths has lasting value beyond
-any individual course or semester.
-
----
-
-## Recommended Build Order
-
-1. Repo and docs
-2. First core structures
-3. Trace system
-4. Console rendering
-5. Metadata registry
-6. Terminal simulator
-7. More structures
-8. Comparison mode
-9. GUI
-10. Algorithms and polish
-
----
-
-## Version Checkpoints
-
-| Version | Milestone                                       |
-|---------|-------------------------------------------------|
-| 0.1     | Repo scaffold and docs                          |
-| 0.2     | Core arrays, stacks, queues                     |
-| 0.3     | Trace + ASCII rendering                         |
-| 0.4     | Registry + searchable structure info            |
-| 0.5     | Terminal interactive simulator                  |
-| 0.6     | More structures and combinations                |
-| 0.7     | Comparison mode                                 |
-| 0.8     | JavaFX graphical simulator                      |
-| 1.0     | Full StructLab simulator with educational demos |
+### Ongoing
+- Additional structure families (Trie, Red-Black Tree)
+- Performance experiment mode
+- Animated visual transitions
+- Complexity-table expansion in Learn cards

@@ -22,8 +22,6 @@
     <surefire.version>3.5.5</surefire.version>
     <javafx.version>21.0.5</javafx.version>
     <jacoco.version>0.8.12</jacoco.version>
-    <sonar.projectKey>MogProgJ_DataDance</sonar.projectKey>
-    <sonar.organization>asae44344grsgy546grger</sonar.organization>
   </properties>
 
 
@@ -81,7 +79,7 @@
         </configuration>
       </plugin>
 
-      <!-- Coverage: generates target/site/jacoco/jacoco.xml for Sonar -->
+      <!-- Coverage: generates target/site/jacoco/index.html -->
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
@@ -95,6 +93,41 @@
             <id>report</id>
             <phase>verify</phase>
             <goals><goal>report</goal></goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Produce a single runnable JAR with all dependencies included.
+           JavaFX modules are bundled so the JAR is self-contained on any
+           JDK 17+ that does NOT include JavaFX (i.e. most JDKs).
+           Default launch opens the GUI; use 'java -jar structlab.jar -t'
+           for the REPL, or '-h' for usage info. -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.6.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals><goal>shade</goal></goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>structlab.app.StructLabLauncher</mainClass>
+                </transformer>
+              </transformers>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+            </configuration>
           </execution>
         </executions>
       </plugin>

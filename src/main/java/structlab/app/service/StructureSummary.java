@@ -7,5 +7,7 @@ public record StructureSummary(
     String name,
     String category,
     Set<String> keywords,
-    String description
+    String description,
+    String behavior,
+    String learningNotes
 ) {}

@@ -1,0 +1,93 @@
+# ──────────────────────────────────────────────────────────────
+# CI Pipeline — StructLab / DataDance
+# ──────────────────────────────────────────────────────────────
+# Runs on every push to main/Gemini and on pull requests.
+# Two jobs:
+#   1. verify  — compile, test, JaCoCo coverage report
+#   2. package — produce the shaded uber-JAR and upload as artifact
+#
+# Tag-triggered releases are handled by release.yml, not here.
+# ──────────────────────────────────────────────────────────────
+name: CI
+
+on:
+  push:
+    branches: [main, Gemini]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+# Cancel in-flight CI for the same branch when a new push arrives.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ── 1. Verify ──────────────────────────────────────────────
+  verify:
+    name: Verify (compile + test + coverage)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
+      - name: mvn verify
+        run: |
+          chmod +x ./mvnw
+          xvfb-run --auto-servernum ./mvnw -B -ntp verify
+
+      - name: Upload JaCoCo report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/
+          retention-days: 14
+
+  # ── 2. Package ─────────────────────────────────────────────
+  # Only runs on pushes to long-lived branches (not on PRs)
+  package:
+    name: Package (uber-JAR)
+    needs: verify
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
+
+      - name: Build package (skip tests — already passed)
+        run: |
+          chmod +x ./mvnw
+          ./mvnw -B -ntp package -DskipTests -Djacoco.skip=true
+
+      - name: Upload packaged JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: structlab-snapshot
+          path: target/structlab-*.jar
+          retention-days: 30

@@ -55,6 +55,18 @@ public class RuntimeFactoryTest {
     }
 
     @Test
+    public void testCreateHashTableRuntime() {
+        StructureRuntime rt = RuntimeFactory.createRuntime(sm("hash"), im("impl-hash-table-chaining"));
+        assertTrue(rt instanceof HashRuntimeAdapter);
+    }
+
+    @Test
+    public void testCreateHashSetRuntime() {
+        StructureRuntime rt = RuntimeFactory.createRuntime(sm("hash"), im("impl-hash-set"));
+        assertTrue(rt instanceof HashRuntimeAdapter);
+    }
+
+    @Test
     public void testUnknownStructure() {
         assertThrows(UnsupportedOperationException.class, () -> {
             RuntimeFactory.createRuntime(sm("unknown"), im("impl-unknown"));
