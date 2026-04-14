@@ -100,8 +100,8 @@
       <!-- Produce a single runnable JAR with all dependencies included.
            JavaFX modules are bundled so the JAR is self-contained on any
            JDK 17+ that does NOT include JavaFX (i.e. most JDKs).
-           Note: GUI mode requires a real display or Xvfb; the terminal
-           entry point works headless. -->
+           Default launch opens the GUI; use 'java -jar structlab.jar -t'
+           for the REPL, or '-h' for usage info. -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -113,7 +113,7 @@
             <configuration>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>structlab.app.StructLabApp</mainClass>
+                  <mainClass>structlab.app.StructLabLauncher</mainClass>
                 </transformer>
               </transformers>
               <filters>

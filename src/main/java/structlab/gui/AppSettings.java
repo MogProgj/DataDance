@@ -17,6 +17,7 @@ public class AppSettings {
     private static final String PREF_AUTO_FIT = "autoFitGraph";
     private static final String PREF_SHOW_TRACKER = "showAlgorithmTracker";
     private static final String PREF_TRACKER_EXPANDED = "trackerExpanded";
+    private static final String PREF_ONBOARDING_DISMISSED = "onboardingDismissed";
 
     private static final boolean DEF_MOTION = true;
     private static final boolean DEF_COMPACT = false;
@@ -26,6 +27,7 @@ public class AppSettings {
     private static final boolean DEF_AUTO_FIT = true;
     private static final boolean DEF_SHOW_TRACKER = true;
     private static final boolean DEF_TRACKER_EXPANDED = true;
+    private static final boolean DEF_ONBOARDING_DISMISSED = false;
 
     private final Preferences prefs = Preferences.userNodeForPackage(AppSettings.class);
 
@@ -37,6 +39,7 @@ public class AppSettings {
     private final BooleanProperty autoFitGraph = new SimpleBooleanProperty(prefs.getBoolean(PREF_AUTO_FIT, DEF_AUTO_FIT));
     private final BooleanProperty showAlgorithmTracker = new SimpleBooleanProperty(prefs.getBoolean(PREF_SHOW_TRACKER, DEF_SHOW_TRACKER));
     private final BooleanProperty trackerExpanded = new SimpleBooleanProperty(prefs.getBoolean(PREF_TRACKER_EXPANDED, DEF_TRACKER_EXPANDED));
+    private final BooleanProperty onboardingDismissed = new SimpleBooleanProperty(prefs.getBoolean(PREF_ONBOARDING_DISMISSED, DEF_ONBOARDING_DISMISSED));
 
     public AppSettings() {
         motionEnabled.addListener((obs, o, n) -> prefs.putBoolean(PREF_MOTION, n));
@@ -47,6 +50,7 @@ public class AppSettings {
         autoFitGraph.addListener((obs, o, n) -> prefs.putBoolean(PREF_AUTO_FIT, n));
         showAlgorithmTracker.addListener((obs, o, n) -> prefs.putBoolean(PREF_SHOW_TRACKER, n));
         trackerExpanded.addListener((obs, o, n) -> prefs.putBoolean(PREF_TRACKER_EXPANDED, n));
+        onboardingDismissed.addListener((obs, o, n) -> prefs.putBoolean(PREF_ONBOARDING_DISMISSED, n));
     }
 
     // ── Existing properties ─────────────────────────────────
@@ -85,6 +89,10 @@ public class AppSettings {
     public boolean isTrackerExpanded() { return trackerExpanded.get(); }
     public void setTrackerExpanded(boolean v) { trackerExpanded.set(v); }
 
+    public BooleanProperty onboardingDismissedProperty() { return onboardingDismissed; }
+    public boolean isOnboardingDismissed() { return onboardingDismissed.get(); }
+    public void setOnboardingDismissed(boolean v) { onboardingDismissed.set(v); }
+
     // ── Restore defaults ────────────────────────────────────
 
     public void restoreDefaults() {
@@ -96,5 +104,6 @@ public class AppSettings {
         setAutoFitGraph(DEF_AUTO_FIT);
         setShowAlgorithmTracker(DEF_SHOW_TRACKER);
         setTrackerExpanded(DEF_TRACKER_EXPANDED);
+        setOnboardingDismissed(DEF_ONBOARDING_DISMISSED);
     }
 }

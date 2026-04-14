@@ -162,6 +162,27 @@ JavaFxToolkitExtension with bounded startup timeout.
 - **Compare support**: Full — BST vs AVL side-by-side comparison reveals
   shape differences and rotation behaviour.
 
+### Phase 6B — Release-Ready Productization
+- **GUI-first launcher**: StructLabLauncher entry point defaults to GUI;
+  `--terminal` / `-t` for REPL, `--help` / `-h` for usage. Non-Application
+  class avoids JavaFX shaded-JAR module-path check.
+- **Release artifacts**: Run scripts (run-gui.bat/sh, run-terminal.bat/sh)
+  bundled in GitHub Release alongside the uber-JAR.
+- **First-run onboarding**: Welcome overlay on first launch with page
+  descriptions and a suggested first action. Persisted via AppSettings
+  `onboardingDismissed` property; reopenable from Settings.
+- **Empty-state polish**: Improved placeholder text across Explore,
+  Compare, Learn, Activity, and Settings pages — actionable guidance
+  instead of generic placeholders.
+- **Learn tab upgrade**: Three-tab structure (Structures / Algorithms /
+  How to Use) with segmented toggle bar. Algorithms tab shows all 11
+  graph algorithms grouped by category with metadata cards. How to Use
+  tab provides a guided tour of every page.
+- **About/help surfaces**: Expanded Settings About card with algorithm
+  count and "Reopen Getting Started" button.
+- **Tests**: StructLabLauncherTest (9 tests), AppSettingsTest updated
+  for onboarding property.
+
 ---
 
 ## Current state
@@ -171,16 +192,19 @@ JavaFxToolkitExtension with bounded startup timeout.
 - Full Explore and Compare modes with visual rendering and compare intelligence
 - Algorithm Lab with 11 graph algorithms, compare mode, and scenario save/load
 - Six-page GUI shell (Explore, Compare, Learn, Activity, Settings, Algorithm Lab)
-- Learn page with search/filter, behavior descriptions, learning notes,
-  complexity matrix table, and quick-action navigation buttons
+- GUI-first launcher: double-click the JAR to open the GUI; `--terminal` for REPL
+- First-run onboarding overlay with page tour and suggested first steps
+- Learn page with three tabs: Structures (search/filter/cards), Algorithms
+  (11 graph algorithms grouped by category), and How to Use (guided page tour)
+- Improved empty-state text across all pages with actionable guidance
+- Settings with expanded About card, algorithm count, and "Reopen Getting Started"
 - Settings persisted via Preferences with live compact/high-density effects,
   Algorithm Lab preferences, and Restore Defaults
 - Activity page with category filter, clear, and export
 - Compare and Activity export (JSON + text) via FileChooser
 - Algorithm Lab tracker pane with structured per-step telemetry display
   (phase, metrics, sections, events) for all 11 runners
-- Learn cards with implementation descriptions, compare badges, and
-  improved complexity matrix headers
+- Run scripts (bat/sh) for GUI and terminal modes, bundled in releases
 - 1000+ tests, 0 failures
 - Clean CI with Xvfb and coverage reporting
 - Structured visual state architecture (VisualState sealed hierarchy)

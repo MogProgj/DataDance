@@ -70,6 +70,7 @@ class AppSettingsTest {
         assertNotNull(s.autoFitGraphProperty());
         assertNotNull(s.showAlgorithmTrackerProperty());
         assertNotNull(s.trackerExpandedProperty());
+        assertNotNull(s.onboardingDismissedProperty());
     }
 
     @Test
@@ -86,6 +87,9 @@ class AppSettingsTest {
 
         s.setTrackerExpanded(false);
         assertFalse(s.isTrackerExpanded());
+
+        s.setOnboardingDismissed(true);
+        assertTrue(s.isOnboardingDismissed());
     }
 
     @Test
@@ -99,6 +103,7 @@ class AppSettingsTest {
         s.setAutoFitGraph(false);
         s.setShowAlgorithmTracker(false);
         s.setTrackerExpanded(false);
+        s.setOnboardingDismissed(true);
 
         s.restoreDefaults();
 
@@ -110,6 +115,7 @@ class AppSettingsTest {
         assertTrue(s.isAutoFitGraph());
         assertTrue(s.isShowAlgorithmTracker());
         assertTrue(s.isTrackerExpanded());
+        assertFalse(s.isOnboardingDismissed());
     }
 
     @Test

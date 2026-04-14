@@ -18,6 +18,8 @@ import structlab.app.comparison.ComparisonOperationResult;
 import structlab.app.comparison.ComparisonRuntimeEntry;
 import structlab.app.comparison.ComparisonSession;
 import structlab.app.service.*;
+import structlab.core.graph.GraphAlgorithmCatalog;
+import structlab.core.graph.GraphAlgorithmSpec;
 import structlab.gui.*;
 import structlab.gui.export.ExportHelper;
 import structlab.gui.visual.ComparisonCardPane;
@@ -92,6 +94,8 @@ public class MainWindowController {
     private VBox learnCardContainer;
     private TextField learnSearchField;
     private ComboBox<String> learnCategoryFilter;
+    private StackPane learnTabHost;
+    private Node learnStructuresTab, learnAlgorithmsTab, learnGuideTab;
 
     // ══ Activity page elements ═══════════════════════════════
     private VBox activityFeed;
@@ -107,6 +111,9 @@ public class MainWindowController {
         wireSettingsEffects();
         navigateTo(NavigationPage.EXPLORE);
         activityLog.log("Application started", "StructLab initialized", "system");
+        if (!settings.isOnboardingDismissed()) {
+            showOnboardingOverlay();
+        }
     }
 
     @FXML
@@ -114,6 +121,79 @@ public class MainWindowController {
         navButtons = new Button[]{
             navExploreBtn, navCompareBtn, navAlgoLabBtn, navLearnBtn, navActivityBtn, navSettingsBtn
         };
+    }
+
+    // ══════════════════════════════════════════════════════════
+    //  Onboarding
+    // ══════════════════════════════════════════════════════════
+
+    void showOnboardingOverlay() {
+        int totalImpls = service.getAllStructures().stream()
+                .mapToInt(s -> service.getImplementations(s.id()).size()).sum();
+
+        VBox card = new VBox(16);
+        card.getStyleClass().add("onboarding-card");
+        card.setMaxWidth(520);
+        card.setMaxHeight(Region.USE_PREF_SIZE);
+        card.setPadding(new Insets(36, 40, 28, 40));
+
+        Label title = styledLabel("Welcome to StructLab", "onboarding-title");
+        Label tagline = styledLabel(
+                "A hands-on data structure simulator with "
+                + service.getAllStructures().size() + " structure families and "
+                + totalImpls + " implementations.",
+                "onboarding-tagline");
+        tagline.setWrapText(true);
+
+        VBox pages = new VBox(10);
+        pages.getChildren().addAll(
+                onboardingItem("Explore",
+                        "Open a structure, run operations, and watch the state update live."),
+                onboardingItem("Compare",
+                        "Benchmark multiple implementations side by side."),
+                onboardingItem("Algorithm Lab",
+                        "Run graph algorithms step-by-step with visual playback."),
+                onboardingItem("Learn",
+                        "Browse structure families, algorithms, and a usage guide."));
+
+        Label tip = styledLabel(
+                "Try this first: pick a Stack in Explore, open a session, and push a few values.",
+                "onboarding-tip");
+        tip.setWrapText(true);
+
+        CheckBox dontShow = styledCheck("Don\u2019t show this again", false);
+
+        Button getStarted = new Button("Get Started");
+        getStarted.getStyleClass().add("primary-button");
+
+        HBox bottom = new HBox(12, dontShow, new Region(), getStarted);
+        HBox.setHgrow(bottom.getChildren().get(1), Priority.ALWAYS);
+        bottom.setAlignment(Pos.CENTER_LEFT);
+
+        card.getChildren().addAll(title, tagline, pages, tip, bottom);
+
+        StackPane overlay = new StackPane(card);
+        overlay.getStyleClass().add("onboarding-overlay");
+        overlay.setAlignment(Pos.CENTER);
+
+        getStarted.setOnAction(e -> {
+            if (dontShow.isSelected()) {
+                settings.setOnboardingDismissed(true);
+            }
+            pageHost.getChildren().remove(overlay);
+        });
+
+        pageHost.getChildren().add(overlay);
+    }
+
+    private HBox onboardingItem(String page, String desc) {
+        Label bullet = styledLabel("\u25b8 " + page, "onboarding-page-name");
+        bullet.setMinWidth(120);
+        Label description = styledLabel(desc, "onboarding-page-desc");
+        description.setWrapText(true);
+        HBox row = new HBox(8, bullet, description);
+        row.setAlignment(Pos.TOP_LEFT);
+        return row;
     }
 
     // ══════════════════════════════════════════════════════════
@@ -247,7 +327,7 @@ public class MainWindowController {
 
         VBox detailCard = card("STRUCTURE DETAILS");
         VBox detailBody = cardBody(detailCard);
-        explDetailName = styledLabel("Select a structure to begin exploring.", "detail-name");
+        explDetailName = styledLabel("Select a structure from the list to see its details.", "detail-name");
         explDetailCat = styledLabel("", "info-label");
         explDetailDesc = styledLabel("", "detail-description");
         explDetailDesc.setWrapText(true);
@@ -258,13 +338,13 @@ public class MainWindowController {
         VBox.setVgrow(stateCard, Priority.ALWAYS);
         VBox stateBody = cardBody(stateCard);
         VBox.setVgrow(stateBody, Priority.ALWAYS);
-        explVisualHost = new VisualStateHost("Open a session to see the live structure state.");
+        explVisualHost = new VisualStateHost("Pick a structure and implementation, then click \"Open Session\" to see it live.");
         VBox.setVgrow(explVisualHost, Priority.ALWAYS);
         stateBody.getChildren().add(explVisualHost);
 
         VBox traceCard = card("TRACE LOG");
         VBox traceBody = cardBody(traceCard);
-        explTrace = monoArea("Execution traces appear here after operations.");
+        explTrace = monoArea("Run an operation to see its step-by-step execution trace here.");
         explTrace.setPrefHeight(150);
         traceBody.getChildren().add(explTrace);
 
@@ -299,7 +379,7 @@ public class MainWindowController {
 
         VBox sessCard = new VBox(4);
         sessCard.getStyleClass().add("inspector-card");
-        explSessStruct = styledLabel("No active session", "info-label");
+        explSessStruct = styledLabel("No active session — open one from the left panel", "info-label");
         explSessImpl = styledLabel("", "info-label");
         explSessOps = styledLabel("", "info-label");
 
@@ -345,7 +425,7 @@ public class MainWindowController {
     private void onExploreStructureSelected(StructureSummary selected) {
         explImplList.getItems().clear();
         if (selected == null) {
-            explDetailName.setText("Select a structure to begin exploring.");
+            explDetailName.setText("Select a structure from the list to see its details.");
             explDetailCat.setText("");
             explDetailDesc.setText("");
             explDetailKw.setText("");
@@ -537,7 +617,7 @@ public class MainWindowController {
         sessionActive = false;
         explVisualHost.resetCache();
         explVisualHost.showPlaceholder();
-        explSessStruct.setText("No active session");
+        explSessStruct.setText("No active session \u2014 open one from the left panel");
         explSessImpl.setText("");
         explSessOps.setText("");
         explTrace.clear();
@@ -589,7 +669,7 @@ public class MainWindowController {
         cmpCardGrid.getStyleClass().add("comparison-card-grid");
 
         Label emptyHint = styledLabel(
-                "Select a structure and start a comparison to analyze implementations side by side.",
+                "Choose a structure from the left, then click \"Start Comparison\" to benchmark its implementations.",
                 "detail-description");
         emptyHint.setWrapText(true);
         emptyHint.setPadding(new Insets(24));
@@ -628,7 +708,7 @@ public class MainWindowController {
 
         VBox sessCard = new VBox(4);
         sessCard.getStyleClass().add("inspector-card");
-        cmpSessLabel = styledLabel("No active comparison", "info-label");
+        cmpSessLabel = styledLabel("No active comparison \u2014 pick a structure to begin", "info-label");
         cmpImplCount = styledLabel("", "info-label");
         cmpOpsCount = styledLabel("", "info-label");
 
@@ -883,14 +963,14 @@ public class MainWindowController {
 
     private void clearCompareSession() {
         comparisonActive = false;
-        cmpSessLabel.setText("No active comparison");
+        cmpSessLabel.setText("No active comparison — pick a structure to begin");
         cmpImplCount.setText("");
         cmpOpsCount.setText("");
         cmpSummary.updateIdle();
         cmpCards.clear();
         cmpCardGrid.getChildren().clear();
         Label emptyHint = styledLabel(
-                "Select a structure and start a comparison to analyze implementations side by side.",
+                "Choose a structure from the left, then click \"Start Comparison\" to benchmark its implementations.",
                 "detail-description");
         emptyHint.setWrapText(true);
         emptyHint.setPadding(new Insets(24));
@@ -915,23 +995,66 @@ public class MainWindowController {
     // ─────────────────────────────────────────────────────────
 
     private Node buildLearnPage() {
-        VBox content = new VBox(28);
+        VBox content = new VBox(20);
         content.getStyleClass().add("page-content");
         content.setPadding(new Insets(36, 48, 36, 48));
 
         // Hero
-        Label heroTitle = styledLabel("Data Structure Library", "hero-title");
         int totalImpls = service.getAllStructures().stream()
                 .mapToInt(s -> service.getImplementations(s.id()).size()).sum();
+        Label heroTitle = styledLabel("Learn", "hero-title");
         Label heroSub = styledLabel(
                 service.getAllStructures().size() + " structure families, "
-                + totalImpls + " implementations — explore the foundations of computer science.",
+                + totalImpls + " implementations, "
+                + GraphAlgorithmCatalog.all().size() + " graph algorithms.",
                 "hero-subtitle");
         heroSub.setWrapText(true);
         VBox hero = new VBox(8, heroTitle, heroSub);
         hero.getStyleClass().add("hero-section");
 
-        // Search + Category filter bar
+        // Segmented tab bar
+        ToggleGroup tabGroup = new ToggleGroup();
+        ToggleButton structBtn = new ToggleButton("Structures");
+        ToggleButton algoBtn = new ToggleButton("Algorithms");
+        ToggleButton guideBtn = new ToggleButton("How to Use");
+        structBtn.setToggleGroup(tabGroup);
+        algoBtn.setToggleGroup(tabGroup);
+        guideBtn.setToggleGroup(tabGroup);
+        structBtn.getStyleClass().add("learn-tab-btn");
+        algoBtn.getStyleClass().add("learn-tab-btn");
+        guideBtn.getStyleClass().add("learn-tab-btn");
+        structBtn.setSelected(true);
+        HBox tabBar = new HBox(0, structBtn, algoBtn, guideBtn);
+        tabBar.getStyleClass().add("learn-tab-bar");
+        tabBar.setAlignment(Pos.CENTER_LEFT);
+
+        // Build tab content
+        learnStructuresTab = buildLearnStructuresTab();
+        learnAlgorithmsTab = buildLearnAlgorithmsTab();
+        learnGuideTab = buildLearnGuideTab();
+
+        learnTabHost = new StackPane(learnStructuresTab);
+
+        tabGroup.selectedToggleProperty().addListener((obs, old, sel) -> {
+            if (sel == null) { if (old != null) old.setSelected(true); return; }
+            if (sel == structBtn) learnTabHost.getChildren().setAll(learnStructuresTab);
+            else if (sel == algoBtn) learnTabHost.getChildren().setAll(learnAlgorithmsTab);
+            else learnTabHost.getChildren().setAll(learnGuideTab);
+        });
+
+        content.getChildren().addAll(hero, tabBar, learnTabHost);
+
+        ScrollPane scroll = new ScrollPane(content);
+        scroll.setFitToWidth(true);
+        scroll.getStyleClass().add("page-scroll");
+        return scroll;
+    }
+
+    // ── Learn: Structures tab ────────────────────────────────
+
+    private Node buildLearnStructuresTab() {
+        VBox tab = new VBox(20);
+
         learnSearchField = new TextField();
         learnSearchField.setPromptText("Search structures by name, keyword, or description...");
         learnSearchField.getStyleClass().add("learn-search-field");
@@ -951,16 +1074,161 @@ public class MainWindowController {
         learnSearchField.textProperty().addListener((obs, o, n) -> refreshLearnCards());
         learnCategoryFilter.valueProperty().addListener((obs, o, n) -> refreshLearnCards());
 
-        // Card container
         learnCardContainer = new VBox(28);
         refreshLearnCards();
 
-        content.getChildren().addAll(hero, filterBar, learnCardContainer);
+        tab.getChildren().addAll(filterBar, learnCardContainer);
+        return tab;
+    }
 
-        ScrollPane scroll = new ScrollPane(content);
-        scroll.setFitToWidth(true);
-        scroll.getStyleClass().add("page-scroll");
-        return scroll;
+    // ── Learn: Algorithms tab ────────────────────────────────
+
+    private Node buildLearnAlgorithmsTab() {
+        VBox tab = new VBox(24);
+
+        Label intro = styledLabel(
+                "Graph algorithms available in the Algorithm Lab. "
+                + "Select a preset graph, pick an algorithm, and step through execution with visual playback.",
+                "hero-subtitle");
+        intro.setWrapText(true);
+
+        List<GraphAlgorithmSpec> specs = GraphAlgorithmCatalog.all();
+        Map<GraphAlgorithmSpec.Category, List<GraphAlgorithmSpec>> byCategory =
+                specs.stream().collect(Collectors.groupingBy(
+                        GraphAlgorithmSpec::category,
+                        LinkedHashMap::new,
+                        Collectors.toList()));
+
+        for (var entry : byCategory.entrySet()) {
+            tab.getChildren().add(
+                    styledLabel(entry.getKey().label().toUpperCase(), "category-header"));
+            FlowPane grid = new FlowPane(16, 16);
+            grid.getStyleClass().add("card-grid");
+            for (GraphAlgorithmSpec spec : entry.getValue()) {
+                grid.getChildren().add(buildAlgorithmLearnCard(spec));
+            }
+            tab.getChildren().add(grid);
+        }
+
+        tab.getChildren().add(0, intro);
+
+        Button openLab = new Button("Open Algorithm Lab");
+        openLab.getStyleClass().add("primary-button");
+        openLab.setOnAction(e -> navigateTo(NavigationPage.ALGORITHM_LAB));
+        tab.getChildren().add(openLab);
+
+        return tab;
+    }
+
+    private VBox buildAlgorithmLearnCard(GraphAlgorithmSpec spec) {
+        VBox card = new VBox(8);
+        card.getStyleClass().add("learn-card");
+        card.setPrefWidth(360);
+        card.setMinWidth(300);
+        card.setPadding(new Insets(18));
+
+        HBox titleRow = new HBox(8);
+        titleRow.setAlignment(Pos.CENTER_LEFT);
+        titleRow.getChildren().add(styledLabel(spec.displayLabel(), "learn-card-title"));
+        Label catBadge = styledLabel(spec.category().label(), "learn-compare-badge");
+        titleRow.getChildren().add(catBadge);
+        card.getChildren().add(titleRow);
+
+        Label desc = styledLabel(spec.hint(), "learn-card-desc");
+        desc.setWrapText(true);
+        card.getChildren().add(desc);
+
+        // Requirements
+        VBox reqs = new VBox(4);
+        reqs.getChildren().add(styledLabel("REQUIREMENTS", "learn-card-section"));
+        reqs.getChildren().add(styledLabel(
+                "Source node: " + (spec.sourceRequired() ? "Required" : "Not needed"),
+                "info-label"));
+        String targetText = switch (spec.targetMode()) {
+            case NONE -> "Not used";
+            case OPTIONAL -> "Optional";
+            case REQUIRED -> "Required";
+        };
+        reqs.getChildren().add(styledLabel("Target node: " + targetText, "info-label"));
+
+        String graphTypes = (spec.directedOk() && spec.undirectedOk()) ? "Directed & Undirected"
+                : spec.directedOk() ? "Directed only"
+                : "Undirected only";
+        reqs.getChildren().add(styledLabel("Graph types: " + graphTypes, "info-label"));
+
+        card.getChildren().addAll(new Separator(), reqs);
+
+        // Quick action
+        Button tryBtn = new Button("Try in Algorithm Lab");
+        tryBtn.getStyleClass().add("learn-action-btn");
+        tryBtn.setOnAction(e -> navigateTo(NavigationPage.ALGORITHM_LAB));
+        card.getChildren().addAll(new Separator(), tryBtn);
+
+        return card;
+    }
+
+    // ── Learn: How to Use tab ────────────────────────────────
+
+    private Node buildLearnGuideTab() {
+        VBox tab = new VBox(24);
+
+        Label intro = styledLabel(
+                "A quick tour of StructLab\u2019s pages and how to get the most out of each one.",
+                "hero-subtitle");
+        intro.setWrapText(true);
+        tab.getChildren().add(intro);
+
+        tab.getChildren().addAll(
+                guideSection("Explore",
+                        "Interact with a single data structure in real time.",
+                        "1. Pick a structure family from the left panel (e.g. Stack).\n"
+                        + "2. Choose an implementation and click \"Open Session\".\n"
+                        + "3. Select an operation, enter arguments, and click Run.\n"
+                        + "4. Watch the visual state update and read the trace log."),
+                guideSection("Compare",
+                        "Benchmark multiple implementations of the same structure.",
+                        "1. Select a structure family that supports comparison.\n"
+                        + "2. Click \"Start Comparison\" \u2014 all implementations open side by side.\n"
+                        + "3. Run operations and compare execution time, state output, and traces."),
+                guideSection("Algorithm Lab",
+                        "Step through graph algorithms with animated playback.",
+                        "1. Choose a preset graph or load your own.\n"
+                        + "2. Pick an algorithm (BFS, Dijkstra, Prim, etc.).\n"
+                        + "3. Set source/target nodes as needed, then click Run.\n"
+                        + "4. Use the playback controls to step forward/back through frames."),
+                guideSection("Learn",
+                        "You\u2019re here! Browse structures, algorithms, and this guide.",
+                        "Use the Structures tab to search and filter all structure families.\n"
+                        + "The Algorithms tab lists every graph algorithm with its requirements.\n"
+                        + "Each card has quick-action buttons to jump to Explore or Compare."),
+                guideSection("Activity",
+                        "Track your session history.",
+                        "Every session, comparison, and operation is logged here.\n"
+                        + "Filter by category or export the log to a file."),
+                guideSection("Settings",
+                        "Customize transitions, density, trace detail, and playback speed.",
+                        "Toggle motion, compact mode, or raw traces.\n"
+                        + "Adjust default playback speed for the Algorithm Lab.\n"
+                        + "Restore all settings to defaults with one click."));
+
+        return tab;
+    }
+
+    private VBox guideSection(String title, String subtitle, String steps) {
+        VBox section = new VBox(8);
+        section.getStyleClass().add("learn-card");
+        section.setPadding(new Insets(18));
+        section.setPrefWidth(600);
+
+        section.getChildren().add(styledLabel(title, "learn-card-title"));
+        Label sub = styledLabel(subtitle, "learn-card-desc");
+        sub.setWrapText(true);
+        section.getChildren().add(sub);
+
+        Label body = styledLabel(steps, "info-label");
+        body.setWrapText(true);
+        section.getChildren().addAll(new Separator(), body);
+        return section;
     }
 
     private void refreshLearnCards() {
@@ -988,7 +1256,7 @@ public class MainWindowController {
                         Collectors.toList()));
 
         if (filtered.isEmpty()) {
-            Label empty = styledLabel("No structures match your search.", "detail-description");
+            Label empty = styledLabel("No structures match your search. Try a broader term or reset the category filter.", "detail-description");
             empty.setPadding(new Insets(24));
             learnCardContainer.getChildren().add(empty);
             return;
@@ -1216,7 +1484,7 @@ public class MainWindowController {
 
         if (recent.isEmpty()) {
             Label empty = styledLabel(
-                    "No activity yet. Open a session or start a comparison to see your history here.",
+                    "No activity yet. Explore a structure or run a comparison \u2014 your session history will appear here.",
                     "empty-state-text");
             empty.setWrapText(true);
             empty.setPadding(new Insets(24));
@@ -1420,7 +1688,8 @@ public class MainWindowController {
                 "info-label");
         Label structures = styledLabel(
                 service.getAllStructures().size() + " structure families  \u00b7  "
-                + totalImpls + " implementations", "info-label");
+                + totalImpls + " implementations  \u00b7  "
+                + GraphAlgorithmCatalog.all().size() + " graph algorithms", "info-label");
 
         Button restoreBtn = new Button("Restore Defaults");
         restoreBtn.getStyleClass().add("action-btn");
@@ -1429,7 +1698,17 @@ public class MainWindowController {
             setStatus("Settings restored to defaults.");
         });
 
-        settingsCardBody(aboutCard).getChildren().addAll(version, structures, restoreBtn);
+        Button reopenOnboarding = new Button("Reopen Getting Started");
+        reopenOnboarding.getStyleClass().add("action-btn");
+        reopenOnboarding.setOnAction(e -> {
+            settings.setOnboardingDismissed(false);
+            showOnboardingOverlay();
+        });
+
+        HBox aboutBtns = new HBox(8, restoreBtn, reopenOnboarding);
+        aboutBtns.setAlignment(Pos.CENTER_LEFT);
+
+        settingsCardBody(aboutCard).getChildren().addAll(version, structures, aboutBtns);
 
         content.getChildren().addAll(hero, motionCard, traceCard, algoCard, aboutCard);
 

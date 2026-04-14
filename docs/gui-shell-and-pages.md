@@ -77,8 +77,9 @@ for visual-or-text-fallback rendering.
 
 ### Learn
 
-Data structure reference library with search and filtering.
+Three-tab reference and guide page with a segmented toggle bar.
 
+**Structures tab** (default):
 - **Search bar**: Real-time text filter across structure names,
   categories, keywords, descriptions, behavior, and learning notes
 - **Category filter**: ComboBox to narrow by structure category
@@ -87,6 +88,17 @@ Data structure reference library with search and filtering.
   and a complexity matrix table sourced from the registry
 - "Comparable" badge shown for structures with 2+ implementations
 - Grouped by category when unfiltered
+
+**Algorithms tab**:
+- Lists all graph algorithms from `GraphAlgorithmCatalog` grouped by
+  category (Traversal, Shortest Path, MST, Connectivity)
+- Each card shows display label, category badge, hint text, and
+  requirements (source, target, graph type)
+- "Try in Algorithm Lab" quick-action button
+
+**How to Use tab**:
+- Guided walkthrough of every page (Explore, Compare, Algorithm Lab,
+  Learn, Activity, Settings) with step-by-step usage instructions
 
 ### Activity
 
@@ -110,6 +122,8 @@ Application preferences persisted via `java.util.prefs.Preferences`.
   style class (tighter spacing, smaller font sizes)
 - **Show raw traces** / **Motion enabled**: Additional preference toggles
 - All settings take effect immediately and persist across restarts
+- **Reopen Getting Started**: Reopens the first-run onboarding overlay
+- **About**: Version info, structure/algorithm counts
 
 ### Algorithm Lab
 

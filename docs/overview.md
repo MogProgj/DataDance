@@ -33,7 +33,9 @@ and open addressing diverge on the same hash insertions.
 ### Learn
 
 Browse the structure registry — categories, descriptions, complexity
-metadata, and implementation variants.
+metadata, and implementation variants.  The Algorithms tab lists all
+graph algorithms with requirements and quick-launch buttons.  The
+How to Use tab provides a guided walkthrough of every page.
 
 ### Activity
 
