@@ -53,36 +53,25 @@ a swamp.
 
 ## Project status
 
-> **Phase 4C — Graph Workbench Hardening (active)**
+> **Phase 6B — Release-Ready Productization (complete)**
 >
-> Phases 1–6 and the comparison-mode / algorithm-lab expansions are
-> complete.  A terminal simulator backend and a JavaFX GUI are both
-> functional.  Phase 4C hardens the Algorithm Lab with typed algorithm
-> metadata, context-aware controls, compare-mode productization, and
-> doc/test alignment.
+> 8 structure families, 19 implementations, 11 graph algorithms,
+> 1111 tests (0 failures).
+>
+> The GUI is the primary interface — double-click the JAR or run
+> `java -jar structlab.jar`.  A terminal REPL is available via
+> `--terminal`.
 >
 > **What works:**
-> - Terminal simulator: full discovery, session, operation, and comparison flow
-> - JavaFX GUI: structure browsing, detail display, session lifecycle,
->   operation execution, state/trace/history rendering, comparison mode
->   via "Compare All" button
-> - Comparison mode: open a comparison session for any structure with 2+
->   implementations, execute operations across all implementations,
->   view side-by-side state/trace/history, reset all, close
-> - Supported comparison families: Stack (2), Queue (3), Deque (2),
->   Heap (2), Array (2), Linked List (2), Hash Table (5), Ordered Tree (2)
-> - Algorithm Lab: 11 graph algorithms (BFS, DFS, Dijkstra, Bellman-Ford,
->   Topo Sort, A*, Prim, Kruskal, SCC, Bridges, Articulation Points)
->   with typed metadata catalog, per-step telemetry, tracker pane,
->   compare mode, and scenario save/load
-> - Service facade: clean API consumed by the GUI and terminal, tested
->   independently
-> - Backend tests: 930+ automated tests covering core, trace, render,
->   service, comparison, and graph algorithm layers
->
-> **Current limitations:**
-> - GUI comparison view uses text-based rendering (not rich graphics)
-> - Operations use integer-based interactive values
+> - JavaFX GUI: six-page shell (Explore, Compare, Algorithm Lab,
+>   Learn, Activity, Settings) with first-run onboarding
+> - Explore: live structure sessions with visual state and trace log
+> - Compare: side-by-side benchmarking of multiple implementations
+> - Algorithm Lab: 11 graph algorithms with step-by-step playback
+> - Learn: three-tab reference (Structures, Algorithms, How to Use)
+> - Terminal simulator: full discovery, session, operation, and
+>   comparison flow
+> - Release JAR with bundled run scripts for GUI and terminal modes
 
 ---
 
@@ -245,57 +234,65 @@ For the Phase 0 working contract, see [`docs/phase-0-foundation.md`](docs/phase-
 
 ## Running the project
 
-Requires Java 17+.  Maven is provided by the included
+Requires **Java 17+** on your `PATH`.  Maven is provided by the included
 [Maven Wrapper](https://maven.apache.org/wrapper/) — no global Maven
 installation needed.
 
-### GUI mode (primary)
+### From a release JAR
+
+Download `structlab.jar` (and optionally the run scripts) from the
+[GitHub Releases](../../releases) page.
+
+| Action | Command |
+|--------|---------|
+| **Open the GUI** (default) | `java -jar structlab.jar` |
+| **Open the terminal REPL** | `java -jar structlab.jar --terminal` |
+| **Print usage help** | `java -jar structlab.jar --help` |
+
+Or use the bundled scripts (place them next to the JAR):
+
+| Script | What it does |
+|--------|--------------|
+| `run-gui.bat` / `run-gui.sh` | Launches the GUI |
+| `run-terminal.bat` / `run-terminal.sh` | Launches the terminal REPL |
+
+> **Tip:** Double-clicking `structlab.jar` opens the GUI on most systems.
+
+### From source
 
 ```bash
+# GUI — opens the JavaFX window
 ./mvnw clean javafx:run
-```
 
-The JavaFX application window will open.  See
-[`docs/how-to-play.md`](docs/how-to-play.md) for a
-step-by-step walkthrough.
-
-### Terminal mode (secondary)
-
-```bash
+# Terminal REPL — interactive text mode
 ./mvnw compile exec:java "-Dexec.mainClass=structlab.app.StructLabApp"
 ```
 
-See [`docs/how-to-play.md`](docs/how-to-play.md) for terminal commands and
-usage.
+On Windows, use `.\mvnw.cmd` instead of `./mvnw`.
 
 ### Build and test
 
 ```bash
 ./mvnw compile         # compile all sources
 ./mvnw test            # compile and run all tests
+./mvnw clean package   # produce the shaded uber-JAR in target/
 ```
 
-### Run a traced demo
+### First launch
 
-```bash
-./mvnw compile exec:java -Dexec.mainClass=structlab.demo.TracedArrayStackDemo
-```
-
-Replace the class name with any demo under `structlab.demo`.
+On first launch the GUI shows a **Getting Started** overlay that explains
+each page. Dismiss it with "Get Started", or reopen it later from
+**Settings → Reopen Getting Started**.
 
 ---
 
-## Testing the app
+## Testing
 
-| Layer | Command | Purpose |
-|---|---|---|
-| Backend tests | `./mvnw test` | Primary regression gate — must always pass |
-| GUI manual testing | `./mvnw clean javafx:run` | Primary human acceptance surface |
-| Console smoke test | `./mvnw compile exec:java "-Dexec.mainClass=structlab.app.StructLabApp"` | Secondary debug/validation path |
-
-- **GUI** is the main surface for manual feature validation.
-- **Backend tests** are mandatory before every merge.
-- **Terminal** remains available for quick debugging and smoke testing.
+| Command | Purpose |
+|---------|---------|
+| `./mvnw test` | Run all automated tests (mandatory before every merge) |
+| `./mvnw clean javafx:run` | Manual GUI smoke test |
+| `java -jar structlab.jar --terminal` | Manual terminal smoke test |
 
 For full details, see:
 - [`docs/gui-playthrough-manual.md`](docs/gui-playthrough-manual.md) — GUI testing manual
